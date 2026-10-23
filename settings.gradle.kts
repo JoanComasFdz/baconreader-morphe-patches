@@ -19,3 +19,10 @@ pluginManagement {
 plugins {
     id("app.morphe.patches") version "2.0.0"
 }
+
+settings {
+    extensions {
+        // Must resolve to an absolute path, otherwise extensions fail to find the proguard config.
+        proguardFiles(rootProject.projectDir.resolve("extensions/proguard-rules.pro").toString())
+    }
+}

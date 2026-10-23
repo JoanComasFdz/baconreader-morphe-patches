@@ -17,6 +17,9 @@ patches {
 val patchListGeneratorClasspath = configurations.create("patchListGeneratorClasspath")
 
 dependencies {
+    // Shared patches and utilities such as sharedExtensionPatch and replaceStringPatch.
+    implementation(libs.morphe.patches.library)
+
     compileOnly(libs.gson)
     patchListGeneratorClasspath(libs.gson)
 }
