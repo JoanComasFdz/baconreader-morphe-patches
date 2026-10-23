@@ -82,6 +82,11 @@ public class BaconReaderPreferenceFragment extends PreferenceFragment {
                 comments.addPreference(switchPreference(context, Settings.USER_AVATAR_BACKGROUND));
             }
 
+            PreferenceCategory chat = category(screen, "revanced_settings_baconreader_screen_4_chat_title");
+            if (IncludedPatches.redditChat()) {
+                chat.addPreference(switchPreference(context, Settings.CHECK_CHAT_MESSAGES));
+            }
+
             PreferenceCategory about = category(screen, "revanced_settings_baconreader_screen_0_about_title");
             Preference version = new Preference(context);
             version.setTitle("BaconReader Patches");
@@ -90,7 +95,7 @@ public class BaconReaderPreferenceFragment extends PreferenceFragment {
             about.addPreference(version);
 
             // Sections without settings, because their patches were not applied.
-            for (PreferenceCategory category : new PreferenceCategory[]{images, links, comments}) {
+            for (PreferenceCategory category : new PreferenceCategory[]{images, links, comments, chat}) {
                 if (category.getPreferenceCount() == 0) screen.removePreference(category);
             }
 

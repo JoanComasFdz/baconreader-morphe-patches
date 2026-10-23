@@ -28,4 +28,8 @@ public final class IncludedPatches {
     public static boolean userAvatars() {
         return false;
     }
+
+    public static boolean redditChat() {
+        return false;
+    }
 }

@@ -46,4 +46,7 @@ public class Settings extends BaseSettings {
 
     // Prompt to open Reddit links. Not shown in the settings.
     public static final BooleanSetting OPEN_LINKS_PROMPT_SHOWN = new BooleanSetting("revanced_baconreader_open_links_prompt_shown", FALSE, false, false);
+
+    // Reddit chat: chat messages Reddit also sends to the inbox are kept apart from it.
+    public static final BooleanSetting CHECK_CHAT_MESSAGES = new BooleanSetting("revanced_baconreader_check_chat_messages", TRUE);
 }

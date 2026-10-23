@@ -123,4 +123,16 @@
     <string name="revanced_comment_search_error">Could not load all comments: %s</string>
     <string name="revanced_meme_template_loading">Loading template…</string>
     <string name="revanced_meme_template_error">Could not load the full template</string>
+    <string name="revanced_settings_baconreader_screen_4_chat_title">Chat</string>
+    <string name="revanced_baconreader_check_chat_messages_title">Chat messages apart from the inbox</string>
+    <string name="revanced_baconreader_check_chat_messages_summary_on">Reddit also sends chat messages to the inbox, titled [direct chat room]. They\'re left out of the inbox, counted next to Chat in the menu, notified as chat messages, and marked as read when the chat opens. BaconReader\'s own message check finds them, when the app opens and at its update interval</string>
+    <string name="revanced_baconreader_check_chat_messages_summary_off">Chat messages stay in the inbox</string>
+    <string name="revanced_baconreader_chat_entry">Chat</string>
+    <string name="revanced_baconreader_chat_entry_unread">Chat (%s)</string>
+    <string name="revanced_baconreader_chat_load_error">Could not load Reddit chat. Check the connection and try again.</string>
+    <string name="revanced_baconreader_chat_retry">Retry</string>
+    <string name="revanced_baconreader_chat_notification_one">1 new chat message</string>
+    <string name="revanced_baconreader_chat_notification_many">%s new chat messages</string>
+    <string name="revanced_baconreader_chat_notification_text">Tap to open Reddit chat</string>
+    <string name="revanced_baconreader_chat_notification_channel">Reddit chat</string>
 </resources>
