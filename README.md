@@ -16,10 +16,7 @@
 ## ⚡ Install
 
 1. Install [Morphe Manager](https://morphe.software).
-2. On your phone, open [**Add to Morphe Manager**](https://morphe.software/add-source?github=JoanComasFdz/baconreader-morphe-patches) nd add the source. Reseam Manager shows the bundle's signing key; it must be:
-   ```text
-   8fcc605f22082b88c826675e5614938e1fedcd769c3c568b79f3cd9564159437
-   ```
+2. On your phone, open [**Add to Morphe Manager**](https://morphe.software/add-source?github=JoanComasFdz/baconreader-morphe-patches) and add the source. Or, in Morphe Manager, add `https://github.com/JoanComasFdz/baconreader-morphe-patches` as a remote source.
 3. Patch your **BaconReader 6.1.4** APK, free or Premium.
 4. Uninstall the original BaconReader, then install the patched one.
 
@@ -72,8 +69,6 @@ Settings live in BaconReader → **Settings → Patches**.
 | Disable unavailable sidebar | Greys out "View Sidebar" where there's none |
 | Disable feedback popup | No feedback nag |
 | Disable final release announcement | No goodbye popup |
-
-<!-- PATCHES_END -->
 
 ## 🛠️ Development
 
