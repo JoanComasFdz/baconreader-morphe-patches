@@ -2,6 +2,7 @@
 <!-- Strings of the BaconReader patches, added to the app's res/values/strings.xml. -->
 <resources>
     <string name="revanced_settings_title">Patches</string>
+    <string name="baconreader_patches_drawer_version">Patches %1$s (Morphe)</string>
     <string name="revanced_settings_baconreader_screen_0_about_title">About</string>
     <string name="revanced_settings_baconreader_screen_1_images_title">Images and videos</string>
     <string name="revanced_settings_baconreader_screen_2_links_title">Links</string>
