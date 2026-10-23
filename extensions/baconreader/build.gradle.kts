@@ -16,4 +16,6 @@ dependencies {
     compileOnly(libs.annotation)
     // Provided at runtime by BaconReader.
     compileOnly(libs.okhttp)
+    // Compile-only BaconReader classes (stub/).
+    compileOnly(project(":extensions:baconreader:stub"))
 }
