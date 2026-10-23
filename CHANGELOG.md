@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.1.0...v1.1.1) (2026-10-23)
+
+### 🐛 Bug Fixes
+
+* Don't count chat messages in "Fix unread messages" ([a920e3d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/a920e3d5dbd5fcb6371d8ebdf580d58cb4fe39d4))
+* Pass the post to "Fix list thumbnails" for Imgur posts ([4941eff](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/4941eff911886b9bcc5117fcc76eef0d60aca494))
+
 ## [1.1.1-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.1.0...v1.1.1-dev.1) (2026-10-23)
 
 ### 🐛 Bug Fixes
