@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.github.joancomasfdz.extension.baconreader.chat.InboxChats;
 import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
 import app.morphe.extension.shared.Utils;
 
@@ -20,6 +21,7 @@ import app.morphe.extension.shared.Utils;
  * <ul>
  * <li>The orange inbox envelope of the drawer follows "Mark read": the app only updated it when the inbox or the
  * background check loaded the messages, so it stayed orange after the last unread message was marked as read.</li>
+ * <li>Chat messages don't count while the Reddit chat patch keeps them apart from the inbox.</li>
  * <li>"Mark unread" is removed: Reddit no longer keeps messages unread (api/unread_message answers 404 for comment
  * replies, and old.reddit.com's "mark unread" does not stick either), so it did nothing.</li>
  * </ul>
@@ -99,7 +101,8 @@ public final class UnreadMessagesPatch {
 
     /**
      * Asks Reddit for the unread messages, with the app's request of the background check (message/unread), and
-     * updates the envelope.
+     * updates the envelope. While chat messages are kept apart from the inbox, up to 100 messages are requested, so
+     * an unread inbox message is found behind unread chat messages.
      */
     private static void checkUnread() {
         try {
@@ -108,13 +111,23 @@ public final class UnreadMessagesPatch {
                 if (method.getName().equals("getMessages") && method.getParameterTypes().length == 6) getMessages = method;
             }
             if (getMessages == null) throw new NoSuchMethodException("RedditApi.getMessages");
-            getMessages.invoke(null, Utils.getContext(), "unread", null, null, 1, new Tasks.OnCompleteListener<Object>() {
+            int limit = InboxChats.separate() ? 100 : 1;
+            getMessages.invoke(null, Utils.getContext(), "unread", null, null, limit, new Tasks.OnCompleteListener<Object>() {
                 @Override
                 public void onComplete(Object listing) {
                     try {
+                        Class<?> messageClass = Class.forName("com.onelouder.baconreader.reddit.Message");
+                        Class<?> commentClass = Class.forName("com.onelouder.baconreader.reddit.Comment");
+                        Field subject = messageClass.getField("subject");
                         List<?> children = (List<?>) listing.getClass().getMethod("getChildren", Class.class)
-                                .invoke(listing, Class.forName("com.onelouder.baconreader.reddit.Message"));
-                        boolean hasUnread = !children.isEmpty();
+                                .invoke(listing, messageClass);
+                        boolean hasUnread = false;
+                        for (Object child : children) {
+                            if (!InboxChats.isChat((String) subject.get(child), commentClass.isInstance(child))) {
+                                hasUnread = true;
+                                break;
+                            }
+                        }
                         setNewMessages(hasUnread);
                         if (!hasUnread) {
                             NotificationManager notifications = (NotificationManager)
