@@ -36,6 +36,8 @@ and the [patcher docs](https://github.com/MorpheApp/morphe-patcher/blob/main/doc
 
 Every push to a branch other than `main` runs `dev_build.yml`, which uploads the built `.mpp` and the latest Morphe Desktop jar as workflow artifacts.
 
+Pushes that only change Markdown files, `docs/`, `LICENSE`, `NOTICE` or issue templates skip `dev_build.yml` and `release.yml`.
+
 ## Releases
 
 - **Make all changes on the `dev` branch.**
