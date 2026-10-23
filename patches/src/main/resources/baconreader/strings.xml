@@ -97,6 +97,7 @@
     <string name="revanced_baconreader_auto_load_more_comments_entry_3">Up to 3 replies</string>
     <string name="revanced_baconreader_auto_load_more_comments_entry_4">Up to 4 replies</string>
     <string name="revanced_baconreader_auto_load_more_comments_entry_5">Up to 5 replies</string>
+    <string name="revanced_baconreader_comment_limit_reset">Reset</string>
     <string name="revanced_markdown_bold">Bold</string>
     <string name="revanced_markdown_italic">Italic</string>
     <string name="revanced_markdown_strikethrough">Strikethrough</string>
