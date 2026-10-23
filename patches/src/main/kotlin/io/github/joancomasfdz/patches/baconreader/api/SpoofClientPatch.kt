@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.patches.baconreader.api
 
 import app.morphe.patcher.Fingerprint
@@ -21,8 +25,6 @@ private const val REDREADER_CLIENT_ID = "yH0aTnJEt6qUgGn835B4vg"
 private const val REDREADER_REDIRECT_URI = "redreader://rr_oauth_redir"
 private const val REDREADER_USER_AGENT = "org.quantumbadger.redreader/1.25.1"
 
-// Ported from ReVanced Patches (GPLv3): https://gitlab.com/ReVanced/revanced-patches
-//
 // Reddit stopped accepting BaconReader's OAuth client when BaconReader shut down in 2023, so
 // logging in and loading anything fails. Another app's client still works, as long as the redirect
 // URI and user agent match what Reddit has on record for it. RedReader's is the default.

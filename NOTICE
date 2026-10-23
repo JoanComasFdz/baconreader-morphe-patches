@@ -19,3 +19,12 @@ provided that such references:
 - Are accurate, factual, and non-misleading;
 - Do not suggest authorship by the Morphe project; and
 - Appear only in a secondary or descriptive context, not as part of the product or project name.
+
+ReVanced Patches
+================
+
+The patches and extension are ported from ReVanced Patches
+(https://gitlab.com/ReVanced/revanced-patches), mostly from its BaconReader
+merge requests 6989 and 6998, which are licensed under the GNU General Public
+License, version 3. Those files carry ReVanced's copyright in their SPDX
+headers and stay under that license; see LICENSES/GPL-3.0-only.txt.

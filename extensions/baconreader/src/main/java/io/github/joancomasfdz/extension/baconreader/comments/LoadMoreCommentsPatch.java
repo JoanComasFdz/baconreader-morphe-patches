@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.comments;
 
 import android.os.Handler;
@@ -20,8 +24,6 @@ import io.github.joancomasfdz.extension.baconreader.settings.Settings;
 import app.morphe.extension.shared.Logger;
 
 /**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  * <p>
  * Fewer "load more comments" in posts. Reddit returns about 200 comments by default and puts the replies that do
  * not fit behind "load more comments (N replies)", often for one or two low-ranked replies. The thread is

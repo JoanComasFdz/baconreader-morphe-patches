@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.embedcommentimages;
 
 import android.content.Context;
@@ -11,9 +15,6 @@ import android.widget.ImageView;
 
 /**
  * ImageView with pinch to zoom, drag to pan and double tap to zoom in/out.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 final class ZoomImageView extends ImageView {
     private static final float MAX_ZOOM = 5f;

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.openlinks;
 
 import android.app.Activity;
@@ -8,8 +12,6 @@ import android.preference.Preference;
 import android.util.AttributeSet;
 
 /**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  * <p>
  * Shows whether Reddit links open in BaconReader, and opens the system screen to change it.
  * The summary is updated when coming back from the system screen.

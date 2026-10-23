@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.flairs;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -38,8 +42,6 @@ import app.morphe.extension.shared.ResourceUtils;
 import app.morphe.extension.shared.Utils;
 
 /**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  * <p>
  * A "Flair" control in the sort bar of the post list. The selected flairs are applied as a Reddit search in the
  * subreddit (flair_name:"A" OR flair_name:"B"), which the app already loads like any listing when its LinksetKey

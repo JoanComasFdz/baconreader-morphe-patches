@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.embedcommentimages;
 
 import android.content.Context;
@@ -41,9 +45,6 @@ import app.morphe.extension.shared.Logger;
  * Videos uploaded in comments, linked as reddit.com/link/[post]/video/[id]/player, and links to video files
  * (.mp4, .webm). Reddit's web page for the first does not work, so they are played in the comment, with the
  * ExoPlayer bundled in BaconReader.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 final class CommentVideo {
     private static final float DEFAULT_RATIO = 9f / 16f;

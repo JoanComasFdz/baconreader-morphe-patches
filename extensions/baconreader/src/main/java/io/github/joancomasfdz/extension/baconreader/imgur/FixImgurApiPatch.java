@@ -1,11 +1,11 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.imgur;
 
 import java.net.HttpURLConnection;
 
-/**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
- */
 @SuppressWarnings("unused")
 public final class FixImgurApiPatch {
     private FixImgurApiPatch() {

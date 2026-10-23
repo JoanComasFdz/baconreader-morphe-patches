@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.embedcommentimages;
 
 import android.graphics.Canvas;
@@ -53,9 +57,6 @@ import app.morphe.extension.shared.Logger;
  * <p>
  * X posts come from X's embed service, the one embedded posts on web pages use. Long posts are cut there, and
  * end with "…". Bluesky posts come from Bluesky's public API.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 final class SocialPosts {
     private static final Pattern STATUS = Pattern.compile(
