@@ -32,46 +32,6 @@
 | Spoof client | Log in to Reddit again |
 | Fix Redgifs API | Redgifs videos play again |
 
-Spoof client uses RedReader's Reddit client by default, so it needs no setup. Its client ID, redirect URI and user agent can be changed as patch options.
-
-## 📋 Patch details
-
-<!-- PATCHES_START EXPANDED -->
-> **[v1.0.0](https://github.com/JoanComasFdz/baconreader-morphe-patches/releases/tag/v1.0.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;4 patches total
-<details open>
-<summary>📦 BaconReader&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
-<br>
-
-**🎯 Supported versions:**
-
-| 6.1.4 |
-| :---: |
-
-| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
-|----------|----------------|-----------|
-| [Fix Redgifs API](#fix-redgifs-api) | Fixes Redgifs media not loading by using temporary Redgifs API tokens. |  |
-| [Spoof client](#spoof-client) | Makes logging in to Reddit work again by using another Reddit app's client ID. | • Application client ID<br>• Application redirect URI<br>• Application user agent |
-
-</details>
-
-<details open>
-<summary>📦 BaconReader Premium&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
-<br>
-
-**🎯 Supported versions:**
-
-| 6.1.4 |
-| :---: |
-
-| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
-|----------|----------------|-----------|
-| [Fix Redgifs API](#fix-redgifs-api) | Fixes Redgifs media not loading by using temporary Redgifs API tokens. |  |
-| [Spoof client](#spoof-client) | Makes logging in to Reddit work again by using another Reddit app's client ID. | • Application client ID<br>• Application redirect URI<br>• Application user agent |
-
-</details>
-
-<!-- PATCHES_END -->
-
 ## 🛠️ Development
 
 How to set up, build, test and release: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
