@@ -1,14 +1,13 @@
-group = "app.template"
+group = "io.github.joancomasfdz"
 
 patches {
-    // TODO: Update this section with your project details.
     about {
-        name = "UserXYZ Patches"
-        description = "Patches for apps I like"
-        source = "git@github.com:UserXYZ/morphe-patches.git"
-        author = "Awesome dev"
-        contact = "na"
-        website = "na"
+        name = "JoanComasFdz BaconReader Patches"
+        description = "BaconReader patches for use with Morphe"
+        source = "git@github.com:JoanComasFdz/baconreader-morphe-patches.git"
+        author = "Joan Comas"
+        contact = "https://github.com/JoanComasFdz/baconreader-morphe-patches/issues"
+        website = "https://github.com/JoanComasFdz/baconreader-morphe-patches"
         license = "GPLv3"
     }
 }
@@ -18,6 +17,9 @@ patches {
 val patchListGeneratorClasspath = configurations.create("patchListGeneratorClasspath")
 
 dependencies {
+    // Shared patches and utilities such as sharedExtensionPatch and replaceStringPatch.
+    implementation(libs.morphe.patches.library)
+
     compileOnly(libs.gson)
     patchListGeneratorClasspath(libs.gson)
 }
