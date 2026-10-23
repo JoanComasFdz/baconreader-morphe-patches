@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.memes;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -25,9 +29,6 @@ import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
 /**
  * BaconReader's own meme templates (cf-baconreader.onelouder.com/memebackgrounds) no longer exist.
  * The grid shows Imgflip's 250 px thumbnails, and a tapped template is downloaded at full size.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 @SuppressWarnings("unused")
 public final class FixMemeTemplatesPatch {

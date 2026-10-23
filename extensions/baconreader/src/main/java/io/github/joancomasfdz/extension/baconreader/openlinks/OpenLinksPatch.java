@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.openlinks;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -23,8 +27,6 @@ import io.github.joancomasfdz.extension.baconreader.settings.Settings;
 import app.morphe.extension.shared.Logger;
 
 /**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  * <p>
  * Android 12+ does not let an app enable its own links (reddit.com only verifies the official app),
  * so this shows whether they are enabled and opens the system "Open by default" screen.

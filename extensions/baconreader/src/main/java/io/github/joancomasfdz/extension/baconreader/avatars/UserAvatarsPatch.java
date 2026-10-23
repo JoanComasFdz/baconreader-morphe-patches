@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.avatars;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -45,8 +49,6 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
 
 /**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  * <p>
  * User avatars before the author of comments, as on Reddit's website. The comment JSON has the author's id
  * (author_fullname, a field the patch adds to the app's Comment class); avatars come from

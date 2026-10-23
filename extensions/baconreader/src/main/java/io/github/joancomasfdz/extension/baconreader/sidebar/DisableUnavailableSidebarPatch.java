@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.sidebar;
 
 import android.app.Activity;
@@ -9,8 +13,6 @@ import app.morphe.extension.shared.ResourceUtils;
 import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
 
 /**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  * <p>
  * "View Sidebar" only works for a subreddit. Front Page, All, Popular, Friends, multireddits and Random before
  * it has loaded only show "This subreddit does not have a sidebar".

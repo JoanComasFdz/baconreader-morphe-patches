@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.embedcommentimages;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -38,9 +42,6 @@ import app.morphe.extension.shared.Logger;
  * Imgur albums (imgur.com/a/... and imgur.com/gallery/... links) in comments and posts.
  * The images are listed with the app's own Imgur client, and shown one at a time in the comment:
  * swipe sideways to change the image. Each image behaves like any other embedded image.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 final class ImgurAlbum {
     private static final Pattern ALBUM = Pattern.compile(

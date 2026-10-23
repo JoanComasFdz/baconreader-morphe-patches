@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.awards;
 
 import android.view.Menu;
@@ -8,8 +12,6 @@ import app.morphe.extension.shared.ResourceUtils;
 import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
 
 /**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  * <p>
  * Reddit's API no longer reports awards (all_awardings is always empty since 2023), and the award endpoints
  * of the old coins system are gone.

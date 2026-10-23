@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.postmedia;
 
 import android.content.Context;
@@ -29,9 +33,6 @@ import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
  * thumbnail downloads a full image, often a big GIF, and the image shown waits for them.
  * The strip now uses the previews, and the image shown is downloaded with a progress bar,
  * with its preview shown until it is loaded.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 @SuppressWarnings("unused")
 public final class RedditGalleryPatch {

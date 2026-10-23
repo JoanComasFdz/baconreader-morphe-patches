@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.chat;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -31,7 +34,7 @@ import app.morphe.extension.shared.Utils;
 import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
 
 /**
- * Reddit's chat inside the app, with unread notifications. Ported from baconreader-reseam-patches.
+ * Reddit's chat inside the app, with unread notifications.
  * <p>
  * Reddit has no public chat API, and the app's OAuth login can't open Reddit's website. So the chat is Reddit's
  * mobile website chat in a WebView over MainActivity's post list, where users log in to the website once.

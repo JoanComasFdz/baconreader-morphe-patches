@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader;
 
 import androidx.annotation.GuardedBy;
@@ -15,9 +19,6 @@ import java.util.Map;
 
 /**
  * Manages Redgifs token lifecycle.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 public class RedgifsTokenManager {
     public static class RedgifsToken {

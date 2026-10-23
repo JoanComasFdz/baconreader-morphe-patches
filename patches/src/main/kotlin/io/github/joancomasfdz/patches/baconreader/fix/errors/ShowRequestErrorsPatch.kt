@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.patches.baconreader.fix.errors
 
 import app.morphe.patcher.patch.PatchException
@@ -8,7 +12,6 @@ import com.android.tools.smali.dexlib2.immutable.ImmutableMethodImplementation
 import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER
 import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER_PREMIUM
 
-// Ported from ReVanced Patches (GPLv3): https://gitlab.com/ReVanced/revanced-patches
 @Suppress("unused")
 val showRequestErrorsPatch = bytecodePatch(
     name = "Show request errors",

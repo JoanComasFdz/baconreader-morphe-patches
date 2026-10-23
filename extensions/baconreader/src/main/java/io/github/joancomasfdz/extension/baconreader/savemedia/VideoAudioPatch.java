@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.savemedia;
 
 import android.content.Context;
@@ -31,9 +35,6 @@ import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
  * Reddit videos (v.redd.it) keep the picture and the sound in separate files, which players combine. "Save to
  * device" downloaded only the picture (fallback_url), so saved videos had no sound. After the download, the audio
  * track is downloaded too and both are combined into the saved file, without re-encoding.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 @SuppressWarnings("unused")
 public final class VideoAudioPatch {
