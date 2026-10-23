@@ -1,20 +1,40 @@
-# 🥓🧩 JoanComasFdz BaconReader Patches
+<div align="center">
 
-BaconReader patches for use with [Morphe](https://morphe.software).
+# 🥓 BaconReader Patches
 
-## ❓ About
+**BaconReader, alive again.** Patches for [Morphe](https://morphe.software) that make BaconReader work with today's Reddit.
 
-Fixes and improvements for [BaconReader](https://play.google.com/store/apps/details?id=com.onelouder.baconreader),
-the Reddit client. The patches target BaconReader 6.1.4, both `com.onelouder.baconreader` and
-`com.onelouder.baconreader.premium`.
+[![Morphe](https://img.shields.io/badge/Morphe-patches-ff4500?style=flat-square)](https://morphe.software)
+[![BaconReader](https://img.shields.io/badge/BaconReader-6.1.4-f57c00?style=flat-square)](#-install)
+[![Patches](https://img.shields.io/badge/patches-2-2ea44f?style=flat-square)](#-whats-inside)
+[![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](LICENSE)
 
-This project is not affiliated with or endorsed by the Morphe project.
+[**➕ Add to Morphe Manager**](https://morphe.software/add-source?github=JoanComasFdz/baconreader-morphe-patches)
 
-### How to use these patches
+</div>
 
-Click here to add these patches to Morphe: https://morphe.software/add-source?github=JoanComasFdz/baconreader-morphe-patches
+## ⚡ Install
 
-## 🩹 Patches list
+1. Install [Morphe Manager](https://morphe.software).
+2. On your phone, open [**Add to Morphe Manager**](https://morphe.software/add-source?github=JoanComasFdz/baconreader-morphe-patches) and add the source. Or, in Morphe Manager, add `https://github.com/JoanComasFdz/baconreader-morphe-patches` as a remote source.
+3. Patch your **BaconReader 6.1.4** APK, free or Premium.
+4. Uninstall the original BaconReader, then install the patched one.
+
+> [!WARNING]
+> Use an APK you trust. Repackaged "Premium" APKs often carry malware.
+
+## 🧩 What's inside
+
+**🔧 Fixes**: what broke since 2023
+
+| Patch | |
+|---|---|
+| Spoof client | Log in to Reddit again |
+| Fix Redgifs API | Redgifs videos play again |
+
+Spoof client uses RedReader's Reddit client by default, so it needs no setup. Its client ID, redirect URI and user agent can be changed as patch options.
+
+## 📋 Patch details
 
 <!-- PATCHES_START EXPANDED -->
 > **[v1.0.0](https://github.com/JoanComasFdz/baconreader-morphe-patches/releases/tag/v1.0.0)**&nbsp;&nbsp;•&nbsp;&nbsp;`main`&nbsp;&nbsp;•&nbsp;&nbsp;4 patches total
@@ -52,51 +72,14 @@ Click here to add these patches to Morphe: https://morphe.software/add-source?gi
 
 <!-- PATCHES_END -->
 
-## 🧑‍💻 Development
+## 🛠️ Development
 
-See the [Morphe development docs](https://github.com/MorpheApp/morphe-documentation/blob/main/docs/morphe-development/README.md)
-and the [patcher docs](https://github.com/MorpheApp/morphe-patcher/blob/main/docs/1_patcher_intro.md).
-
-### Setup
-
-1. Install JDK 21 or newer.
-2. Create a GitHub [personal access token (classic)](https://github.com/settings/tokens/new?scopes=read:packages&description=Morphe)
-   with the `read:packages` scope. Morphe's Gradle plugin and patcher are on GitHub Packages.
-3. Add it to `~/.gradle/gradle.properties`:
-   ```properties
-   gpr.user = <GitHub username>
-   gpr.key = <personal access token>
-   ```
-   Or set the `GITHUB_ACTOR` and `GITHUB_TOKEN` environment variables.
-
-### Layout
-
-| Path | What |
-|---|---|
-| `patches/src/main/kotlin/io/github/joancomasfdz/patches/` | Patches (Kotlin). `shared/Constants.kt` declares the supported BaconReader packages and versions |
-| `extensions/baconreader/` | Extension code (Java) bundled as `extensions/baconreader.mpe` and called from patches |
-
-### Build and patch
-
-- Run `./gradlew buildAndroid`. The patches file is `patches/build/libs/patches-*.mpp`.
-- Patch an APK with [Morphe Desktop](https://github.com/MorpheApp/morphe-desktop):
-  ```bash
-  java -jar morphe-desktop-*-all.jar patch --patches patches/build/libs/patches-*.mpp --out baconreader-patched.apk baconreader.apk
-  ```
-  Add `--install` to install on a device connected over ADB.
-
-### Releases
-
-- **Make all changes on the `dev` branch.**
-- Use [semantic commit](https://kapeli.com/cheat_sheets/Semantic_Commits.docset/Contents/Resources/Documents/index) messages:
-  - `feat: ...` and `fix: ...` create a pre-release from `dev`.
-  - `chore: ...` creates no release.
-- Pre-releases are available in Morphe Manager when pre-releases are enabled for this patch source.
-- For a stable release, merge `dev` into `main` with a merge commit (no squash). `open_pull_request.yml` keeps a `dev` → `main` pull request open.
-- Releases are created only by `release.yml`. Do not create releases by hand, do not edit `patches-list.json`,
-  `patches-bundle.json` or `CHANGELOG.md`, and do not force-push release commits.
+How to set up, build, test and release: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 ## 📜 License
 
-JoanComasFdz BaconReader Patches are licensed under the [GNU General Public License v3.0](LICENSE).
-See [NOTICE](NOTICE) for the Morphe name restriction.
+[GPL-3.0](LICENSE). The patches are ported from [ReVanced Patches](https://gitlab.com/ReVanced/revanced-patches). Not affiliated with Reddit, BaconReader or Morphe.
+
+## 🤖 AI disclosure
+
+I developed these patches with AI assistance (Claude Code). The AI wrote most of the code following my requirements, and I test the patches on my device and review the results. The commits say so too.

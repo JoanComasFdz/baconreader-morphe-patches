@@ -3,6 +3,13 @@ name: Release
 on:
   workflow_dispatch:
   push:
+    # Skip pushes that only change files the build doesn't use.
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - 'NOTICE'
+      - '.github/ISSUE_TEMPLATE/**'
 
 jobs:
   release:
