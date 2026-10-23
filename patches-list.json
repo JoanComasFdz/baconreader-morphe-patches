@@ -1,5 +1,124 @@
 {
   "NOTE": "Do NOT manually edit this file. This file is automatically updated when semantic release (release.yml) runs. Manually editing this file can break your releases and break third party tools that use this file.",
-  "version": "0.0.0",
-  "patches": []
+  "version": "1.0.0-dev.1",
+  "patches": [
+    {
+      "name": "Fix Redgifs API",
+      "description": "Fixes Redgifs media not loading by using temporary Redgifs API tokens.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.onelouder.baconreader",
+          "name": "BaconReader",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#F26522",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "6.1.4",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.onelouder.baconreader.premium",
+          "name": "BaconReader Premium",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#F26522",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "6.1.4",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": []
+    },
+    {
+      "name": "Spoof client",
+      "description": "Makes logging in to Reddit work again by using another Reddit app's client ID.",
+      "default": true,
+      "category": null,
+      "compatiblePackages": [
+        {
+          "packageName": "com.onelouder.baconreader",
+          "name": "BaconReader",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#F26522",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "6.1.4",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        },
+        {
+          "packageName": "com.onelouder.baconreader.premium",
+          "name": "BaconReader Premium",
+          "description": null,
+          "apkFileType": "APK",
+          "appIconColor": "#F26522",
+          "signatures": null,
+          "formFactor": "MOBILE",
+          "targets": [
+            {
+              "version": "6.1.4",
+              "versionCodes": null,
+              "isExperimental": false,
+              "minSdk": null,
+              "description": null
+            }
+          ]
+        }
+      ],
+      "options": [
+        {
+          "key": "clientId",
+          "title": "Application client ID",
+          "description": "The client ID of an \"Installed app\" from https://www.reddit.com/prefs/apps.",
+          "required": true,
+          "type": "kotlin.String",
+          "default": "yH0aTnJEt6qUgGn835B4vg",
+          "values": null
+        },
+        {
+          "key": "redirectUri",
+          "title": "Application redirect URI",
+          "description": "The redirect URI of that Reddit app. Empty keeps BaconReader's own, http://baconreader.com/auth.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "redreader://rr_oauth_redir",
+          "values": null
+        },
+        {
+          "key": "userAgent",
+          "title": "Application user agent",
+          "description": "The user agent of that Reddit app, ideally. Empty keeps BaconReader's own.",
+          "required": false,
+          "type": "kotlin.String",
+          "default": "org.quantumbadger.redreader/1.25.1",
+          "values": null
+        }
+      ]
+    }
+  ]
 }

@@ -17,17 +17,38 @@ Click here to add these patches to Morphe: https://morphe.software/add-source?gi
 ## 🩹 Patches list
 
 <!-- PATCHES_START EXPANDED -->
+> **[v1.0.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/releases/tag/v1.0.0-dev.1)**&nbsp;&nbsp;•&nbsp;&nbsp;`dev`&nbsp;&nbsp;•&nbsp;&nbsp;4 patches total
+<details open>
+<summary>📦 BaconReader&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
 
-<!-- Do not modify this section by hand. The patch list is generated when release.yml creates a new release.
-     
-     If you wish for the patches list to be collapsed, then remove the word 'EXPANDED' from the comment tag above.
+**🎯 Supported versions:**
 
-     If you wish to manually keep this list updated then remove the PATCHES_START and PATCHES_END 
-     comment blocks entirely. -->
+| 6.1.4 |
+| :---: |
 
-#### The list of patches will be shown here after the first patches release is created.
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Fix Redgifs API](#fix-redgifs-api) | Fixes Redgifs media not loading by using temporary Redgifs API tokens. |  |
+| [Spoof client](#spoof-client) | Makes logging in to Reddit work again by using another Reddit app's client ID. | • Application client ID<br>• Application redirect URI<br>• Application user agent |
 
-&nbsp;
+</details>
+
+<details open>
+<summary>📦 BaconReader Premium&nbsp;&nbsp;•&nbsp;&nbsp;2 patches</summary>
+<br>
+
+**🎯 Supported versions:**
+
+| 6.1.4 |
+| :---: |
+
+| 💊&nbsp;Patch | 📜&nbsp;Description | ⚙️&nbsp;Options |
+|----------|----------------|-----------|
+| [Fix Redgifs API](#fix-redgifs-api) | Fixes Redgifs media not loading by using temporary Redgifs API tokens. |  |
+| [Spoof client](#spoof-client) | Makes logging in to Reddit work again by using another Reddit app's client ID. | • Application client ID<br>• Application redirect URI<br>• Application user agent |
+
+</details>
 
 <!-- PATCHES_END -->
 
