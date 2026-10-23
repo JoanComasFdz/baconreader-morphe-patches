@@ -1,3 +1,9 @@
+## [1.2.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.1.1...v1.2.0-dev.1) (2026-10-23)
+
+### ✨ New Features
+
+* Show the version of the patches at the bottom of the drawer ([a655dda](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/a655ddac7060c3a8f187991f9af688ecc29bf264))
+
 ## [1.1.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.1.0...v1.1.1) (2026-10-23)
 
 ### 🐛 Bug Fixes
