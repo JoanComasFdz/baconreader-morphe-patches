@@ -38,6 +38,10 @@ Every push to a branch other than `main` runs `dev_build.yml`, which uploads the
 
 Pushes that only change Markdown files, `docs/`, `LICENSE`, `NOTICE` or issue templates skip `dev_build.yml` and `release.yml`.
 
+## README
+
+The README is written by hand. When you add or change a patch, update the tables in **What's inside** and the patch count badge.
+
 ## Releases
 
 - **Make all changes on the `dev` branch.**
