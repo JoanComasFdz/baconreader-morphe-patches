@@ -28,3 +28,10 @@ internal object SettingsActivityOpenFragmentFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("I"),
 )
+
+/** Builds the drawer's items; runs when the drawer is made and again on each change. */
+internal object DrawerHandlerUpdateDrawerFingerprint : Fingerprint(
+    definingClass = "Lcom/onelouder/baconreader/DrawerHandler;",
+    name = "updateDrawer",
+    returnType = "V",
+)

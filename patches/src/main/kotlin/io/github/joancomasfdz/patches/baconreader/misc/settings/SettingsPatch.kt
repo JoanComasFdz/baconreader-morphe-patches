@@ -1,5 +1,6 @@
 package io.github.joancomasfdz.patches.baconreader.misc.settings
 
+import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
@@ -10,9 +11,11 @@ import io.github.joancomasfdz.patches.baconreader.misc.extension.EXTENSION_PACKA
 import io.github.joancomasfdz.patches.baconreader.misc.extension.sharedExtensionPatch
 
 private const val ACTIVITY_HOOK_CLASS_DESCRIPTOR = "$EXTENSION_PACKAGE/settings/BaconReaderActivityHook;"
+private const val DRAWER_FOOTER_CLASS_DESCRIPTOR = "$EXTENSION_PACKAGE/settings/DrawerVersionFooter;"
 
 /**
- * Adds a "Patches" entry at the end of BaconReader's settings menu, with the settings of the other patches.
+ * Adds a "Patches" entry at the end of BaconReader's settings menu, with the settings of the other patches,
+ * and shows the version of the patches at the bottom of the drawer.
  * Patches with settings depend on it and call [markPatchIncluded].
  */
 internal val settingsPatch = bytecodePatch(
@@ -63,6 +66,13 @@ internal val settingsPatch = bytecodePatch(
                 return-void
             """,
             ExternalLabel("original", SettingsActivityOpenFragmentFingerprint.method.getInstruction(0)),
+        )
+
+        // The version of the patches at the bottom of the drawer, as in baconreader-reseam-patches.
+        // p0 is above v15 in this method, so the call needs the range form.
+        DrawerHandlerUpdateDrawerFingerprint.method.addInstruction(
+            0,
+            "invoke-static/range { p0 .. p0 }, $DRAWER_FOOTER_CLASS_DESCRIPTOR->addVersionFooter(Ljava/lang/Object;)V",
         )
     }
 }
