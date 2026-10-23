@@ -143,6 +143,26 @@ public final class FixListThumbnailsPatch {
     }
 
     /**
+     * Injected in place of the Imgur step of LinkProcessor.loadThumbnail: the thumbnail of an Imgur post is the
+     * image of its link. Done here because the app's own code overwrites the Link register with that URL, and
+     * {@link #loadThumbnail} needs the Link.
+     *
+     * @return The URL to load: the Imgur image, or the given thumbnail.
+     */
+    public static String imgurThumbnail(Object link, String thumbnail) {
+        try {
+            String url = (String) field(link, "url");
+            Class<?> imgurHandler = Class.forName("com.onelouder.baconreader.imageutils.ImgurHandler");
+            if (!(Boolean) imgurHandler.getMethod("isImgur", String.class).invoke(null, url)) return thumbnail;
+            String imgurUrl = (String) imgurHandler.getMethod("handleImgurUrl", String.class).invoke(null, url);
+            return imgurUrl == null || imgurUrl.isEmpty() ? thumbnail : imgurUrl;
+        } catch (Exception ex) {
+            Logger.printInfo(() -> "Could not get the Imgur thumbnail", ex);
+            return thumbnail;
+        }
+    }
+
+    /**
      * Injected in place of the app's Glide load in LinkProcessor.loadThumbnail: tries again when the
      * thumbnail fails to load, and looks up the thumbnails of RedGIFs posts.
      */

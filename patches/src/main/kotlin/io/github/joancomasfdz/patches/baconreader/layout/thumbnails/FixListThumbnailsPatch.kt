@@ -5,12 +5,16 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.removeInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.removeInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.smali.ExternalLabel
+import app.morphe.util.getReference
+import app.morphe.util.indexOfFirstInstructionOrThrow
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.FieldReference
 import io.github.joancomasfdz.patches.baconreader.misc.extension.EXTENSION_PACKAGE
 import io.github.joancomasfdz.patches.baconreader.misc.extension.sharedExtensionPatch
 import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER
@@ -59,6 +63,27 @@ val fixListThumbnailsPatch = bytecodePatch(
                     intoIndex,
                     "invoke-static { v${into.registerC}, v${into.registerD}, p1 }, " +
                         "$EXTENSION_CLASS_DESCRIPTOR->loadThumbnail(Ljava/lang/Object;Landroid/widget/ImageView;Ljava/lang/Object;)V",
+                )
+
+                // For Imgur posts, the app replaces the thumbnail with the image of the link, and writes that URL
+                // into the Link's register (p1), which loadThumbnail above reads. The method has no free register
+                // to keep the Link, so the app's Imgur step, from reading Link.url to "move-object thumbnail, url",
+                // is replaced by a call that returns the URL and leaves p1 alone.
+                val imgurStartIndex = indexOfFirstInstructionOrThrow {
+                    opcode == Opcode.IGET_OBJECT && getReference<FieldReference>()?.let {
+                        it.definingClass == LINK_CLASS_DESCRIPTOR && it.name == "url"
+                    } == true
+                }
+                val imgurEndIndex = indexOfFirstInstructionOrThrow(imgurStartIndex, Opcode.MOVE_OBJECT)
+                val linkRegister = getInstruction<TwoRegisterInstruction>(imgurStartIndex).registerB
+                val thumbnailRegister = getInstruction<TwoRegisterInstruction>(imgurEndIndex).registerA
+                removeInstructions(imgurStartIndex, imgurEndIndex - imgurStartIndex + 1)
+                addInstructions(
+                    imgurStartIndex,
+                    """
+                        invoke-static { v$linkRegister, v$thumbnailRegister }, $EXTENSION_CLASS_DESCRIPTOR->imgurThumbnail(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/String;
+                        move-result-object v$thumbnailRegister
+                    """,
                 )
 
                 addInstructions(
