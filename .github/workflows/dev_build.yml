@@ -6,6 +6,8 @@ on:
   push:
     branches-ignore:
       - main
+      # The e2e GIFs' throwaway branches (docs/hosting.md): nothing to build.
+      - 'e2e-gifs/**'
     # Skip pushes that only change files the build doesn't use.
     paths-ignore:
       - '**.md'
