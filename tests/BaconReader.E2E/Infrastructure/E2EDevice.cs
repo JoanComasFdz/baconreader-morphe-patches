@@ -10,7 +10,7 @@ namespace BaconReader.E2E.Infrastructure;
 /// - <c>E2E_VIDEO_DIR</c>: where a recorded run leaves its video and record (tools/e2e/record.sh sets it); unset, nothing
 ///   is recorded and nothing is paced;
 /// - <c>E2E_ACTION_GAP</c>: the least seconds between two steps of a recorded scenario (default 1);
-/// - <c>E2E_BUNDLE</c>: the Reseam bundle to patch with, by default the one <c>./gradlew bundle</c> builds;
+/// - <c>E2E_BUNDLE</c>: the Morphe bundle (<c>.mpp</c>) to patch with, by default the newest one <c>./gradlew buildAndroid</c> builds;
 /// - <c>E2E_BASE_APK</c>: the clean APK to patch, by default BaconReader Premium 6.1.4's in <c>E2E_ARTIFACTS_DIR</c>, the
 ///   folder the connection script downloads it to.
 /// </summary>
@@ -39,7 +39,7 @@ public static class E2EDevice
     public static string Bundle =>
         Environment.GetEnvironmentVariable("E2E_BUNDLE") is { Length: > 0 } bundle
             ? bundle
-            : Path.Combine(RepoRoot, "build", "reseam", "baconreader-patches.reseam");
+            : NewestBundle();
 
     public static string BaseApk =>
         Environment.GetEnvironmentVariable("E2E_BASE_APK") is { Length: > 0 } apk
@@ -54,6 +54,14 @@ public static class E2EDevice
 
     /// <summary>The repository's root (the folder with settings.gradle.kts): build/ lives there.</summary>
     public static string RepoRoot { get; } = FindRepoRoot();
+
+    private static string NewestBundle()
+    {
+        var built = Path.Combine(RepoRoot, "patches", "build", "libs");
+        return Directory.Exists(built)
+            ? Directory.EnumerateFiles(built, "patches-*.mpp").OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault() ?? Path.Combine(built, "patches-<version>.mpp")
+            : Path.Combine(built, "patches-<version>.mpp");
+    }
 
     private static string FindRepoRoot()
     {

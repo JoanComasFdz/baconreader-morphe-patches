@@ -77,7 +77,7 @@ public sealed class SpoofClientTests : BaseE2E
 `Infrastructure/BaseE2E.cs` owns everything that isn't the scenario:
 - the skip: a scenario is skipped unless `E2E_APPIUM_URL` is set (the emulator's connection script exports it: README, "The emulator");
 - **the patches:** it patches the clean APK with the scenario's `[PatchedWith]` patches, the fewest it needs, with
-  `reseam patch --preset none --enable …` and the bundle `./gradlew bundle` built, and installs it with its runtime
+  `morphe-desktop patch --exclusive --enable …` and the bundle `./gradlew buildAndroid` built, and installs it with its runtime
   permissions granted (`Device/PatchedApps`). An APK is patched once per set of patches and bundle, signed with one test
   key, and sent to the emulator only when it isn't the one installed (sending one takes ~40 s over the slow link);
 - **a fresh app per scenario:** stopped and its data cleared (no login, no setting, no cache from the scenario before),
@@ -141,7 +141,7 @@ A scenario never repeats any of that.
   a setting…), one file per kind, each with one function from a case to what the app shows (`ToShownText`): the only
   place those strings live. The reverse (`Read<Kind>`) is derived from it.
 - **Patches are an enum,** `Patch`, not a union: `[PatchedWith]` is an attribute, and an attribute takes only
-  constants. Its `ToShownText` is the patch's name in the bundle, which `reseam patch --enable` takes and the Gherkin
+  constants. Its `ToShownText` is the patch's name in the bundle, which `morphe-desktop patch --enable` takes and the Gherkin
   quotes.
 - A Gherkin's quoted **name** of a thing a scenario acts on or checks ("Front Page", "Best", "Spoof client") is a
   vocabulary case in the scenario. A quoted **text the app composes** (a post's title, a comment, a dialog's message)
@@ -170,7 +170,7 @@ one device, so scenarios run one after another (`xunit.runner.json`), in any ord
    calls. A missing content description goes into the patch, in the same PR.
 6. Run it unrecorded while you work: `tools/e2e/record.sh --no-video <its class>` (`--no-bundle` when the patches
    didn't change).
-7. Record it once, right before the push, never between pushes: `tools/e2e/record.sh --changed-since origin/main`. Each
+7. Record it once, right before the push, never between pushes: `tools/e2e/record.sh --changed-since origin/dev`. Each
    GIF shows what the Gherkin says. Right after the push, `tools/e2e/push-gifs.sh` posts the GIFs on the PR.
 
 ## h. From a Gherkin to a scenario

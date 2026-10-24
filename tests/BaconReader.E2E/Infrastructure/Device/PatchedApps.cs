@@ -3,7 +3,7 @@
 
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 using BaconReader.E2E.Infrastructure.Vocabulary;
 
 namespace BaconReader.E2E.Infrastructure.Device;
@@ -11,19 +11,18 @@ namespace BaconReader.E2E.Infrastructure.Device;
 /// <summary>
 /// Patches the clean BaconReader APK with a scenario's patches and installs it on the emulator, as cheaply as a slow
 /// link to it allows (a cloud session's reaches it at ~3–4 Mbit/s):
-/// - each set of patches is patched once per bundle (<c>build/e2e/patched/&lt;hash&gt;.apk</c>; reseam takes about a second);
-/// - every APK is signed with one test key (<c>build/e2e/signing/</c>, made by reseam on the first patch), so one installs over
+/// - each set of patches is patched once per bundle (<c>build/e2e/patched/&lt;hash&gt;.apk</c>; Morphe Desktop takes about six seconds);
+/// - every APK is signed with the one key Morphe Desktop keeps next to its jar (<c>morphe.keystore</c>), so one installs over
 ///   another; an install signed with another key (the owner's, another session's) is uninstalled first;
 /// - an APK already installed (the device's copy has the same SHA-256) isn't sent again: sending one takes ~40 s.
 /// </summary>
-public static partial class PatchedApps
+public static class PatchedApps
 {
     private const string DeviceApk = "/data/local/tmp/e2e/app.apk";
     private static readonly SemaphoreSlim OneAtATime = new(1, 1);
 
-    private static string Reseam => Environment.GetEnvironmentVariable("E2E_RESEAM") is { Length: > 0 } reseam ? reseam : "reseam";
-
-    private static string SigningFolder => Path.Combine(E2EDevice.WorkFolder, "signing");
+    private static string MorpheDesktop =>
+        Environment.GetEnvironmentVariable("E2E_MORPHE_DESKTOP") is { Length: > 0 } jar ? jar : "/opt/patch-tools/morphe-desktop.jar";
 
     /// <summary>Patches the clean APK with <paramref name="patches"/> (once per bundle) and returns the patched APK.</summary>
     public static async Task<string> PatchAsync(IReadOnlyList<Patch> patches)
@@ -31,7 +30,8 @@ public static partial class PatchedApps
         await OneAtATime.WaitAsync();
         try
         {
-            CheckExists(E2EDevice.Bundle, "the bundle: build it with ./gradlew bundle (README)");
+            CheckExists(E2EDevice.Bundle, "the bundle: build it with ./gradlew buildAndroid (README)");
+            CheckExists(MorpheDesktop, "Morphe Desktop: tools/morphe-desktop.sh installs it (E2E_MORPHE_DESKTOP names another jar)");
             CheckExists(E2EDevice.BaseApk, "the clean BaconReader APK: the emulator's connection script downloads it (README, \"The emulator\")");
             var names = patches.Select(patch => patch.ToShownText()).Order(StringComparer.Ordinal).ToArray();
             var key = Hash($"{HashFile(E2EDevice.Bundle)}\n{HashFile(E2EDevice.BaseApk)}\n{string.Join('\n', names)}")[..16];
@@ -42,43 +42,30 @@ public static partial class PatchedApps
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName(patched)!);
+            var writing = Path.Combine(Path.GetDirectoryName(patched)!, key + "-writing.apk");
+            var report = Path.ChangeExtension(writing, ".json");
             var arguments = new List<string>
             {
-                "patch", E2EDevice.BaseApk,
-                "--bundle", E2EDevice.Bundle,
-                "--trust", await ReadSignerAsync(),
-                "--preset", "none",
+                "-jar", MorpheDesktop, "patch",
+                "--patches", E2EDevice.Bundle,
+                "--exclusive",
+                "--result-file", report,
+                "--out", writing,
             };
             foreach (var name in names)
             {
                 arguments.AddRange(["--enable", name]);
             }
 
-            var signingKey = Path.Combine(SigningFolder, "e2e.pk8");
-            var signingCert = Path.Combine(SigningFolder, "e2e.der");
-            var hasKey = File.Exists(signingKey) && File.Exists(signingCert);
-            if (hasKey)
-            {
-                arguments.AddRange(["--key", signingKey, "--cert", signingCert]);
-            }
-
-            var writing = Path.Combine(Path.GetDirectoryName(patched)!, key + "-writing.apk");
-            arguments.AddRange(["--output", writing]);
-            var ran = await Commands.RunAsync(Reseam, [.. arguments]);
+            arguments.Add(E2EDevice.BaseApk);
+            var ran = await Commands.RunAsync("java", [.. arguments]);
             var log = ran.Output + ran.Error;
-            if (!ran.Succeeded || FailedCount().Match(log) is not { Success: true } finished || finished.Groups[1].Value != "0")
+            if (!ran.Succeeded || !File.Exists(report) || !AppliedEvery(File.ReadAllText(report), names))
             {
-                throw new InvalidOperationException($"reseam couldn't apply every patch of {string.Join(", ", names)}:\n{log}");
+                throw new InvalidOperationException($"Morphe Desktop couldn't apply every patch of {string.Join(", ", names)}:\n{log}");
             }
 
-            if (!hasKey)
-            {
-                // Without --key reseam signs with a key it makes and leaves next to the APK: kept, every later APK uses it.
-                Directory.CreateDirectory(SigningFolder);
-                File.Move(Path.ChangeExtension(writing, ".pk8"), signingKey, overwrite: true);
-                File.Move(Path.ChangeExtension(writing, ".der"), signingCert, overwrite: true);
-            }
-
+            File.Delete(report);
             File.Move(writing, patched, overwrite: true);
             return patched;
         }
@@ -136,12 +123,15 @@ public static partial class PatchedApps
         return sum.Split(' ', 2)[0];
     }
 
-    // The key that signed the bundle, which reseam must be told to trust.
-    private static async Task<string> ReadSignerAsync()
+    // Morphe Desktop's report of the run: it succeeded, none failed, and every patch asked for was applied (it also applies what they depend on).
+    private static bool AppliedEvery(string report, IReadOnlyList<string> names)
     {
-        var listed = await Commands.RunOrFailAsync(Reseam, "bundle", "list", E2EDevice.Bundle);
-        var signer = Signer().Match(listed);
-        return signer.Success ? signer.Groups[1].Value : throw new InvalidOperationException($"reseam bundle list names no signer:\n{listed}");
+        using var json = JsonDocument.Parse(report);
+        var root = json.RootElement;
+        var applied = root.GetProperty("appliedPatches").EnumerateArray().Select(patch => patch.GetString()).ToHashSet();
+        return root.GetProperty("success").GetBoolean()
+            && root.GetProperty("failedPatches").GetArrayLength() == 0
+            && names.All(applied.Contains);
     }
 
     private static void CheckExists(string path, string what)
@@ -159,10 +149,4 @@ public static partial class PatchedApps
     }
 
     private static string Hash(string text) => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(text)));
-
-    [GeneratedRegex(@"signer: ([0-9a-f]{64})")]
-    private static partial Regex Signer();
-
-    [GeneratedRegex(@"failed\S*=\S*?(\d+)")]
-    private static partial Regex FailedCount();
 }

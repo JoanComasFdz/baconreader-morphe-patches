@@ -4,7 +4,7 @@
 namespace BaconReader.E2E.Infrastructure.Vocabulary;
 
 /// <summary>
-/// A patch of baconreader-reseam-patches, as its bundle names it. An enum, not a union like the other kinds (rule e): a
+/// A patch of baconreader-morphe-patches, as its bundle names it. An enum, not a union like the other kinds (rule e): a
 /// scenario names its patches in <see cref="PatchedWithAttribute"/>, and an attribute takes only constants. A case is
 /// added when a test needs it.
 /// </summary>
@@ -18,7 +18,7 @@ public enum Patch
 /// <summary>What the bundle names each <see cref="Patch"/>: the only place those strings live.</summary>
 public static class PatchShowing
 {
-    /// <summary>The patch's name in the bundle, as <c>reseam patch --enable</c> takes it and the Gherkin quotes it.</summary>
+    /// <summary>The patch's name in the bundle, as <c>morphe-desktop patch --enable</c> takes it and the Gherkin quotes it.</summary>
     public static string ToShownText(this Patch patch) =>
         patch switch
         {

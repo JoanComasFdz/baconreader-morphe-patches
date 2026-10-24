@@ -133,7 +133,7 @@ A patch's scenarios go in the same PR as the patch, and the GIFs are posted on i
 1. **Copy every expected text from the screen** (a screenshot, the UI tree), never from memory or from
    the patch's code.
 2. **Its test passes on the emulator:** while you work, `tools/e2e/record.sh --no-video <its class>` plays it fast,
-   unrecorded; right before the push (never between pushes), `tools/e2e/record.sh --changed-since origin/main` records
+   unrecorded; right before the push (never between pushes), `tools/e2e/record.sh --changed-since origin/dev` records
    it, and each GIF shows what the Gherkin says; `tools/e2e/push-gifs.sh` posts them on the PR right after the push. A scenario or patch change after the recording and before the push means recording again.
 3. **List anything you saw but didn't expect, and anything the owner has to decide,** in the message that hands the
    work over. Never fold either into a Gherkin as if it were expected.
