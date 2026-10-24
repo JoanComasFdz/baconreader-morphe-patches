@@ -77,6 +77,16 @@ In the Comments section:
 | Avatar size: Normal, Medium, Large or Extra large | `revanced_baconreader_user_avatar_size` | Normal (`0`). Needs Show user avatars |
 | Avatar background | `revanced_baconreader_user_avatar_background` | On. Needs Show user avatars |
 
+### Video autoplay in detail view settings
+
+In the Images and videos section:
+
+| Setting | Key | Default |
+|---|---|---|
+| Autoplay videos in Detail View | `revanced_baconreader_autoplay_videos_in_detail_view` | On |
+
+Off, the detail view of a post shows the post's preview image (the largest of Reddit's preview resolutions) with a play button in place of a video shown by ExoPlayer (v.redd.it, and the MP4 and GIFV videos of Imgur and RedGIFs), and doesn't load the video. A tap on it gives the video back to BaconReader, which shows and plays it as it does with the setting on. The detail view is the one whose `PostMediaHandler` listener is `DetailLinkFragment$6`: the full-screen photo viewer and the browser keep autoplaying, and so do the videos in comments. A post without a preview image shows a black page with the play button.
+
 ### Reddit chat settings
 
 In the Chat section:
@@ -97,5 +107,6 @@ The ports follow ReVanced's BaconReader merge requests !6989 and !6998 closely: 
 - **Fix unread messages.** While Reddit chat keeps chat messages apart from the inbox, the unread check asks for up to 100 messages and leaves the chat ones out.
 - **Not from ReVanced:**
   - Reddit chat, ported from baconreader-reseam-patches;
+  - Video autoplay in detail view, ported from baconreader-reseam-patches;
   - Disable final release announcement;
   - the drawer's version footer.

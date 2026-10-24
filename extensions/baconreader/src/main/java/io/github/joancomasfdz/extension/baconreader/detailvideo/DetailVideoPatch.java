@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.detailvideo;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -28,8 +31,6 @@ import io.github.joancomasfdz.extension.baconreader.settings.Settings;
  * a play button in place of the video, which isn't loaded. Tapping it hands the video back to the app,
  * which starts it as it would have. PostMediaHandler is also used by the full-screen photo viewer and the
  * browser, which keep autoplaying.
- * <p>
- * Ported from baconreader-reseam-patches.
  */
 @SuppressWarnings("unused")
 public final class DetailVideoPatch {

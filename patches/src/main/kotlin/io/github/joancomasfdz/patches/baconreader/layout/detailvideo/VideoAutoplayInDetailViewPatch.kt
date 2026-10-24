@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.patches.baconreader.layout.detailvideo
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
@@ -13,7 +16,6 @@ import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "$EXTENSION_PACKAGE/detailvideo/DetailVideoPatch;"
 
-// Ported from baconreader-reseam-patches.
 // BaconReader starts every video as soon as the detail view of a post shows it, on mobile data too,
 // and has no setting to wait for a tap.
 @Suppress("unused")
