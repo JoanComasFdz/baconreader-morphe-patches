@@ -217,7 +217,7 @@ public final class PostMediaPatch {
     // region Loading overlay
 
     /** A static image of the post: the largest preview resolution, else the source. */
-    private static String stillPreviewUrl(Object link) throws Exception {
+    public static String stillPreviewUrl(Object link) throws Exception {
         Object image = firstPreviewImage(link);
         if (image == null) return null;
         List<?> resolutions = (List<?>) get(image, "resolutions");
