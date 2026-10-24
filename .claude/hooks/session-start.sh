@@ -145,7 +145,7 @@ else
   warn "MORPHE_GPR_TOKEN is not set: the bundle can't build (GitHub Packages needs a read:packages token)"
 fi
 
-if [ -n "${CLAUDE_ENV_FILE:-}" ] && ! grep -qs 'ANDROID_HOME' "$CLAUDE_ENV_FILE"; then
+if [ -n "${CLAUDE_ENV_FILE:-}" ] && ! grep -qs "$JDK21" "$CLAUDE_ENV_FILE"; then
   {
     echo "export JAVA_HOME=$JDK21"
     echo "export ANDROID_HOME=$ANDROID_SDK"
