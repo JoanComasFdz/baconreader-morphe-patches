@@ -56,6 +56,10 @@ public class BaconReaderPreferenceFragment extends PreferenceFragment {
                 images.addPreference(textPreference(context, "revanced_baconreader_images_gestures"));
             }
 
+            if (IncludedPatches.videoAutoplayInDetailView()) {
+                images.addPreference(switchPreference(context, Settings.AUTOPLAY_VIDEOS_IN_DETAIL_VIEW));
+            }
+
             PreferenceCategory links = category(screen, "revanced_settings_baconreader_screen_2_links_title");
             if (IncludedPatches.embedCommentImages()) {
                 links.addPreference(switchPreference(context, Settings.YOUTUBE_TITLES));

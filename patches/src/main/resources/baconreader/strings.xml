@@ -22,6 +22,10 @@
     <string name="revanced_baconreader_show_videos_title">Play videos in comments</string>
     <string name="revanced_baconreader_show_videos_summary_on">Videos uploaded in comments and video links are played in the comment</string>
     <string name="revanced_baconreader_show_videos_summary_off">Videos uploaded in comments and video links are shown as links</string>
+    <string name="revanced_baconreader_autoplay_videos_in_detail_view_title">Autoplay videos in Detail View</string>
+    <string name="revanced_baconreader_autoplay_videos_in_detail_view_summary_on">Videos in a post\'s detail view, such as v.redd.it videos, start playing when the post opens</string>
+    <string name="revanced_baconreader_autoplay_videos_in_detail_view_summary_off">The post shows its preview image with a play button, and the video loads when you tap it. GIFs are not affected</string>
+    <string name="revanced_baconreader_detail_video_play">Play video</string>
     <string name="revanced_baconreader_images_gestures_title">Gestures</string>
     <string name="revanced_baconreader_images_gestures_summary">Tap an image to switch between full width and 200×200\nDouble tap an image to open it in full screen (pinch to zoom)</string>
     <string name="revanced_baconreader_youtube_titles_title">Show YouTube video titles</string>

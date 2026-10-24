@@ -20,6 +20,10 @@ public final class IncludedPatches {
         return false;
     }
 
+    public static boolean videoAutoplayInDetailView() {
+        return false;
+    }
+
     public static boolean promptToOpenRedditLinks() {
         return false;
     }
