@@ -1,3 +1,9 @@
+## [1.3.0](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.2.0...v1.3.0) (2026-10-24)
+
+### ✨ New Features
+
+* Add Video autoplay in detail view, a setting to make videos in a post wait for a tap ([61ee378](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/61ee3781382954989fd3e0863a44ff4d1ae45e72)), closes [#15](https://github.com/JoanComasFdz/baconreader-morphe-patches/issues/15)
+
 ## [1.3.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.2.0...v1.3.0-dev.1) (2026-10-24)
 
 ### ✨ New Features
