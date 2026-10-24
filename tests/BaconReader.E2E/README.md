@@ -26,8 +26,8 @@ the scenarios joins the emulator, starts Appium in the session and exports what 
 | `E2E_APPIUM_UDID` | `E2E_ADB_SERIAL` | the emulator as the Appium server sees it (its adb serial, when Appium runs next to the tests) |
 | `E2E_ARTIFACTS_DIR` | unset | the folder holding `com.onelouder.baconreader.premium-6.1.4-clean-base-*.apk` |
 | `E2E_BASE_APK` | that APK | the APK to patch, if it's elsewhere |
-| `E2E_BUNDLE` | `build/reseam/baconreader-patches.reseam` | the bundle to patch with (`./gradlew bundle`) |
-| `E2E_RESEAM` | `reseam` | the reseam CLI |
+| `E2E_BUNDLE` | the newest `patches/build/libs/patches-*.mpp` | the bundle to patch with (`./gradlew buildAndroid`) |
+| `E2E_MORPHE_DESKTOP` | `/opt/patch-tools/morphe-desktop.jar` | Morphe Desktop, the patcher (`tools/morphe-desktop.sh` installs it), run with `java -jar` (JDK 21) |
 | `E2E_VIDEO_DIR` | unset | record each run there (`record.sh` sets it) |
 | `E2E_ACTION_GAP` | `1` | least seconds between two recorded steps |
 | `E2E_APPIUM_INSTALL_HELPERS` | unset | `1`: let Appium install its helper apps (an emulator just recreated) |
@@ -41,9 +41,9 @@ emulator, so a session starts without reinstalling them; a new emulator needs on
 For each scenario, `BaseE2E`:
 
 1. patches the clean APK with the bundle, enabling only the scenario's `[PatchedWith]` patches
-   (`reseam patch --preset none --enable …`), once per set of patches and bundle (`build/e2e/patched/`);
-2. installs it, unless it is the APK already installed, with its permissions granted; every APK is signed with one test
-   key (`build/e2e/signing/`, made on the first patch), and an app signed with another key is uninstalled first;
+   (`morphe-desktop patch --exclusive --enable …`), once per set of patches and bundle (`build/e2e/patched/`);
+2. installs it, unless it is the APK already installed, with its permissions granted; every APK is signed with the one
+   key Morphe Desktop keeps next to its jar (`morphe.keystore`), and an app signed with another key is uninstalled first;
 3. clears the app's data, so the scenario starts from a fresh install;
 4. starts recording the screen, when the run records.
 
@@ -55,8 +55,8 @@ its patch changes.
 A scenario replaces the installed BaconReader with its own test-signed build and clears its data: whatever was
 installed and logged in on the emulator doesn't survive a run.
 
-Measured on 2026-10-23 from a cloud session (~3–4 Mbit/s to the emulator): patching ~1 s; sending a new APK ~40 s; a
-scenario whose APK is already installed ~35 s, recorded.
+Measured on 2026-10-24 from a cloud session (~3–4 Mbit/s to the emulator): patching ~6 s; the first scenario, which also sent
+and installed its APK, ~100 s unrecorded.
 
 ## Run and record
 
@@ -65,7 +65,7 @@ In the shell that sourced the emulator's connection script:
 ```bash
 tools/e2e/record.sh --no-video SpoofClientTests            # while developing: unrecorded, unpaced
 tools/e2e/record.sh --no-video --no-bundle Account         # a domain folder, reusing the last bundle
-tools/e2e/record.sh --changed-since origin/main            # right before the push: this branch's scenarios, recorded
+tools/e2e/record.sh --changed-since origin/dev            # right before the push: this branch's scenarios, recorded
 tools/e2e/push-gifs.sh                                     # right after the push: posted on the branch's PR
 ```
 

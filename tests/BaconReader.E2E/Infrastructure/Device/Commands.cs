@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace BaconReader.E2E.Infrastructure.Device;
 
-/// <summary>Runs the command-line tools the scenarios need around the app (adb, reseam) and reads their output.</summary>
+/// <summary>Runs the command-line tools the scenarios need around the app (adb, java for Morphe Desktop) and reads their output.</summary>
 public static class Commands
 {
     /// <summary>What a command printed and how it ended.</summary>
