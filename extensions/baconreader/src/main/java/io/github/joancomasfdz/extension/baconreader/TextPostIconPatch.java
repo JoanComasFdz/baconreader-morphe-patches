@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader;
 
 import android.animation.ValueAnimator;
@@ -17,8 +21,6 @@ import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
 import static app.morphe.extension.shared.StringRef.str;
 
 /**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  * <p>
  * Text posts in the list have a button that expands the post's text under the title. The app
  * draws it as a triangle in a circle, which looks like a video that did not load. This shows a

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.embedcommentimages;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -46,9 +50,6 @@ import app.morphe.extension.shared.Logger;
  * Bare YouTube links (the link text is the URL itself) show a small spinner, then the video's
  * title from YouTube's oEmbed endpoint. The link keeps its spans, so it stays clickable and
  * keeps the app's "red YouTube links" color. Links written as [text](url) are left alone.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 final class YoutubeTitles {
     private static final String SPINNER_SEPARATOR = "\u00A0";

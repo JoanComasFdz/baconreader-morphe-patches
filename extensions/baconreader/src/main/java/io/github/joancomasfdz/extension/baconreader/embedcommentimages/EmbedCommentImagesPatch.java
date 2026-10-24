@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.embedcommentimages;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -60,9 +64,6 @@ import app.morphe.extension.shared.Utils;
  *
  * Gestures on an image: tap switches between 200x200dp and full width, double tap
  * opens a full-screen zoomable viewer, long press downloads (if enabled in settings).
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 @SuppressWarnings("unused")
 public final class EmbedCommentImagesPatch {

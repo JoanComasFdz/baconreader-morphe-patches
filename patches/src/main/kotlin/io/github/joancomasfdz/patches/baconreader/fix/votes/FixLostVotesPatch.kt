@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.patches.baconreader.fix.votes
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
@@ -11,7 +15,6 @@ import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "$EXTENSION_PACKAGE/votes/FixLostVotesPatch;"
 
-// Ported from ReVanced Patches (GPLv3): https://gitlab.com/ReVanced/revanced-patches
 @Suppress("unused")
 val fixLostVotesPatch = bytecodePatch(
     name = "Fix lost post votes",

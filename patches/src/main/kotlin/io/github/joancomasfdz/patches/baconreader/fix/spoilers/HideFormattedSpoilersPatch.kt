@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.patches.baconreader.fix.spoilers
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
@@ -7,7 +11,6 @@ import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER
 
 private const val ELEMENT = "Lcom/onelouder/baconreader/parser/RedditParser\$Element;"
 
-// Ported from ReVanced Patches (GPLv3): https://gitlab.com/ReVanced/revanced-patches
 @Suppress("unused")
 val hideFormattedSpoilersPatch = bytecodePatch(
     name = "Hide formatted spoilers",

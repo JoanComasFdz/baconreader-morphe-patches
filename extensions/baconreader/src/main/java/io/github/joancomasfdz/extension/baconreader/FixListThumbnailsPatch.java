@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader;
 
 import android.graphics.RenderEffect;
@@ -32,9 +36,6 @@ import java.util.regex.Pattern;
  * NSFW (with "Show NSFW images" off) and spoiler posts get a blurred one.
  * Crossposts of galleries get the preview of the first image, and BaconReader's own gallery indicator.
  * RedGIFs posts without a thumbnail get theirs from the RedGIFs API when they are shown.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 @SuppressWarnings("unused")
 public final class FixListThumbnailsPatch {
