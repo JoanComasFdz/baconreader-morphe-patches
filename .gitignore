@@ -132,3 +132,7 @@ local.properties
 # Clean base APK and screenshots fetched by tools/e2e/connect.sh
 .e2e/
 *.apk
+
+# .NET build output (the end-to-end tests and their tools)
+bin/
+obj/
