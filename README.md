@@ -6,7 +6,7 @@
 
 [![Morphe](https://img.shields.io/badge/Morphe-patches-ff4500?style=flat-square)](https://morphe.software)
 [![BaconReader](https://img.shields.io/badge/BaconReader-6.1.4-f57c00?style=flat-square)](#-install)
-[![Patches](https://img.shields.io/badge/patches-28-2ea44f?style=flat-square)](#-whats-inside)
+[![Patches](https://img.shields.io/badge/patches-29-2ea44f?style=flat-square)](#-whats-inside)
 [![License](https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square)](LICENSE)
 
 [**➕ Add to Morphe Manager**](https://morphe.software/add-source?github=JoanComasFdz/baconreader-morphe-patches)
@@ -59,6 +59,7 @@ Settings live in BaconReader → **Settings → Patches**.
 | Hide formatted spoilers | Every spoiler stays hidden |
 | Text post icon | A page icon instead of a play button on text posts |
 | Prompt to open Reddit links | Reddit links open in BaconReader |
+| Video autoplay in detail view | A setting to show a preview with a play button instead of autoplaying videos |
 
 **🧹 Cleanups**
 
@@ -72,7 +73,7 @@ Settings live in BaconReader → **Settings → Patches**.
 
 ## 🛠️ Development
 
-How to set up, build, test and release: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+What each patch does: [docs/patches.md](docs/patches.md); its settings and differences from ReVanced: [docs/patcher-specific-patches.md](docs/patcher-specific-patches.md). Build and release: [patcher-specific-build.md](patcher-specific-build.md), [patcher-specific-release.md](patcher-specific-release.md). Code style and checks: [STYLE.md](STYLE.md), [patcher-specific-code.md](patcher-specific-code.md) and [AGENTS.md](AGENTS.md).
 
 ## 📜 License
 

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.patches.baconreader.layout.postmedia
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
@@ -24,7 +28,6 @@ private const val GIF_FALLBACK_CALLBACK_CLASS_DESCRIPTOR = "Lcom/onelouder/bacon
 /** Its lambdas run when the response is not successful (4), no bitmap could be made (2), or rendering threw (3). */
 private val GIF_FALLBACK_FAILURES = listOf(2, 3, 4)
 
-// Ported from ReVanced Patches (GPLv3): https://gitlab.com/ReVanced/revanced-patches
 @Suppress("unused")
 val improvePostMediaLoadingPatch = bytecodePatch(
     name = "Improve post media loading",

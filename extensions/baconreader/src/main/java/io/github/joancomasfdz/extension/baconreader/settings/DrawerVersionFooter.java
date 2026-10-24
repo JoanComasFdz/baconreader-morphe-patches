@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.settings;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -19,7 +22,6 @@ import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
 
 /**
  * Shows the version of the patches at the bottom of the drawer, to tell which build is installed.
- * Ported from baconreader-reseam-patches.
  */
 @SuppressWarnings("unused")
 public final class DrawerVersionFooter {

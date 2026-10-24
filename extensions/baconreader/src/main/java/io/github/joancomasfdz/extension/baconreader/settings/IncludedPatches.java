@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.settings;
 
 /**
@@ -14,6 +17,10 @@ public final class IncludedPatches {
     }
 
     public static boolean improvePostMediaLoading() {
+        return false;
+    }
+
+    public static boolean videoAutoplayInDetailView() {
         return false;
     }
 

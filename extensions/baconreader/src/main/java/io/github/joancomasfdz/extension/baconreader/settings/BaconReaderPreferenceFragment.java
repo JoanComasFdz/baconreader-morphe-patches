@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.settings;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -51,6 +54,10 @@ public class BaconReaderPreferenceFragment extends PreferenceFragment {
                 images.addPreference(switchPreference(context, Settings.IMAGES_WIFI_ONLY));
                 images.addPreference(switchPreference(context, Settings.SHOW_VIDEOS));
                 images.addPreference(textPreference(context, "revanced_baconreader_images_gestures"));
+            }
+
+            if (IncludedPatches.videoAutoplayInDetailView()) {
+                images.addPreference(switchPreference(context, Settings.AUTOPLAY_VIDEOS_IN_DETAIL_VIEW));
             }
 
             PreferenceCategory links = category(screen, "revanced_settings_baconreader_screen_2_links_title");

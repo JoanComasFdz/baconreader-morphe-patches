@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.savemedia;
 
 import java.lang.reflect.Field;
@@ -8,9 +12,6 @@ import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
  * Saving a post's media creates the file first, named after the post with a guessed extension
  * ("title.jpg"). The download then uses the extension of the media's URL ("title.jpeg"), in a second
  * file, and the first one stays empty.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 @SuppressWarnings("unused")
 public final class FixEmptySavedFilesPatch {

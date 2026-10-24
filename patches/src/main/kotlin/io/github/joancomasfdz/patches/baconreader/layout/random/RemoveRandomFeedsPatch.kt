@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.patches.baconreader.layout.random
 
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
@@ -5,7 +9,6 @@ import app.morphe.patcher.patch.bytecodePatch
 import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER
 import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER_PREMIUM
 
-// Ported from ReVanced Patches (GPLv3): https://gitlab.com/ReVanced/revanced-patches
 @Suppress("unused")
 val removeRandomFeedsPatch = bytecodePatch(
     name = "Remove Random feeds",

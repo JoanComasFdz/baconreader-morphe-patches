@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.settings;
 
 import static java.lang.Boolean.FALSE;
@@ -43,6 +46,9 @@ public class Settings extends BaseSettings {
     public static final StringSetting LINK_PREVIEW_JAVASCRIPT_ALLOWED = new StringSetting("revanced_baconreader_link_preview_javascript_allowed",
             "bsky.app\nimgur.com\ninstagram.com\nreddit.com\nstreamable.com\ntwitch.tv\ntwitter.com\nvimeo.com\nx.com\nyoutu.be\nyoutube.com",
             parentNot(LINK_PREVIEW_JAVASCRIPT));
+
+    // Video autoplay in detail view.
+    public static final BooleanSetting AUTOPLAY_VIDEOS_IN_DETAIL_VIEW = new BooleanSetting("revanced_baconreader_autoplay_videos_in_detail_view", TRUE);
 
     // Prompt to open Reddit links. Not shown in the settings.
     public static final BooleanSetting OPEN_LINKS_PROMPT_SHOWN = new BooleanSetting("revanced_baconreader_open_links_prompt_shown", FALSE, false, false);

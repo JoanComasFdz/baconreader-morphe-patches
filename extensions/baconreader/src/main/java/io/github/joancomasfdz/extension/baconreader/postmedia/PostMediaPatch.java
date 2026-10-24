@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.postmedia;
 
 import static app.morphe.extension.shared.StringRef.str;
@@ -47,9 +51,6 @@ import io.github.joancomasfdz.extension.baconreader.settings.Settings;
  * The overlay is drawn with the media ViewFlipper's ViewOverlay, so it floats above whichever
  * page the app shows (the app shows an empty PhotoView while a GIF downloads) without
  * changing the app's view hierarchy.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 @SuppressWarnings("unused")
 public final class PostMediaPatch {
@@ -217,7 +218,7 @@ public final class PostMediaPatch {
     // region Loading overlay
 
     /** A static image of the post: the largest preview resolution, else the source. */
-    private static String stillPreviewUrl(Object link) throws Exception {
+    public static String stillPreviewUrl(Object link) throws Exception {
         Object image = firstPreviewImage(link);
         if (image == null) return null;
         List<?> resolutions = (List<?>) get(image, "resolutions");

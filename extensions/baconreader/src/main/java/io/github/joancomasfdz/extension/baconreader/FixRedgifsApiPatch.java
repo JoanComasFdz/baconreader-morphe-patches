@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader;
 
 import androidx.annotation.NonNull;
@@ -17,9 +21,6 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
- *
  * @noinspection unused
  */
 public class FixRedgifsApiPatch implements Interceptor {

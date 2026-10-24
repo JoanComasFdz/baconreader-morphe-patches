@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.patches.baconreader.inbox
 
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
@@ -44,7 +47,7 @@ private val chatIconResourcePatch = resourcePatch {
     }
 }
 
-// Ported from baconreader-reseam-patches.
+//
 // BaconReader predates Reddit's chat, and Reddit has no public API for it. Reddit's mobile website has the chat,
 // but it needs a login to the website: the app's OAuth login doesn't carry over. The chat shows over the main
 // screen's post list, below its toolbar, so the drawer stays.

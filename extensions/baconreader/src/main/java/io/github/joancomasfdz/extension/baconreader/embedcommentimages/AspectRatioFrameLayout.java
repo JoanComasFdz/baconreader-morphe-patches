@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2026 ReVanced contributors
+// SPDX-FileCopyrightText: 2026 JoanComasFdz
+// SPDX-License-Identifier: GPL-3.0-only
+
 package io.github.joancomasfdz.extension.baconreader.embedcommentimages;
 
 import android.content.Context;
@@ -5,9 +9,6 @@ import android.widget.FrameLayout;
 
 /**
  * A FrameLayout whose height follows its width (height = width * ratio), capped at maxHeight.
- * <p>
- * Ported from ReVanced Patches (GPLv3):
- * https://gitlab.com/ReVanced/revanced-patches
  */
 final class AspectRatioFrameLayout extends FrameLayout {
     private float ratio;
