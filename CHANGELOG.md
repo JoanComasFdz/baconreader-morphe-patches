@@ -1,3 +1,9 @@
+## [1.4.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.2...v1.4.0-dev.3) (2026-10-25)
+
+### 🐛 Bug Fixes
+
+* Install adb with the Android SDK, so Gradle stops adding platform-tools-2 ([b558028](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/b558028d7f4710b6ab6f44771c21c50cb5217bab))
+
 ## [1.4.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.1...v1.4.0-dev.2) (2026-10-25)
 
 ### 🐛 Bug Fixes
