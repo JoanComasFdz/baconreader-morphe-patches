@@ -115,4 +115,11 @@ session that works the PR records them on the emulator; CI records nothing (it c
 2. **Settings → Actions → General → Workflow permissions → "Read and write permissions"**, so the workflow's token
    can create `prs-resources`, upload to it, comment and delete the `e2e-gifs/…` branches.
 
-Nothing else: the workflow creates `prs-resources` on its first post.
+3. **Create `prs-resources` once, by hand.** The workflow would put its tag on the repository's first commit, and in
+   this repository that commit holds workflow files: a workflow's own token may never create a ref to it (GitHub
+   answers `HTTP 403: Resource not accessible by integration`). With `gh` logged in with the `workflow` scope
+   (`gh auth refresh -s workflow`), on one line:
+   `gh release create prs-resources --prerelease --title prs-resources --notes "<the notes>" --target <the first commit of main> --repo JoanComasFdz/baconreader-morphe-patches`.
+   Done on 2026-10-25, on `06e40936`.
+
+Nothing else: the workflow finds `prs-resources` and uploads to it.
