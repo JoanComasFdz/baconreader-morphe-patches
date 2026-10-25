@@ -37,12 +37,11 @@ session that works the PR records them on the emulator; CI records nothing (it c
   uploads the GIFs and MP4s and posts them, and the branch is deleted whatever happened (the run's log says why one
   failed). A push that fails the checks uploads and posts nothing. The runner's own .NET 10 SDK builds the tool (it
   needs only its Core, so it builds in seconds); no emulator, no ffmpeg.
-- **Where the GIFs and MP4s go:** assets of one pre-release, **`prs-resources`**, never committed anywhere. The workflow
-  creates it on its first upload when it can (as a pre-release titled with its tag); in this repository it can't, so
-  the owner created it once by hand ("One-time setup by the owner", step 3). It never gets in the bundle's way: GitHub lists releases by their tag's commit,
-  and its tag sits on the repository's first commit, so it comes last, below every `dev` pre-release, and Morphe
-  Manager, with pre-releases on, takes the newest of those (checked on 2026-10-25: it offered 1.4.0-dev.1, not
-  `prs-resources`). For the same reason it is never the "previous tag" whose commits a release's notes list. A release asset embedded as
+- **Where the GIFs and MP4s go:** assets of one pre-release, **`prs-resources`**, never committed anywhere. The owner
+  creates it once (step 3 of "One-time setup by the owner"), so the workflow only uploads to it. It never gets in the
+  bundle's way: GitHub lists releases by their tag's commit, and its tag sits on the repository's first commit, so it
+  comes after every bundle release, and Morphe Manager, with pre-releases on, takes the newest `dev` pre-release; and
+  it is never the "previous tag" whose commits a bundle release's notes list. A release asset embedded as
   `![title](https://github.com/<owner>/<repo>/releases/download/prs-resources/<name>)` shows inline in GitHub (an MP4
   there only shows as a link, so the comment shows the GIF and links the MP4 to the player page below). Uploads use the
   workflow's `GITHUB_TOKEN` (contents and pull-requests write); no personal token.
@@ -113,13 +112,11 @@ session that works the PR records them on the emulator; CI records nothing (it c
 1. **Settings → Pages → Build and deployment → Source: "Deploy from a branch", `gh-pages`, `/ (root)`.** Then run
    "Deploy site" once (Actions → Deploy site → Run workflow), or merge a change under `site/`.
 2. **Settings → Actions → General → Workflow permissions → "Read and write permissions"**, so the workflow's token
-   can create `prs-resources`, upload to it, comment and delete the `e2e-gifs/…` branches.
+   can upload to `prs-resources`, comment and delete the `e2e-gifs/…` branches.
 
-3. **Create `prs-resources` once, by hand.** The workflow would put its tag on the repository's first commit, and in
-   this repository that commit holds workflow files: a workflow's own token may never create a ref to it (GitHub
-   answers `HTTP 403: Resource not accessible by integration`). With `gh` logged in with the `workflow` scope
-   (`gh auth refresh -s workflow`), on one line:
+3. **Create `prs-resources` once.** The workflow can't: its tag goes on the repository's first commit, which holds
+   workflow files, and a workflow's token may never create a ref to such a commit. With `gh` logged in with the
+   `workflow` scope (`gh auth refresh -s workflow`), on one line:
    `gh release create prs-resources --prerelease --title prs-resources --notes "<the notes>" --target <the first commit of main> --repo JoanComasFdz/baconreader-morphe-patches`.
-   Done on 2026-10-25, on `06e40936`.
 
-Nothing else: the workflow finds `prs-resources` and uploads to it.
+Nothing else.
