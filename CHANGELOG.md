@@ -1,3 +1,9 @@
+## [1.4.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.1...v1.4.0-dev.2) (2026-10-25)
+
+### 🐛 Bug Fixes
+
+* Make connect.sh say when its exports are lost, and when --down logged out ([9723aed](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/9723aedfa3d1aab67d60fb3f09c0e8340dc10e9a))
+
 ## [1.4.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.3.0...v1.4.0-dev.1) (2026-10-25)
 
 ### ✨ New Features
