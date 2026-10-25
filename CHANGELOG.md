@@ -1,3 +1,11 @@
+## [1.4.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.3.0...v1.4.0-dev.1) (2026-10-25)
+
+### ✨ New Features
+
+* Copy the e2e tests and their tools from baconreader-reseam-patches, unchanged ([fd04c04](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/fd04c0475abc4856b0d0e34b091af845f8794383))
+* Post the e2e GIFs and MP4s on pull requests, with the player page ([cb81eff](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/cb81effd09c49a5736a2298d54deb1d754a49e13))
+* Run the e2e tests with Morphe Desktop and the .mpp bundle ([6ed595e](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/6ed595e0a7266df3ca94466cb398a9af7da16d2a))
+
 ## [1.3.0](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.2.0...v1.3.0) (2026-10-24)
 
 ### ✨ New Features
