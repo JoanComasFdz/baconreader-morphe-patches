@@ -38,11 +38,11 @@ session that works the PR records them on the emulator; CI records nothing (it c
   failed). A push that fails the checks uploads and posts nothing. The runner's own .NET 10 SDK builds the tool (it
   needs only its Core, so it builds in seconds); no emulator, no ffmpeg.
 - **Where the GIFs and MP4s go:** assets of one pre-release, **`prs-resources`**, never committed anywhere. The workflow
-  creates it on its first upload (as a pre-release titled with its tag; its `GITHUB_TOKEN` can, a session can't), so
-  nobody creates it by hand. Check that it doesn't get in the bundle's way: GitHub's "latest release", which
-  Morphe Manager reads the stable bundle from, is never a pre-release, but a pre-release is what a `dev` release is, and
-  `prs-resources` holds no `.mpp`: with pre-releases on, Morphe Manager may take it for the newest one. Its tag sits on
-  the repository's first commit, so it is never the "previous tag" whose commits a release's notes list. A release asset embedded as
+  creates it on its first upload when it can (as a pre-release titled with its tag); in this repository it can't, so
+  the owner created it once by hand ("One-time setup by the owner", step 3). It never gets in the bundle's way: GitHub lists releases by their tag's commit,
+  and its tag sits on the repository's first commit, so it comes last, below every `dev` pre-release, and Morphe
+  Manager, with pre-releases on, takes the newest of those (checked on 2026-10-25: it offered 1.4.0-dev.1, not
+  `prs-resources`). For the same reason it is never the "previous tag" whose commits a release's notes list. A release asset embedded as
   `![title](https://github.com/<owner>/<repo>/releases/download/prs-resources/<name>)` shows inline in GitHub (an MP4
   there only shows as a link, so the comment shows the GIF and links the MP4 to the player page below). Uploads use the
   workflow's `GITHUB_TOKEN` (contents and pull-requests write); no personal token.
