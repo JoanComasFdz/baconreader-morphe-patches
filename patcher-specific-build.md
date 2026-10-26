@@ -73,7 +73,6 @@ The environment needs network access "Full" and these variables, set in the envi
 | `TS_AUTHKEY_CLOUD` | A reusable, ephemeral Tailscale auth key, tagged for cloud sessions |
 | `E2E_EMULATOR_HOST` | The emulator's name on the tailnet |
 | `E2E_APK_CHECKSUM` | The sha256 of the clean BaconReader Premium 6.1.4 APK the emulator host serves |
-| `E2E_REDDIT_USERNAME`, `E2E_REDDIT_PASSWORD` | The e2e tests' Reddit account ([tests/BaconReader.E2E/README.md](tests/BaconReader.E2E/README.md)) |
 | `MORPHE_GPR_TOKEN` | A classic GitHub token with `read:packages`, for Morphe's Gradle plugin and patcher on GitHub Packages |
 | `MORPHE_GPR_USER` | Optional: the token's GitHub user, `JoanComasFdz` by default |
 
