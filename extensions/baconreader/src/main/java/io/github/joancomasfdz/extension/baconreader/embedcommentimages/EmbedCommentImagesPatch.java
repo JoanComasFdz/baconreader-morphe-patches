@@ -55,6 +55,8 @@ import io.github.joancomasfdz.extension.baconreader.GlideUtils;
 import io.github.joancomasfdz.extension.baconreader.ImageDownloader;
 import io.github.joancomasfdz.extension.baconreader.settings.Settings;
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.ResourceType;
+import app.morphe.extension.shared.ResourceUtils;
 import app.morphe.extension.shared.Utils;
 
 /**
@@ -444,6 +446,7 @@ public final class EmbedCommentImagesPatch {
 
         // The image starts empty (0x0) and grows when Glide sets it.
         final ImageView imageView = new ImageView(context);
+        imageView.setId(viewId(image.fullUrl));
         imageView.setAdjustViewBounds(true);
         imageView.setScaleType(ImageView.ScaleType.FIT_START);
         slot.addView(imageView, new FrameLayout.LayoutParams(
@@ -879,6 +882,17 @@ public final class EmbedCommentImagesPatch {
 
     static String unescape(String url) {
         return url.replace("&amp;", "&");
+    }
+
+    /**
+     * The id of an image's view, a GIF's apart from an image's (the patch adds both to the app's resources): the e2e
+     * tests find the images by it.
+     */
+    private static int viewId(String url) {
+        String path = url.toLowerCase(Locale.ROOT).replaceFirst("[?#].*$", "");
+        String name = path.endsWith(".gif") ? "baconreader_patches_comment_gif" : "baconreader_patches_comment_image";
+        int id = ResourceUtils.getIdentifier(ResourceType.ID, name);
+        return id == 0 ? View.NO_ID : id;
     }
 
     /** The width attribute of an <img> tag, or 0. */
