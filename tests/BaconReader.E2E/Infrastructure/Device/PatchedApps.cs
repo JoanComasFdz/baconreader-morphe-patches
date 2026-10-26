@@ -23,6 +23,12 @@ public static class PatchedApps
     private const string DeviceApk = "/data/local/tmp/e2e/app.apk";
     private static readonly SemaphoreSlim OneAtATime = new(1, 1);
 
+    /// <summary>
+    /// The patches every scenario's app is patched with, besides those its Given names, which never name these:
+    /// "E2E fake Reddit", so the app talks to the fake Reddit, never to Reddit.
+    /// </summary>
+    public static IReadOnlyList<Patch> Always { get; } = [Patch.E2EFakeReddit];
+
     private static string MorpheDesktop =>
         Environment.GetEnvironmentVariable("E2E_MORPHE_DESKTOP") is { Length: > 0 } jar ? jar : "/opt/patch-tools/morphe-desktop.jar";
 
@@ -112,14 +118,18 @@ public static class PatchedApps
     }
 
     /// <summary>
-    /// Leaves the installed app as if just installed: stopped, its data cleared (logins, settings, what it cached) and
-    /// its runtime permissions granted again (clearing its data revokes them, and Android 14 would ask for notifications).
+    /// Leaves the installed app as if just installed: stopped, its data cleared (logins, settings, what it cached) and,
+    /// when <paramref name="allowNotifications"/>, its notifications allowed again (clearing its data revokes them, and
+    /// Android 14 would ask for them).
     /// </summary>
-    public static async Task ResetAsync()
+    public static async Task ResetAsync(bool allowNotifications)
     {
         await Commands.ShellAsync($"am force-stop {E2EDevice.Package}");
         await Commands.ShellAsync($"pm clear {E2EDevice.Package}");
-        await Commands.ShellAsync($"pm grant {E2EDevice.Package} android.permission.POST_NOTIFICATIONS");
+        if (allowNotifications)
+        {
+            await Commands.ShellAsync($"pm grant {E2EDevice.Package} android.permission.POST_NOTIFICATIONS");
+        }
     }
 
     private static async Task<string?> ReadInstalledShaAsync()
