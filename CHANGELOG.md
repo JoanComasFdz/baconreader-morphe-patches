@@ -1,3 +1,9 @@
+## [1.4.0-dev.4](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.3...v1.4.0-dev.4) (2026-10-26)
+
+### 🐛 Bug Fixes
+
+* **e2e:** exit 0 from record.sh --changed-since when no scenario changed ([0ceb0d6](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/0ceb0d60fe96d07a351c361cc2ff1cebc7d488d4))
+
 ## [1.4.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.2...v1.4.0-dev.3) (2026-10-25)
 
 ### 🐛 Bug Fixes
