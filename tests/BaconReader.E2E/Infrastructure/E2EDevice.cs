@@ -11,6 +11,10 @@ namespace BaconReader.E2E.Infrastructure;
 ///   is recorded and nothing is paced;
 /// - <c>E2E_ACTION_GAP</c>: the least seconds between two steps of a recorded scenario (default 1);
 /// - <c>E2E_BUNDLE</c>: the Morphe bundle (<c>.mpp</c>) to patch with, by default the newest one <c>./gradlew buildAndroid</c> builds;
+/// - <c>E2E_TEST_BUNDLE</c>: the <c>.mpp</c> of the test-only patches, by default the newest one <c>./gradlew buildAndroid</c>
+///   builds in e2e-patches/ (never released);
+/// - <c>E2E_FAKE_REDDIT_URL</c>: the fake Reddit server "E2E fake Reddit" points the app at (default
+///   <c>http://127.0.0.1:5080</c>);
 /// - <c>E2E_BASE_APK</c>: the clean APK to patch, by default BaconReader Premium 6.1.4's in <c>E2E_ARTIFACTS_DIR</c>, the
 ///   folder the connection script downloads it to.
 /// </summary>
@@ -39,7 +43,19 @@ public static class E2EDevice
     public static string Bundle =>
         Environment.GetEnvironmentVariable("E2E_BUNDLE") is { Length: > 0 } bundle
             ? bundle
-            : NewestBundle();
+            : NewestBundle("patches");
+
+    public static string TestBundle =>
+        Environment.GetEnvironmentVariable("E2E_TEST_BUNDLE") is { Length: > 0 } bundle
+            ? bundle
+            : NewestBundle("e2e-patches");
+
+    /// <summary>
+    /// The fake Reddit server's URL as the phone reaches it, <c>E2E_FAKE_REDDIT_URL</c>: by default
+    /// <c>http://127.0.0.1:5080</c>, the test process's port that <c>adb reverse tcp:5080 tcp:5080</c> forwards.
+    /// </summary>
+    public static string FakeRedditUrl =>
+        Environment.GetEnvironmentVariable("E2E_FAKE_REDDIT_URL") is { Length: > 0 } url ? url : "http://127.0.0.1:5080";
 
     public static string BaseApk =>
         Environment.GetEnvironmentVariable("E2E_BASE_APK") is { Length: > 0 } apk
@@ -55,12 +71,13 @@ public static class E2EDevice
     /// <summary>The repository's root (the folder with settings.gradle.kts): build/ lives there.</summary>
     public static string RepoRoot { get; } = FindRepoRoot();
 
-    private static string NewestBundle()
+    // The newest .mpp a patches project (patches, e2e-patches) built: <project>/build/libs/<project>-<version>.mpp.
+    private static string NewestBundle(string project)
     {
-        var built = Path.Combine(RepoRoot, "patches", "build", "libs");
+        var built = Path.Combine(RepoRoot, project, "build", "libs");
         return Directory.Exists(built)
-            ? Directory.EnumerateFiles(built, "patches-*.mpp").OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault() ?? Path.Combine(built, "patches-<version>.mpp")
-            : Path.Combine(built, "patches-<version>.mpp");
+            ? Directory.EnumerateFiles(built, project + "-*.mpp").OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault() ?? Path.Combine(built, project + "-<version>.mpp")
+            : Path.Combine(built, project + "-<version>.mpp");
     }
 
     private static string FindRepoRoot()

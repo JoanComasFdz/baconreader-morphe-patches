@@ -13,6 +13,7 @@ public enum Patch
     SpoofClient,
     DisableFinalReleaseAnnouncement,
     PromptToOpenRedditLinks,
+    E2EFakeReddit,
 }
 
 /// <summary>What the bundle names each <see cref="Patch"/>: the only place those strings live.</summary>
@@ -25,8 +26,15 @@ public static class PatchShowing
             Patch.SpoofClient => "Spoof client",
             Patch.DisableFinalReleaseAnnouncement => "Disable final release announcement",
             Patch.PromptToOpenRedditLinks => "Prompt to open Reddit links",
+            Patch.E2EFakeReddit => "E2E fake Reddit",
             _ => throw new ArgumentOutOfRangeException(nameof(patch), patch, "A patch with no name in the bundle."),
         };
+
+    /// <summary>
+    /// Whether the patch is test-only, in the e2e bundle (e2e-patches/, never released): Morphe Desktop looks for an
+    /// <c>--enable</c> only in the <c>--patches</c> file before it.
+    /// </summary>
+    public static bool IsTestOnly(this Patch patch) => patch is Patch.E2EFakeReddit;
 }
 
 /// <summary>

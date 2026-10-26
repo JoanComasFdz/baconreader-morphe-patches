@@ -45,6 +45,23 @@ java -jar morphe-desktop.jar patch --patches patches/build/libs/patches-*.mpp --
 - Add `--install` to install on a device connected over ADB.
 - The patch's output lists each applied patch; none may fail.
 
+## The e2e bundle
+
+Test-only patches, such as "E2E fake Reddit", which the e2e tests use ([tests/BaconReader.E2E/README.md](tests/BaconReader.E2E/README.md)), live in `e2e-patches/`, a Gradle project of its own with its own `.mpp`. `./gradlew buildAndroid` builds it with the main one:
+
+```bash
+./gradlew buildAndroid --no-daemon   # also → e2e-patches/build/libs/e2e-patches-<version>.mpp
+java -jar morphe-desktop.jar list-patches -o -p -v --patches e2e-patches/build/libs/e2e-patches-*.mpp
+java -jar morphe-desktop.jar patch --exclusive --out patched.apk \
+  --patches patches/build/libs/patches-*.mpp --enable "Spoof client" \
+  --patches e2e-patches/build/libs/e2e-patches-*.mpp --options baseUrl=http://127.0.0.1:5080 --enable "E2E fake Reddit" \
+  BaconReader.apk
+```
+
+- **Never released.** The release publishes only `patches/build/libs/patches-*.mpp` (`.releaserc`, `patches-bundle.json`). `dev_build.yml` fails when that `.mpp` lists a patch named "E2E …". A test-only patch goes in `e2e-patches/`, and not in the README's or `docs/patches.md`'s tables.
+- `--patches` is repeatable, and each `--enable` and `--options` belongs to the `--patches` file before it: a name from the other file is ignored without an error.
+- Patches execute in name order, dependencies first, so "E2E fake Reddit" would execute before "Spoof client". It rewrites strings in `finalize` instead, which Morphe runs once every patch, of every file, has executed: after "Spoof client" and after every extension is merged.
+
 ## Cloud sessions
 
 In a Claude Code cloud session of the `AndroidDev` environment, `.claude/hooks/session-start.sh` installs what the sections above need: JDK 21, the Android SDK (the extensions are Android libraries), apktool, and the credentials of GitHub Packages, written to `~/.gradle/gradle.properties`. It also installs socat, ffmpeg, Tailscale, adb and Appium 3.8 with the UiAutomator2 driver 8.7 for the emulator, and points Gradle at Google's mirror of Maven Central, which often answers 429 to cloud sessions. It does not touch the emulator, and warns (`session-start:`) about anything that failed or any missing variable. A session on this repository runs it on start; no other repository is needed. `JAVA_HOME` is JDK 21 and `ANDROID_HOME` the Android SDK.
