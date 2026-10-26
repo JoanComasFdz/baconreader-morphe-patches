@@ -11,6 +11,8 @@ namespace BaconReader.E2E.Infrastructure.Device;
 /// <summary>
 /// Patches the clean BaconReader APK with a scenario's patches and installs it on the emulator, as cheaply as a slow
 /// link to it allows (a cloud session's reaches it at ~3–4 Mbit/s):
+/// - the released bundle and the test-only one (e2e-patches/) are both loaded, and "E2E fake Reddit" gets the fake Reddit
+///   server's URL (<see cref="E2EDevice.FakeRedditUrl"/>) when a scenario names it;
 /// - each set of patches is patched once per bundle (<c>build/e2e/patched/&lt;hash&gt;.apk</c>; Morphe Desktop takes about six seconds);
 /// - every APK is signed with the one key Morphe Desktop keeps next to its jar (<c>morphe.keystore</c>), so one installs over
 ///   another; an install signed with another key (the owner's, another session's) is uninstalled first;
@@ -31,10 +33,12 @@ public static class PatchedApps
         try
         {
             CheckExists(E2EDevice.Bundle, "the bundle: build it with ./gradlew buildAndroid (README)");
+            CheckExists(E2EDevice.TestBundle, "the e2e bundle: ./gradlew buildAndroid builds it too (README)");
             CheckExists(MorpheDesktop, "Morphe Desktop: tools/morphe-desktop.sh installs it (E2E_MORPHE_DESKTOP names another jar)");
             CheckExists(E2EDevice.BaseApk, "the clean BaconReader APK: the emulator's connection script downloads it (README, \"The emulator\")");
             var names = patches.Select(patch => patch.ToShownText()).Order(StringComparer.Ordinal).ToArray();
-            var key = Hash($"{HashFile(E2EDevice.Bundle)}\n{HashFile(E2EDevice.BaseApk)}\n{string.Join('\n', names)}")[..16];
+            var key = Hash(
+                $"{HashFile(E2EDevice.Bundle)}\n{HashFile(E2EDevice.TestBundle)}\n{HashFile(E2EDevice.BaseApk)}\n{E2EDevice.FakeRedditUrl}\n{string.Join('\n', names)}")[..16];
             var patched = Path.Combine(E2EDevice.WorkFolder, "patched", key + ".apk");
             if (File.Exists(patched))
             {
@@ -52,9 +56,16 @@ public static class PatchedApps
                 "--result-file", report,
                 "--out", writing,
             };
-            foreach (var name in names)
+            // Each --enable and --options belongs to the --patches file before it.
+            foreach (var patch in patches.Where(patch => !patch.IsTestOnly()))
             {
-                arguments.AddRange(["--enable", name]);
+                arguments.AddRange(["--enable", patch.ToShownText()]);
+            }
+
+            arguments.AddRange(["--patches", E2EDevice.TestBundle]);
+            if (patches.Contains(Patch.E2EFakeReddit))
+            {
+                arguments.AddRange(["--options", $"baseUrl={E2EDevice.FakeRedditUrl}", "--enable", Patch.E2EFakeReddit.ToShownText()]);
             }
 
             arguments.Add(E2EDevice.BaseApk);

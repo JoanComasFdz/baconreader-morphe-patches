@@ -11,12 +11,12 @@
 # "this PR's scenarios" with origin/dev.
 # --action-gap <seconds>: the least time between two steps of a recorded scenario (default 1).
 # It needs the emulator's connection in its environment (E2E_APPIUM_URL, E2E_ADB_SERIAL, E2E_ARTIFACTS_DIR: run it in
-# the shell that sourced the connection script, tests/BaconReader.E2E/README.md, "The emulator"). It builds the bundle
-# first (./gradlew buildAndroid; --no-bundle reuses the last one) and runs the chosen scenarios with E2E_VIDEO_DIR set: each
-# one patches, installs and records itself (BaseE2E). Each run's video becomes <out>/<domain folder>/<gif name>.gif
-# (15 fps, 360 px wide) and .mp4 (H.264 at the recording's 540×960), both holding their last frame 3 s, and
-# <out>/scenarios.json lists them (the e2e tool's write-scenarios). Exits non-zero when a scenario failed (its GIF is
-# still written).
+# the shell that sourced the connection script, tests/BaconReader.E2E/README.md, "The emulator"). It builds the bundles
+# first (./gradlew buildAndroid, which builds the test-only one in e2e-patches/ too; --no-bundle reuses the last ones)
+# and runs the chosen scenarios with E2E_VIDEO_DIR set: each one patches, installs and records itself (BaseE2E). Each
+# run's video becomes <out>/<domain folder>/<gif name>.gif (15 fps, 360 px wide) and .mp4 (H.264 at the recording's
+# 540×960), both holding their last frame 3 s, and <out>/scenarios.json lists them (the e2e tool's write-scenarios).
+# Exits non-zero when a scenario failed (its GIF is still written).
 # --no-video: the same scenarios, unrecorded and unpaced: the fast run while developing. It prints each run's result and
 # time and leaves the last recording in <out> as it is.
 # Right before a push that adds or changes scenarios (never between pushes): tools/e2e/record.sh --changed-since
@@ -113,7 +113,7 @@ if [ $everything -eq 1 ] || { [ -z "$changed_since" ] && [ ${#chosen[@]} -eq 0 ]
 fi
 
 if [ $bundle -eq 1 ]; then
-  echo "Building the bundle (./gradlew buildAndroid)…"
+  echo "Building the bundles (./gradlew buildAndroid: patches/ and e2e-patches/)…"
   ./gradlew buildAndroid --no-daemon -q || { echo "The bundle didn't build." >&2; exit 1; }
 fi
 
