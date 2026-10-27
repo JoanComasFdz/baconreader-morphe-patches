@@ -703,6 +703,7 @@ public final class EmbedCommentImagesPatch {
             root.setBackgroundColor(Color.BLACK);
 
             ZoomImageView zoomView = new ZoomImageView(context);
+            zoomView.setId(resourceId("baconreader_patches_image_viewer"));
             root.addView(zoomView, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -891,6 +892,11 @@ public final class EmbedCommentImagesPatch {
     private static int viewId(String url) {
         String path = url.toLowerCase(Locale.ROOT).replaceFirst("[?#].*$", "");
         String name = path.endsWith(".gif") ? "baconreader_patches_comment_gif" : "baconreader_patches_comment_image";
+        return resourceId(name);
+    }
+
+    /** The id the patch adds to the app's resources as {@code name}, for the e2e tests to find a view by. */
+    static int resourceId(String name) {
         int id = ResourceUtils.getIdentifier(ResourceType.ID, name);
         return id == 0 ? View.NO_ID : id;
     }

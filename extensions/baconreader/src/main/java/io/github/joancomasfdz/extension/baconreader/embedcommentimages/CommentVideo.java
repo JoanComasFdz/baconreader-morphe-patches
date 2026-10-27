@@ -124,6 +124,7 @@ final class CommentVideo {
 
         final AspectRatioFrameLayout box = new AspectRatioFrameLayout(context, DEFAULT_RATIO,
                 fullWidth ? maxHeight : boxSize);
+        box.setId(EmbedCommentImagesPatch.resourceId("baconreader_patches_comment_video"));
         GradientDrawable background = new GradientDrawable();
         background.setColor(Color.BLACK);
         background.setCornerRadius(dp(context, 6));
