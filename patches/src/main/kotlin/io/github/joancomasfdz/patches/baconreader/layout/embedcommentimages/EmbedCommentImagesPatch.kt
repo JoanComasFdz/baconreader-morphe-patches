@@ -24,14 +24,19 @@ private const val EXTENSION_CLASS_DESCRIPTOR =
     "$EXTENSION_PACKAGE/embedcommentimages/EmbedCommentImagesPatch;"
 
 /**
- * The views the images are shown in are made in code: these ids, added to the app's ids, name them, a GIF's apart from
- * an image's, so the e2e tests find them. The extension finds them by name.
+ * The views the images and videos are shown in are made in code: these ids, added to the app's ids, name them, a GIF's
+ * apart from an image's, and the full-screen viewer, so the e2e tests find them. The extension finds them by name.
  */
 private val commentImageIdsResourcePatch = resourcePatch {
     execute {
         document("res/values/ids.xml").use { ids ->
             val resources = ids.getElementsByTagName("resources").item(0)
-            listOf("baconreader_patches_comment_image", "baconreader_patches_comment_gif").forEach { name ->
+            listOf(
+                "baconreader_patches_comment_image",
+                "baconreader_patches_comment_gif",
+                "baconreader_patches_comment_video",
+                "baconreader_patches_image_viewer",
+            ).forEach { name ->
                 resources.appendChild(
                     ids.createElement("item").apply {
                         setAttribute("type", "id")
