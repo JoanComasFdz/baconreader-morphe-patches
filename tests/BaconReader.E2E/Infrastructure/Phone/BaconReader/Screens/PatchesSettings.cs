@@ -22,16 +22,6 @@ public sealed class PatchesSettings(AndroidDriver driver)
     public Task WaitUntilShownAsync() =>
         Waiting.UntilShownAsync(driver, Screen, TimeSpan.FromSeconds(10), "The patches' settings, \"BaconReader patches\"");
 
-    /// <summary>Taps <paramref name="page"/>, which opens it.</summary>
-    public Task ClickAsync(SettingsPage page) => OnScreen.PressAsync(driver, Titled(page.ToShownText()));
-
-    /// <summary>Waits until <paramref name="page"/> is open: its settings show, the screen's list of pages doesn't.</summary>
-    public Task WaitUntilPageShownAsync(SettingsPage page) =>
-        Waiting.UntilAsync(
-            () => driver.FindElements(Screen).Count == 0 && driver.FindElements(Titled(page.ToShownText())).Any(title => title.Displayed),
-            TimeSpan.FromSeconds(10),
-            $"The patches' \"{page.ToShownText()}\" settings");
-
     /// <summary>Taps <paramref name="setting"/>'s title, which switches it.</summary>
     public Task TickAsync(PatchSetting setting) => OnScreen.PressAsync(driver, Titled(setting.ToShownText()));
 
