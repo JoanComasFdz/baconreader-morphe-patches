@@ -66,6 +66,8 @@ installed and logged in on the phone doesn't survive a run.
 
 Measured on 2026-10-24 from a cloud session (~3–4 Mbit/s to the emulator): patching ~6 s; the first scenario, which also sent
 and installed its APK, ~100 s unrecorded.
+On the phone (2026-10-30, ~1–3 Mbit/s): sending a new APK ~1 minute; BaconReader's first screen 4–11 s after it opens;
+the seven phone scenarios ~23 minutes recorded, at ~30 frames a second (~5 on the emulator).
 
 ## The fake Reddit
 
