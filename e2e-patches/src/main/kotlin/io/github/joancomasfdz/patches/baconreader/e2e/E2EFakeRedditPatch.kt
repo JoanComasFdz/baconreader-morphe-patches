@@ -44,7 +44,7 @@ private fun redditPrefixes(baseUrl: String): List<Pair<String, String>> =
         ("https://cf-baconreader.onelouder.com/" to "$baseUrl/_onelouder/")
 
 // Reddit detects automation, rate-limits logins and changes its content, so the e2e tests talk to
-// a fake Reddit server in the test process instead, which the emulator reaches through
+// a fake Reddit server in the test process instead, which the phone reaches through
 // `adb reverse`. Only full URL prefixes move: BaconReader recognizes Reddit links in posts by bare
 // domains (reddit.com, v.redd.it), and those stay.
 @Suppress("unused")
