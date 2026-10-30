@@ -11,7 +11,7 @@
 # base APK happen only when a session needs them (tools/e2e/connect.sh), so a session that only edits code never wakes
 # the phone.
 # Environment needs: network access "Full", and the variables TS_AUTHKEY_CLOUD (a reusable, ephemeral Tailscale auth
-# key), E2E_EMULATOR_HOST (the device host's name on the tailnet), E2E_APK_CHECKSUM (the clean base APK's sha256) and
+# key), E2E_DEVICE_HOST (the device host's name on the tailnet), E2E_APK_CHECKSUM (the clean base APK's sha256) and
 # MORPHE_GPR_TOKEN (a classic GitHub token with read:packages; MORPHE_GPR_USER, default JoanComasFdz).
 set -uo pipefail
 
@@ -157,7 +157,7 @@ if [ -n "${CLAUDE_ENV_FILE:-}" ] && ! grep -qs "$JDK21" "$CLAUDE_ENV_FILE"; then
   } >> "$CLAUDE_ENV_FILE"
 fi
 
-for variable in TS_AUTHKEY_CLOUD E2E_EMULATOR_HOST E2E_APK_CHECKSUM; do
+for variable in TS_AUTHKEY_CLOUD E2E_DEVICE_HOST E2E_APK_CHECKSUM E2E_ADB_KEY; do
   [ -n "${!variable:-}" ] || warn "$variable is not set: the phone won't be reachable (tools/e2e/connect.sh)"
 done
 # Quiet by design: say it ran, so a run with nothing left to install doesn't look like no run.
