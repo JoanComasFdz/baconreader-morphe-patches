@@ -27,10 +27,11 @@ public static partial class PatchedApps
     private static readonly SemaphoreSlim OneAtATime = new(1, 1);
 
     /// <summary>
-    /// The patches every scenario's app is patched with, besides those its Given names, which never name these:
-    /// "E2E fake Reddit", so the app talks to the fake Reddit, never to Reddit.
+    /// The patches every scenario's app is patched with, besides those its Given names, which never name these: "E2E
+    /// fake Reddit", so the app talks to the fake Reddit, never to Reddit; "E2E inbox envelope label", so a test sees
+    /// the orange envelope of unread messages in the left-menu button's description.
     /// </summary>
-    public static IReadOnlyList<Patch> Always { get; } = [Patch.E2EFakeReddit];
+    public static IReadOnlyList<Patch> Always { get; } = [Patch.E2EFakeReddit, Patch.E2EInboxEnvelopeLabel];
 
     private static string MorpheDesktop =>
         Environment.GetEnvironmentVariable("E2E_MORPHE_DESKTOP") is { Length: > 0 } jar ? jar : "/opt/patch-tools/morphe-desktop.jar";
@@ -84,6 +85,11 @@ public static partial class PatchedApps
             if (patches.Patches.Contains(Patch.E2EFakeReddit))
             {
                 arguments.AddRange(["--options", $"baseUrl={E2EDevice.FakeRedditUrl}", "--enable", Patch.E2EFakeReddit.ToShownText()]);
+            }
+
+            if (patches.Patches.Contains(Patch.E2EInboxEnvelopeLabel))
+            {
+                arguments.AddRange(["--enable", Patch.E2EInboxEnvelopeLabel.ToShownText()]);
             }
 
             arguments.Add(E2EDevice.BaseApk);

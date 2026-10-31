@@ -157,9 +157,10 @@ public sealed class SpoofClientTests : BaseE2E
 - **the patches:** it patches the clean APK with the bundle `./gradlew buildAndroid` built, and installs it with its
   runtime permissions granted (`Device/PatchedApps`):
   - a Startup scenario's app with its `[PatchedWith]` patches, the fewest it needs, and the ones every scenario gets,
-    which a Given never names (`PatchedApps.Always`: "E2E fake Reddit"): `morphe-desktop patch --exclusive --enable …`;
+    which a Given never names (`PatchedApps.Always`: "E2E fake Reddit", "E2E inbox envelope label"): `morphe-desktop
+    patch --exclusive --enable …`;
   - a LoggedIn scenario's app with every patch the bundle lists (`morphe-desktop list-patches`), each enabled the same
-    way, and "E2E fake Reddit".
+    way, and the test-only ones.
 
   An APK is patched once per set of patches and bundle, signed with one test key, and sent to the phone only when it
   isn't the one installed (sending one takes 1–3 minutes over the slow link): the LoggedIn scenarios share one;
