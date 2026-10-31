@@ -12,13 +12,13 @@ namespace BaconReader.E2E.Infrastructure.Phone.BaconReader;
 /// <summary>
 /// BaconReader on the phone, as the user sees it: one object per screen (an activity: Screens/) and per dialog it shows
 /// (Dialogs/), named and nested as the app names and nests them. It knows the scenario's patches
-/// (<see cref="PatchedWithAttribute"/>): they decide which dialogs opening it shows. <paramref name="noteAppShown"/> tells
+/// (<see cref="PatchSet"/>: a Startup scenario's own, or every patch): they decide which dialogs opening it shows. <paramref name="noteAppShown"/> tells
 /// BaseE2E when the main screen first shows (the run's startup time).
 /// </summary>
 public sealed class BaconReaderApp(
     AndroidDriver driver,
     Launcher launcher,
-    IReadOnlyList<Patch> patches,
+    PatchSet patches,
     Action noteAppShown)
 {
     /// <summary>The dialog a fresh BaconReader shows first, unless "Disable final release announcement" is patched in.</summary>
@@ -48,19 +48,19 @@ public sealed class BaconReaderApp(
     /// <summary>
     /// Opens BaconReader on its main screen, as a scenario's "Given BaconReader … is open" says: opens it from the
     /// launcher, taps "GOT IT :(" on the final release announcement
-    /// and "Not now" on the prompt to open Reddit links when its patches show them, and waits until the main screen is
+    /// and "NOT NOW" on the prompt to open Reddit links when its patches show them, and waits until the main screen is
     /// shown.
     /// </summary>
     public async Task OpenAsync()
     {
         await launcher.OpenBaconReaderAsync();
-        if (!patches.Contains(Patch.DisableFinalReleaseAnnouncement))
+        if (!patches.Includes(Patch.DisableFinalReleaseAnnouncement))
         {
             await FinalReleaseAnnouncement.WaitUntilShownAsync();
             await FinalReleaseAnnouncement.ClickGotItAsync();
         }
 
-        if (patches.Contains(Patch.PromptToOpenRedditLinks))
+        if (patches.Includes(Patch.PromptToOpenRedditLinks))
         {
             await OpenRedditLinksPrompt.WaitUntilShownAsync();
             await OpenRedditLinksPrompt.ClickNotNowAsync();

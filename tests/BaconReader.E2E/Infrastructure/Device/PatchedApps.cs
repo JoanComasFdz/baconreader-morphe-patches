@@ -4,6 +4,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using BaconReader.E2E.Infrastructure.Vocabulary;
 
 namespace BaconReader.E2E.Infrastructure.Device;
@@ -12,13 +13,15 @@ namespace BaconReader.E2E.Infrastructure.Device;
 /// Patches the clean BaconReader APK with a scenario's patches and installs it on the phone, as cheaply as a slow
 /// link to it allows (a cloud session's reaches it at ~3–4 Mbit/s):
 /// - the released bundle and the test-only one (e2e-patches/) are both loaded, and "E2E fake Reddit" gets the fake Reddit
-///   server's URL (<see cref="E2EDevice.FakeRedditUrl"/>) when a scenario names it;
+///   server's URL (<see cref="E2EDevice.FakeRedditUrl"/>), in every scenario's app (<see cref="Always"/>);
+/// - Morphe Desktop runs with <c>--exclusive</c> and an <c>--enable</c> for each patch: a Startup scenario's own, or, for
+///   a LoggedIn scenario's every patch, each one the bundle lists (<c>list-patches</c>), so a patch off by default is in too;
 /// - each set of patches is patched once per bundle (<c>build/e2e/patched/&lt;hash&gt;.apk</c>; Morphe Desktop takes about six seconds);
 /// - every APK is signed with the one key Morphe Desktop keeps next to its jar (<c>morphe.keystore</c>), so one installs over
 ///   another; an install signed with another key (the owner's, another session's) is uninstalled first;
 /// - an APK already installed (the device's copy has the same SHA-256) isn't sent again: sending one takes ~40 s.
 /// </summary>
-public static class PatchedApps
+public static partial class PatchedApps
 {
     private const string DeviceApk = "/data/local/tmp/e2e/app.apk";
     private static readonly SemaphoreSlim OneAtATime = new(1, 1);
@@ -32,8 +35,11 @@ public static class PatchedApps
     private static string MorpheDesktop =>
         Environment.GetEnvironmentVariable("E2E_MORPHE_DESKTOP") is { Length: > 0 } jar ? jar : "/opt/patch-tools/morphe-desktop.jar";
 
-    /// <summary>Patches the clean APK with <paramref name="patches"/> (once per bundle) and returns the patched APK.</summary>
-    public static async Task<string> PatchAsync(IReadOnlyList<Patch> patches)
+    /// <summary>
+    /// Patches the clean APK with <paramref name="patchSet"/> and <see cref="Always"/> (once per bundle) and returns the
+    /// patched APK.
+    /// </summary>
+    public static async Task<string> PatchAsync(PatchSet patchSet)
     {
         await OneAtATime.WaitAsync();
         try
@@ -42,7 +48,13 @@ public static class PatchedApps
             CheckExists(E2EDevice.TestBundle, "the e2e bundle: ./gradlew buildAndroid builds it too (README)");
             CheckExists(MorpheDesktop, "Morphe Desktop: tools/morphe-desktop.sh installs it (E2E_MORPHE_DESKTOP names another jar)");
             CheckExists(E2EDevice.BaseApk, "the clean BaconReader APK: the phone's connection script downloads it (README, \"The phone\")");
-            var names = patches.Select(patch => patch.ToShownText()).Order(StringComparer.Ordinal).ToArray();
+            var patches = new PatchSet.Only([.. (patchSet is PatchSet.Only only ? only.Patches : []).Union(Always)]);
+            // The released bundle's patches to --enable: a Startup scenario's own, or every one it lists.
+            IReadOnlyList<string> released = patchSet is PatchSet.Every
+                ? await ReadPatchNamesAsync(E2EDevice.Bundle)
+                : [.. patches.Patches.Where(patch => !patch.IsTestOnly()).Select(patch => patch.ToShownText())];
+            var testOnly = patches.Patches.Where(patch => patch.IsTestOnly()).Select(patch => patch.ToShownText());
+            IReadOnlyList<string> names = [.. released.Concat(testOnly).Order(StringComparer.Ordinal)];
             var key = Hash(
                 $"{HashFile(E2EDevice.Bundle)}\n{HashFile(E2EDevice.TestBundle)}\n{HashFile(E2EDevice.BaseApk)}\n{E2EDevice.FakeRedditUrl}\n{string.Join('\n', names)}")[..16];
             var patched = Path.Combine(E2EDevice.WorkFolder, "patched", key + ".apk");
@@ -63,13 +75,13 @@ public static class PatchedApps
                 "--out", writing,
             };
             // Each --enable and --options belongs to the --patches file before it.
-            foreach (var patch in patches.Where(patch => !patch.IsTestOnly()))
+            foreach (var name in released)
             {
-                arguments.AddRange(["--enable", patch.ToShownText()]);
+                arguments.AddRange(["--enable", name]);
             }
 
             arguments.AddRange(["--patches", E2EDevice.TestBundle]);
-            if (patches.Contains(Patch.E2EFakeReddit))
+            if (patches.Patches.Contains(Patch.E2EFakeReddit))
             {
                 arguments.AddRange(["--options", $"baseUrl={E2EDevice.FakeRedditUrl}", "--enable", Patch.E2EFakeReddit.ToShownText()]);
             }
@@ -101,6 +113,7 @@ public static class PatchedApps
             return;
         }
 
+        var installing = System.Diagnostics.Stopwatch.StartNew();
         await Commands.ShellAsync("mkdir -p /data/local/tmp/e2e");
         await Commands.AdbAsync("push", apk, DeviceApk);
         var installed = await Commands.ShellAsync($"pm install -r -g {DeviceApk} 2>&1 || true");
@@ -115,6 +128,8 @@ public static class PatchedApps
         {
             throw new InvalidOperationException($"Installing {Path.GetFileName(apk)} failed: {installed}");
         }
+
+        RunLog.Installed(Path.GetFileName(apk), installing.Elapsed);
     }
 
     /// <summary>
@@ -145,6 +160,17 @@ public static class PatchedApps
         var sum = await Commands.ShellAsync($"sha256sum {path}");
         return sum.Split(' ', 2)[0];
     }
+
+    // Every patch a bundle lists, by name ("Name: Spoof client"), as --enable takes it.
+    private static async Task<IReadOnlyList<string>> ReadPatchNamesAsync(string bundle)
+    {
+        var listed = await Commands.RunOrFailAsync("java", "-jar", MorpheDesktop, "list-patches", "--patches", bundle);
+        var names = PatchName().Matches(listed).Select(match => match.Groups[1].Value.Trim()).ToArray();
+        return names.Length > 0 ? names : throw new InvalidOperationException($"Morphe Desktop lists no patch in {bundle}:\n{listed}");
+    }
+
+    [GeneratedRegex(@"^Name: (.+)$", RegexOptions.Multiline)]
+    private static partial Regex PatchName();
 
     // Morphe Desktop's report of the run: it succeeded, none failed, and every patch asked for was applied (it also applies what they depend on).
     private static bool AppliedEvery(string report, IReadOnlyList<string> names)
