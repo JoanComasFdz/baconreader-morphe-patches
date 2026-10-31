@@ -439,10 +439,7 @@ public final class EmbedCommentImagesPatch {
         final int lineBoxHeight = Math.max(textView.getLineHeight() * PLACEHOLDER_LINES, dp(textView, 32));
 
         final FrameLayout slot = new FrameLayout(context);
-        LinearLayout.LayoutParams slotParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        slotParams.topMargin = dp(textView, 4);
-        slot.setLayoutParams(slotParams);
+        slot.setLayoutParams(slotLayoutParams(textView, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         // The image starts empty (0x0) and grows when Glide sets it.
         final ImageView imageView = new ImageView(context);
@@ -950,6 +947,28 @@ public final class EmbedCommentImagesPatch {
 
     private static int withAlpha(int color, int alpha) {
         return (color & 0x00FFFFFF) | (alpha << 24);
+    }
+
+    /**
+     * A slot under {@code textView}, {@code width} wide, sits in the text's column. A comment's
+     * text is inset by its container's padding, which the slot shares; a post's text by its own
+     * margins (24 dp), which the slot copies, or it runs from the screen's edge to the other. A
+     * comment's image fills the comment's width, so it leaves out the right margin its text keeps
+     * (16 dp).
+     */
+    static LinearLayout.LayoutParams slotLayoutParams(TextView textView, int width) {
+        LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.topMargin = dp(textView, 4);
+        if (textView.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams text =
+                    (ViewGroup.MarginLayoutParams) textView.getLayoutParams();
+            boolean comment =
+                    textView.getId() == ResourceUtils.getIdentifier(ResourceType.ID, "commentBody");
+            params.leftMargin = text.leftMargin;
+            params.rightMargin = comment ? 0 : text.rightMargin;
+        }
+        return params;
     }
 
     private static int dp(View view, int dp) {
