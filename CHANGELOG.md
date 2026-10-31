@@ -1,3 +1,9 @@
+## [1.4.0-dev.6](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.5...v1.4.0-dev.6) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** show "Not now" and "Set up" on the links prompt as written, as in Reseam ([8e7e03d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/8e7e03d3a32782350553359be46dc26cb06cf586))
+
 ## [1.4.0-dev.5](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.4...v1.4.0-dev.5) (2026-10-31)
 
 ### 🐛 Bug Fixes
