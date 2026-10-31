@@ -1,3 +1,41 @@
+## [1.4.0-dev.6](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.5...v1.4.0-dev.6) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** show "Not now" and "Set up" on the links prompt as written, as in Reseam ([8e7e03d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/8e7e03d3a32782350553359be46dc26cb06cf586))
+
+## [1.4.0-dev.5](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.4...v1.4.0-dev.5) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** put the images under a post's text in the text's column ([f3b412a](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/f3b412a46255f9d4ab2c8154ecf6ee39a91f2b04))
+
+## [1.4.0-dev.4](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.3...v1.4.0-dev.4) (2026-10-26)
+
+### 🐛 Bug Fixes
+
+* **e2e:** exit 0 from record.sh --changed-since when no scenario changed ([0ceb0d6](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/0ceb0d60fe96d07a351c361cc2ff1cebc7d488d4))
+
+## [1.4.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.2...v1.4.0-dev.3) (2026-10-25)
+
+### 🐛 Bug Fixes
+
+* Install adb with the Android SDK, so Gradle stops adding platform-tools-2 ([b558028](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/b558028d7f4710b6ab6f44771c21c50cb5217bab))
+
+## [1.4.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.1...v1.4.0-dev.2) (2026-10-25)
+
+### 🐛 Bug Fixes
+
+* Make connect.sh say when its exports are lost, and when --down logged out ([9723aed](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/9723aedfa3d1aab67d60fb3f09c0e8340dc10e9a))
+
+## [1.4.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.3.0...v1.4.0-dev.1) (2026-10-25)
+
+### ✨ New Features
+
+* Copy the e2e tests and their tools from baconreader-reseam-patches, unchanged ([fd04c04](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/fd04c0475abc4856b0d0e34b091af845f8794383))
+* Post the e2e GIFs and MP4s on pull requests, with the player page ([cb81eff](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/cb81effd09c49a5736a2298d54deb1d754a49e13))
+* Run the e2e tests with Morphe Desktop and the .mpp bundle ([6ed595e](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/6ed595e0a7266df3ca94466cb398a9af7da16d2a))
+
 ## [1.3.0](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.2.0...v1.3.0) (2026-10-24)
 
 ### ✨ New Features
