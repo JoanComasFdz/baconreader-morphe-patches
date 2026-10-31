@@ -1,3 +1,9 @@
+## [1.4.0-dev.5](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.4...v1.4.0-dev.5) (2026-10-31)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** put the images under a post's text in the text's column ([f3b412a](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/f3b412a46255f9d4ab2c8154ecf6ee39a91f2b04))
+
 ## [1.4.0-dev.4](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.3...v1.4.0-dev.4) (2026-10-26)
 
 ### 🐛 Bug Fixes
