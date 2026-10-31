@@ -98,7 +98,7 @@ Scenario: <what it proves, as a statement>
 3. **Keep checking and doing apart.** "The menu offers…" is a Then. Tapping is a When. They are never one line.
 4. **The first-start dialogs.** A fresh install shows dialogs before the main screen: BaconReader's "FINAL RELEASE
    ANNOUNCEMENT!" (unless "Disable final release announcement" is patched in) and, with "Prompt to open Reddit links", "Open Reddit links with BaconReader?". With every patch, only "Open Reddit links with BaconReader?" shows. A Gherkin about opening the app (a Startup one) taps them in its own When lines; any other
-   folds them into its Given ("is open"), which answers "NOT NOW" to the links prompt, unless it says "with Reddit links
+   folds them into its Given ("is open"), which answers "Not now" to the links prompt, unless it says "with Reddit links
    set up". Android's "Allow BaconReader Premium to send you notifications?" never shows: the tests deny BaconReader's
    notifications before each scenario, since the phone asks only when BaconReader opens its next screen, over it. No
    Gherkin names it.

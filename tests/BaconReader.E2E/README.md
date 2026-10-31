@@ -60,7 +60,7 @@ For each scenario, `BaseE2E`:
 
 The scenario's Given then makes its Reddit data (`Reddit.HasAPost("Weekly thread", "e2e")`), and it opens the app itself: `Phone.Launcher.OpenBaconReaderAsync()` and the first-start dialogs
 (`FINAL RELEASE ANNOUNCEMENT!` → "GOT IT :(", unless "Disable final release announcement" is patched in, and with
-"Prompt to open Reddit links", "Open Reddit links with BaconReader?" → "NOT NOW" or "SET UP"), or
+"Prompt to open Reddit links", "Open Reddit links with BaconReader?" → "Not now" or "Set up"), or
 `Phone.BaconReader.OpenAsync()`, which does all of it: with every patch, only the links prompt shows. Then it taps and
 checks what its patch changes.
 
