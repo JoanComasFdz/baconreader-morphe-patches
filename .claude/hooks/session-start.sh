@@ -137,6 +137,19 @@ beforeSettings { s ->
 }
 GRADLE
 
+# The Plugin Portal also redirects lookups it can't answer to Maven Central, not to the mirror, and a 429 there stops
+# Gradle before it asks Google's Maven or GitHub Packages, where Morphe's plugin and the Android Gradle plugin are. It
+# skips their groups, which it never holds.
+cat > "$HOME/.gradle/init.d/skip-plugin-portal.gradle" <<'GRADLE'
+beforeSettings { s ->
+    s.pluginManagement.repositories.configureEach { r ->
+        if (r.name == 'Gradle Central Plugin Repository') {
+            r.content { ['app\\.morphe.*', 'com\\.android.*', 'com\\.google.*', 'androidx.*'].each { g -> excludeGroupByRegex g } }
+        }
+    }
+}
+GRADLE
+
 # Morphe's Gradle plugin and patcher are on GitHub Packages, which needs a token with read:packages: the environment's
 # MORPHE_GPR_TOKEN, written to ~/.gradle/gradle.properties as gpr.user/gpr.key (settings.gradle.kts reads them).
 if [ -n "${MORPHE_GPR_TOKEN:-}" ]; then
