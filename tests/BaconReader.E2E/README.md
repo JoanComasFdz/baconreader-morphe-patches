@@ -48,7 +48,7 @@ For each scenario, `BaseE2E`:
 2. patches the clean APK with both bundles, the released one and the test-only one, once per set of patches and
    bundles (`build/e2e/patched/`), enabling a Startup scenario's `[PatchedWith]` patches, or for a LoggedIn scenario
    (`[PatchedWithEveryPatch]`) every patch the bundle lists, one APK for all of them ("Where tests go"), and the one
-   every scenario gets, "E2E fake Reddit" (`morphe-desktop patch --exclusive --enable …`, each after its own
+   every scenario gets, "E2E fake Reddit" and "E2E inbox envelope label" (`morphe-desktop patch --exclusive --enable …`, each after its own
    `--patches`);
 3. installs it, unless it is the APK already installed, with its permissions granted; every APK is signed with the one
    key Morphe Desktop keeps next to its jar (`morphe.keystore`), and an app signed with another key is uninstalled first;
@@ -107,6 +107,10 @@ the test process.
   after the test-only `--patches`).
 - **Every scenario gets it.** BaseE2E adds "E2E fake Reddit" to every scenario's patches. A Given and `[PatchedWith]`
   never name it, only the patches under test (`ScenarioShapeTests` checks it).
+- **The bundle's other patch.** "E2E inbox envelope label", which every scenario gets too: with unread messages, the
+  main screen's left-menu button shows an orange envelope instead of the menu icon, two images UiAutomator can't tell
+  apart, both "Navigate up". While the envelope shows, the patch makes the button's description "Navigate up, orange
+  envelope" (`LeftMenu.ReadButtonAsync`).
 - **The phone reaches it** through `adb reverse tcp:5080 tcp:5080` (the port of `E2E_FAKE_REDDIT_URL`), which BaseE2E
   adds afresh before each scenario: one still listed can forward nothing after adb reconnects. BaconReader's network security config already allows
   cleartext HTTP, to 127.0.0.1 too.

@@ -47,7 +47,7 @@ java -jar morphe-desktop.jar patch --patches patches/build/libs/patches-*.mpp --
 
 ## The e2e bundle
 
-Test-only patches, such as "E2E fake Reddit", which the e2e tests use ([tests/BaconReader.E2E/README.md](tests/BaconReader.E2E/README.md)), live in `e2e-patches/`, a Gradle project of its own with its own `.mpp`. `./gradlew buildAndroid` builds it with the main one:
+Test-only patches, "E2E fake Reddit" and "E2E inbox envelope label", which the e2e tests use ([tests/BaconReader.E2E/README.md](tests/BaconReader.E2E/README.md)), live in `e2e-patches/`, a Gradle project of its own with its own `.mpp`. `./gradlew buildAndroid` builds it with the main one:
 
 ```bash
 ./gradlew buildAndroid --no-daemon   # also → e2e-patches/build/libs/e2e-patches-<version>.mpp
