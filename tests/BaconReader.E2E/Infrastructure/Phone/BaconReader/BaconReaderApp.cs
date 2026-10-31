@@ -48,7 +48,7 @@ public sealed class BaconReaderApp(
     /// <summary>
     /// Opens BaconReader on its main screen, as a scenario's "Given BaconReader … is open" says: opens it from the
     /// launcher, taps "GOT IT :(" on the final release announcement
-    /// and "Not now" on the prompt to open Reddit links when its patches show them, and waits until the main screen is
+    /// and "NOT NOW" on the prompt to open Reddit links when its patches show them, and waits until the main screen is
     /// shown.
     /// </summary>
     public async Task OpenAsync()
