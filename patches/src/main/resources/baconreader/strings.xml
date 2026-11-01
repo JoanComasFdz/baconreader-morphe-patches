@@ -84,6 +84,8 @@
     <string name="revanced_baconreader_user_avatar_background_summary_off">Only the avatar image</string>
     <string name="revanced_baconreader_user_avatars_error">Could not load user avatars: %s</string>
     <string name="revanced_flair_filter_button">Flair</string>
+    <string name="revanced_flair_filter_content_description">Flair filter</string>
+    <string name="revanced_flair_filter_content_description_chosen">Flair filter: %s</string>
     <string name="revanced_flair_filter_title">Show posts with flair</string>
     <string name="revanced_flair_filter_apply">Apply</string>
     <string name="revanced_flair_filter_clear">Clear</string>
