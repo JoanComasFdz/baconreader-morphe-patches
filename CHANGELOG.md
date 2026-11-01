@@ -1,3 +1,9 @@
+## [1.4.0-dev.8](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.7...v1.4.0-dev.8) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* count Fix load more comments in the patches badge ([06ba802](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/06ba8022115f5d6c2b3f007f8677ed0d32747675)), closes [#65](https://github.com/JoanComasFdz/baconreader-morphe-patches/issues/65)
+
 ## [1.4.0-dev.7](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.6...v1.4.0-dev.7) (2026-11-01)
 
 ### 🐛 Bug Fixes
