@@ -124,6 +124,9 @@
     <string name="revanced_comment_search_hint">Search comments</string>
     <string name="revanced_comment_search_all">SEARCH ALL</string>
     <string name="revanced_comment_search_filter">Show only matching comments</string>
+    <string name="revanced_comment_search_previous">Previous match</string>
+    <string name="revanced_comment_search_next">Next match</string>
+    <string name="revanced_comment_search_close">Close search</string>
     <string name="revanced_comment_search_loading">LOADING…</string>
     <string name="revanced_comment_search_error">Could not load all comments: %s</string>
     <string name="revanced_meme_template_loading">Loading template…</string>
