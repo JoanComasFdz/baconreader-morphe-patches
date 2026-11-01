@@ -5,7 +5,7 @@ morphe-patches-library = "2.0.0"
 smali = "4220ae75f7"
 gson = "2.14.0"
 annotation = "1.10.0"
-okhttp = "4.12.0"
+okhttp = "5.5.1"
 
 [libraries]
 morphe-patches-library = { module = "app.morphe:morphe-patches-library", version.ref = "morphe-patches-library" }
