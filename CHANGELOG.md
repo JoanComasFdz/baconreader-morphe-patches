@@ -1,3 +1,17 @@
+## [1.4.0-dev.7](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.6...v1.4.0-dev.7) (2026-11-01)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** Hide formatted spoilers shows a spoiler before opening a link in it ([8984f7a](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/8984f7a60c3f63c263438e15b9db2b123cc00a5b))
+* **baconreader:** Load more comments loads the small "load more comments" again when a post opens again ([c935286](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/c9352868af9cebe378e10727ef9e3f35dccc1a73))
+* **baconreader:** Load more comments shows the title of "Comments to load" in the settings ([3bc3750](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/3bc375030a3b8b6ec12a4303fb9e022ba450a0ff))
+
+### ✨ New Features
+
+* **baconreader:** Hide formatted spoilers reads hidden spoilers as "spoiler" to accessibility ([4852c6f](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/4852c6f49ac1f3601da302fb3a516d35bb1745a1))
+* **baconreader:** Search comments names its find bar's buttons ([33b02d1](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/33b02d1761e95142e61a82a0f6678cea625a321f))
+* **baconreader:** Show tables shows its cells and button to accessibility ([61da887](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/61da887304ce9d2c20ef9090d3f625ceddc1725b))
+
 ## [1.4.0-dev.6](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0-dev.5...v1.4.0-dev.6) (2026-10-31)
 
 ### 🐛 Bug Fixes
