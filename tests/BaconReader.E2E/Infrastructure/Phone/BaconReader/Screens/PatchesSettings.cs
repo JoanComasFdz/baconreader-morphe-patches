@@ -80,6 +80,23 @@ public sealed class PatchesSettings(AndroidDriver driver)
             TimeSpan.FromSeconds(10),
             $"The dialog of \"{setting.ToShownText()}\" closing");
 
+    /// <summary>Whether the screen shows, its first section, "Images and videos", listed.</summary>
+    public Task<PatchesSettingsScreenSnapshot> ReadScreenAsync() =>
+        OnScreen.ReadAsync(driver, () => new PatchesSettingsScreenSnapshot(driver.FindElements(FirstSection).Any(title => title.Displayed)));
+
+    /// <summary>Whether <paramref name="setting"/>'s switch, on its row to the right of its title, is on.</summary>
+    public Task<PatchSettingSwitchSnapshot> ReadSwitchAsync(PatchSetting setting) =>
+        OnScreen.ReadAsync(driver, () =>
+        {
+            var title = driver.FindElements(Titled(setting.ToShownText())).First(found => found.Displayed);
+            // The row's switch is the first one below the title's top, as each row's switch sits by its title and summary.
+            var toggle = driver.FindElements(Locate.Switch())
+                .Where(found => found.Displayed && found.Location.Y + found.Size.Height > title.Location.Y)
+                .OrderBy(found => found.Location.Y)
+                .First();
+            return new PatchSettingSwitchSnapshot(setting, toggle.GetAttribute("checked") == "true");
+        });
+
     /// <summary>What the screen shows: the settings it lists, top to bottom.</summary>
     public Task<PatchesSettingsSnapshot> ReadAsync() =>
         OnScreen.ReadAsync(driver, () => new PatchesSettingsSnapshot(
@@ -94,3 +111,9 @@ public sealed class PatchesSettings(AndroidDriver driver)
 
 /// <summary>What the patches' settings show: the settings listed, top to bottom.</summary>
 public sealed record PatchesSettingsSnapshot(ImmutableArray<PatchSetting> Settings);
+
+/// <summary>Whether the patches' settings screen shows.</summary>
+public sealed record PatchesSettingsScreenSnapshot(bool Shown);
+
+/// <summary>Whether a setting's switch is on.</summary>
+public sealed record PatchSettingSwitchSnapshot(PatchSetting Setting, bool On);
