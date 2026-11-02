@@ -239,6 +239,13 @@ public final class PostMediaPatch {
      * the page the app shows has content: an image in the photo/GIF view, a playing video,
      * or any other page (web, blocked, error).
      */
+    /** Whether a ViewFlipper's description is one a loading overlay gave it. */
+    private static boolean isLoadingDescription(CharSequence description) {
+        if (description == null) return false;
+        String text = description.toString();
+        return text.startsWith(str("revanced_post_media_loading")) || text.equals(str("revanced_post_media_loading_failed"));
+    }
+
     private static final class LoadingOverlay {
         /** The PostMediaHandler, weakly: its player tells when a video is ready. */
         final java.lang.ref.WeakReference<Object> handler;
@@ -250,6 +257,12 @@ public final class PostMediaPatch {
         boolean attached;
         boolean progressKnown;
         boolean failed;
+        /**
+         * The ViewFlipper's own description, given back when the overlay hides. Views in a ViewOverlay are not in the
+         * accessibility tree: while the overlay shows, the ViewFlipper's description tells its state ("Loading media,
+         * GIF · 80.6 MB", "Media failed to load"), for screen readers and tests.
+         */
+        CharSequence flipperDescription;
         final int accent;
         /** Changes on every show(), so a late size lookup for a previous post is ignored. */
         Object generation = new Object();
@@ -335,6 +348,9 @@ public final class PostMediaPatch {
             GlideUtils.clear(still);
             still.setImageDrawable(null);
             if (!attached) {
+                // Another overlay of the same ViewFlipper may have described it: that isn't its own.
+                CharSequence own = flipper.getContentDescription();
+                flipperDescription = isLoadingDescription(own) ? null : own;
                 flipper.getOverlay().add(root);
                 flipper.addOnLayoutChangeListener(resizer);
                 flipper.getViewTreeObserver().addOnPreDrawListener(watcher);
@@ -357,6 +373,7 @@ public final class PostMediaPatch {
             attached = false;
             flipper.removeCallbacks(ticker);
             flipper.getOverlay().remove(root);
+            if (isLoadingDescription(flipper.getContentDescription())) flipper.setContentDescription(flipperDescription);
             flipper.removeOnLayoutChangeListener(resizer);
             if (flipper.getViewTreeObserver().isAlive()) flipper.getViewTreeObserver().removeOnPreDrawListener(watcher);
             GlideUtils.clear(still);
@@ -377,6 +394,11 @@ public final class PostMediaPatch {
         void setLabel(String text) {
             label.setText(text);
             label.setVisibility(text == null || text.isEmpty() ? View.GONE : View.VISIBLE);
+            flipper.setContentDescription(failed
+                    ? str("revanced_post_media_loading_failed")
+                    : text == null || text.isEmpty()
+                            ? str("revanced_post_media_loading")
+                            : str("revanced_post_media_loading") + ", " + text);
             layoutToFlipper(); // Views in a ViewOverlay are not re-measured when their text changes.
         }
 

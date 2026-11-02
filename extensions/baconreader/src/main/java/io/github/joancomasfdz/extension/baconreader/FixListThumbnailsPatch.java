@@ -4,6 +4,8 @@
 
 package io.github.joancomasfdz.extension.baconreader;
 
+import static app.morphe.extension.shared.StringRef.str;
+
 import android.graphics.RenderEffect;
 import android.graphics.Shader;
 import android.os.Build;
@@ -279,12 +281,23 @@ public final class FixListThumbnailsPatch {
     }
 
     /** Injected at the start of LinkProcessor.loadThumbnail: blurs the row's thumbnail, or clears the blur. */
+    /** The description each thumbnail view had before it was blurred. */
+    private static final Map<ImageView, CharSequence> descriptions = new WeakHashMap<>();
+
     public static void beforeLoad(Object link, ImageView imageView) {
         if (imageView == null || !canBlur()) return;
         try {
             boolean blur = link != null && marker((String) field(link, "thumbnail")) != null;
             float radius = BLUR_RADIUS_DP * imageView.getResources().getDisplayMetrics().density;
             imageView.setRenderEffect(blur ? RenderEffect.createBlurEffect(radius, radius, Shader.TileMode.CLAMP) : null);
+            // A blurred thumbnail is described as such, so screen readers and tests tell it apart. Rows are reused:
+            // the view's own description comes back when it shows a thumbnail that isn't blurred.
+            if (blur) {
+                if (!descriptions.containsKey(imageView)) descriptions.put(imageView, imageView.getContentDescription());
+                imageView.setContentDescription(str("revanced_thumbnail_blurred"));
+            } else if (descriptions.containsKey(imageView)) {
+                imageView.setContentDescription(descriptions.remove(imageView));
+            }
         } catch (Exception ex) {
             Logger.printInfo(() -> "Could not blur the thumbnail", ex);
         }
