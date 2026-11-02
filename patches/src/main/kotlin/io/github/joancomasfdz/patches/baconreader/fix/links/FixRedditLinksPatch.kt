@@ -56,5 +56,22 @@ val fixRedditLinksPatch = bytecodePatch(
                 ExternalLabel("original", getInstruction(0)),
             )
         }
+
+        // The link next to a post's title starts LinkProcessor's intent only when it opens the browser, so it dropped
+        // the intents above and did nothing.
+        ClickableLinkSpanOnClickFingerprint.method.apply {
+            addInstructionsWithLabels(
+                0,
+                """
+                    iget-object v0, p0, Lcom/onelouder/baconreader/ClickableLinkSpan;->link:Lcom/onelouder/baconreader/reddit/Link;
+                    iget-object v0, v0, Lcom/onelouder/baconreader/reddit/Link;->url:Ljava/lang/String;
+                    invoke-static { p1, v0 }, $EXTENSION_CLASS_DESCRIPTOR->open(Landroid/view/View;Ljava/lang/String;)Z
+                    move-result v0
+                    if-eqz v0, :original
+                    return-void
+                """,
+                ExternalLabel("original", getInstruction(0)),
+            )
+        }
     }
 }
