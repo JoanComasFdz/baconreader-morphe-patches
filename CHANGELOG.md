@@ -1,3 +1,9 @@
+## [1.5.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.5.0-dev.1...v1.5.0-dev.2) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** add Fix Reddit links, which opens share links and other Reddit links in the app ([1907ee5](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/1907ee58b81469c8023955207988ad03a0014826))
+
 ## [1.5.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.4.0...v1.5.0-dev.1) (2026-11-01)
 
 ### ✨ New Features
