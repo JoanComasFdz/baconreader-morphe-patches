@@ -57,6 +57,12 @@ public final class PostMediaPatch {
     private static final int PAGE_LOADING = 0;
     private static final int PAGE_VIDEO = 3;
 
+    /** The Glide target that loads an image into the app's view for long images. */
+    private static final String LARGE_IMAGE_TARGET = "com.onelouder.baconreader.PostMediaHandler$3";
+
+    /** The app's view for long images. */
+    private static final String LARGE_IMAGE_VIEW = "com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView";
+
     /** One overlay per PostMediaHandler. */
     private static final Map<Object, LoadingOverlay> OVERLAYS = new WeakHashMap<>();
     /** HTTP status of the RedGIFs API error being reported on this thread. */
@@ -132,6 +138,14 @@ public final class PostMediaPatch {
         } catch (Exception ex) {
             Logger.printInfo(() -> "onImageLoadFailed failed", ex);
         }
+    }
+
+    /**
+     * Injected at the start of Glide's CustomTarget.onLoadFailed. With "elongated image support", the app loads images
+     * into its view for long images, whose Glide target has no failure handler: the bar shows the failure.
+     */
+    public static void onLargeImageFailed(Object target) {
+        if (target != null && LARGE_IMAGE_TARGET.equals(target.getClass().getName())) onImageLoadFailed(target);
     }
 
     /** Follows the this$ fields of inner classes up to the instance whose class name ends with {@code name}. */
@@ -429,7 +443,27 @@ public final class PostMediaPatch {
             if (page == PAGE_LOADING) return false;
             if (page == PAGE_VIDEO) return playerReady();
             if (current instanceof ImageView) return ((ImageView) current).getDrawable() != null;
+            // The view for long images, which the app shows before Glide loads its image.
+            View largeImage = current instanceof ViewGroup ? largeImageView((ViewGroup) current) : null;
+            if (largeImage != null) return hasImage(largeImage);
             return true; // Web page, blocked, error, galleries: nothing to wait for.
+        }
+
+        private View largeImageView(ViewGroup page) {
+            for (int index = 0; index < page.getChildCount(); index++) {
+                View child = page.getChildAt(index);
+                if (LARGE_IMAGE_VIEW.equals(child.getClass().getName())) return child;
+            }
+            return null;
+        }
+
+        private boolean hasImage(View largeImage) {
+            try {
+                return (boolean) largeImage.getClass().getMethod("hasImage").invoke(largeImage);
+            } catch (Exception ex) {
+                Logger.printInfo(() -> "Could not check the long image", ex);
+                return true;
+            }
         }
 
         /** Whether the app's video player has a frame ready (works for videos the app starts itself). */
