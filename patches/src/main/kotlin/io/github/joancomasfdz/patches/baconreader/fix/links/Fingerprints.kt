@@ -20,3 +20,11 @@ internal object LinkDispatcherProcessingFingerprint : Fingerprint(
     returnType = "Z",
     parameters = listOf("Landroid/content/Intent;"),
 )
+
+/** The link next to a post's title, which starts LinkProcessor's intent only when it opens the browser. */
+internal object ClickableLinkSpanOnClickFingerprint : Fingerprint(
+    definingClass = "Lcom/onelouder/baconreader/ClickableLinkSpan;",
+    name = "onClick",
+    returnType = "V",
+    parameters = listOf("Landroid/view/View;"),
+)

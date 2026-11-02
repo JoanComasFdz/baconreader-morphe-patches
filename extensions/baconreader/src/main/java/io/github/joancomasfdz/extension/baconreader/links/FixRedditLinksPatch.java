@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.view.View;
 
 import com.onelouder.baconreader.BrowserActivity;
 import com.onelouder.baconreader.DetailActivity;
@@ -95,6 +96,25 @@ public final class FixRedditLinksPatch {
         intent.putExtra(DetailActivity.EXTRA_PARENTS, parents);
         if (comment != null && !comment.isEmpty()) intent.putExtra(DetailActivity.EXTRA_COMMENTID, comment);
         return intent;
+    }
+
+    /**
+     * Injected at the start of ClickableLinkSpan.onClick, the link next to a post's title, which starts only the
+     * intents that open the browser. Opens the links {@link #intent} knows and returns true; returns false to let the
+     * span go on.
+     */
+    public static boolean open(View view, String url) {
+        if (view == null || url == null) return false;
+        Context context = view.getContext();
+        if (context == null) return false;
+        Intent next = intent(new LinkProcessor(context, url));
+        if (next == null) return false;
+        try {
+            context.startActivity(next);
+        } catch (Exception ex) {
+            Logger.printInfo(() -> "Could not open the link " + url, ex);
+        }
+        return true;
     }
 
     /**
