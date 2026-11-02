@@ -40,6 +40,10 @@ private val REDDIT_ORIGINS = listOf(
     "http://reddit.com",
 )
 
+// The app knows a gallery by Reddit's own address, https://www.reddit.com/gallery/<id>, which the fake's gallery posts
+// link to as Reddit's do. Moved, "Fix Reddit links" would not take them for Reddit links, as it does on Reddit.
+private const val REDDIT_GALLERY = "https://www.reddit.com/gallery"
+
 private val MEDIA_HOSTS = listOf("i.redd.it", "preview.redd.it", "v.redd.it")
 
 // Each full URL prefix and what it becomes; paths after it are kept.
@@ -141,6 +145,7 @@ val e2eFakeRedditPatch = bytecodePatch(
             string(old, StringComparisonType.CONTAINS).matchAllMethodIndicesForEach(false) { index ->
                 val register = getInstruction<OneRegisterInstruction>(index).registerA
                 val value = getInstruction(index).getReference<StringReference>()!!.string
+                if (value.startsWith(REDDIT_GALLERY)) return@matchAllMethodIndicesForEach
                 val moved = ImmutableStringReference(value.replace(old, new))
                 replaceInstruction(index, BuilderInstruction21c(Opcode.CONST_STRING, register, moved))
             }
@@ -158,6 +163,7 @@ val e2eFakeRedditPatch = bytecodePatch(
         classesWithUrlFields.forEach { type ->
             mutableClassDefBy(type).staticFields.forEach { field ->
                 val value = (field.initialValue as? StringEncodedValue)?.value ?: return@forEach
+                if (value.startsWith(REDDIT_GALLERY)) return@forEach
                 val moved = prefixes.fold(value) { url, (old, new) -> url.replace(old, new) }
                 if (moved != value) {
                     field.setInitialValue(MutableStringEncodedValue(ImmutableStringEncodedValue(moved)))

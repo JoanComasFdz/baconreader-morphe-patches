@@ -14,25 +14,43 @@ import com.onelouder.baconreader.DetailActivity;
 import com.onelouder.baconreader.LinkDispatcher;
 import com.onelouder.baconreader.LinkProcessor;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
 
 /**
  * Opens the Reddit links LinkProcessor doesn't recognize in the app: share links, resolved through their redirect,
- * posts without their subreddit, galleries and posts on a user's profile.
+ * posts without their subreddit, galleries, videos, found through Reddit's api/info, and posts on a user's profile.
  */
 @SuppressWarnings("unused")
 public final class FixRedditLinksPatch {
     /** Share links resolve on www.reddit.com whatever host the link names. */
     private static final String REDDIT = "https://www.reddit.com";
 
+    private static final String VIDEO_HOST = "v.redd.it";
+
     private static final String EXTRA_SHARE_LINK = "io.github.joancomasfdz.extension.baconreader.links.SHARE_LINK";
+    private static final String EXTRA_VIDEO_LINK = "io.github.joancomasfdz.extension.baconreader.links.VIDEO_LINK";
 
     private static final int TIMEOUT_MS = 10_000;
+
+    /**
+     * The ID of a post's own gallery or Reddit video, the last segment of its address, which the app is opening in its
+     * media viewer: {@link #intent} leaves it to the app instead of opening the post again. The next {@link #intent}
+     * call takes it, so it never applies to a later link. LinkProcessor rewrites some Reddit addresses, so the ID is
+     * compared, not the address.
+     */
+    private static final ThreadLocal<String> appMedia = new ThreadLocal<>();
 
     private FixRedditLinksPatch() {
     }
@@ -42,13 +60,23 @@ public final class FixRedditLinksPatch {
      * recognize, or null to let the app decide.
      */
     public static Intent intent(Object processor) {
+        String keep = appMedia.get();
+        appMedia.remove();
         String url = null;
         try {
             if ((boolean) field(processor, "forceBrowser")) return null;
             Context context = (Context) field(processor, "context");
             url = (String) field(processor, "url");
-            if (context == null || url == null || !LinkProcessor.isReddit(url)) return null;
+            if (context == null || url == null) return null;
             Uri uri = Uri.parse(url);
+            if (keep != null && keep.equals(uri.getLastPathSegment())) return null;
+            // v.redd.it/<video>: the app looks up its post through www.reddit.com/video/<video>, which Reddit refuses
+            // (403).
+            if (VIDEO_HOST.equals(uri.getHost()) && uri.getPathSegments() != null
+                    && uri.getPathSegments().size() == 1) {
+                return new Intent(context, LinkDispatcher.class).setData(uri).putExtra(EXTRA_VIDEO_LINK, true);
+            }
+            if (!LinkProcessor.isReddit(url)) return null;
             List<String> segments = uri.getPathSegments();
             if (segments == null || segments.isEmpty()) return null;
             String first = segments.get(0);
@@ -99,14 +127,48 @@ public final class FixRedditLinksPatch {
     }
 
     /**
+     * Injected at the start of LinkProcessor.getBrowserIntent(Context, Link) and of the post header's
+     * DetailLinkHelper.onOpen(Link), which open a post's media from its thumbnail. A gallery or Reddit video the post carries opens in the app's media viewer, as before
+     * {@link #intent} turned its link into the post itself.
+     */
+    public static void keepAppMedia(Object link) {
+        String url = link != null && showsOwnMedia(link) ? (String) fieldOrNull(link, "url") : null;
+        appMedia.set(url != null ? Uri.parse(url).getLastPathSegment() : null);
+    }
+
+    private static boolean showsOwnMedia(Object link) {
+        try {
+            Class<?> linkClass = Class.forName("com.onelouder.baconreader.reddit.Link");
+            Method gallery = LinkProcessor.class.getMethod("isValidRedditGallery", linkClass);
+            return (boolean) gallery.invoke(null, link)
+                    || (boolean) linkClass.getMethod("isRedditVideo").invoke(link);
+        } catch (Exception ex) {
+            Logger.printInfo(() -> "Could not check the media of the post", ex);
+            return false;
+        }
+    }
+
+    private static Object fieldOrNull(Object object, String name) {
+        try {
+            return field(object, name);
+        } catch (ReflectiveOperationException ex) {
+            Logger.printInfo(() -> "Could not read " + name, ex);
+            return null;
+        }
+    }
+
+    /**
      * Injected at the start of ClickableLinkSpan.onClick, the link next to a post's title, which starts only the
      * intents that open the browser. Opens the links {@link #intent} knows and returns true; returns false to let the
-     * span go on.
+     * span go on, and the post's own gallery or video opens in the app's media viewer ({@link #keepAppMedia}).
      */
-    public static boolean open(View view, String url) {
-        if (view == null || url == null) return false;
+    public static boolean open(View view, Object link) {
+        if (view == null || link == null) return false;
         Context context = view.getContext();
-        if (context == null) return false;
+        String url = (String) fieldOrNull(link, "url");
+        if (context == null || url == null) return false;
+        keepAppMedia(link);
+        if (appMedia.get() != null) return false;
         Intent next = intent(new LinkProcessor(context, url));
         if (next == null) return false;
         try {
@@ -119,17 +181,91 @@ public final class FixRedditLinksPatch {
 
     /**
      * Injected at the start of LinkDispatcher.processing. Opens a share link where it leads, once its redirect is
-     * known, and returns true; returns false for every other intent.
+     * known, or a video's post, once it is found, and returns true; returns false for every other intent.
      */
     public static boolean dispatch(Activity activity, Intent intent) {
-        if (activity == null || intent == null || !intent.getBooleanExtra(EXTRA_SHARE_LINK, false)) return false;
+        if (activity == null || intent == null) return false;
         Uri link = intent.getData();
         if (link == null) return false;
-        new Thread(() -> {
-            String target = resolve(link);
-            activity.runOnUiThread(() -> open(activity, link, target));
-        }).start();
-        return true;
+        if (intent.getBooleanExtra(EXTRA_SHARE_LINK, false)) {
+            new Thread(() -> {
+                String target = resolve(link);
+                activity.runOnUiThread(() -> open(activity, link, target));
+            }).start();
+            return true;
+        }
+        if (intent.getBooleanExtra(EXTRA_VIDEO_LINK, false)) {
+            new Thread(() -> {
+                String post = videoPost(link);
+                activity.runOnUiThread(() -> openVideo(activity, link, post));
+            }).start();
+            return true;
+        }
+        return false;
+    }
+
+    private static void openVideo(Activity activity, Uri link, String post) {
+        try {
+            Intent next = post != null
+                    ? new Intent(activity, DetailActivity.class).putExtra(DetailActivity.EXTRA_LINKID, post)
+                    : new Intent(activity, BrowserActivity.class).setData(link);
+            activity.startActivity(next);
+        } catch (Exception ex) {
+            Logger.printInfo(() -> "Could not open the video " + link, ex);
+        }
+        activity.finish();
+    }
+
+    /**
+     * The ID of the post a v.redd.it link was posted in, or null. Reddit's api/info finds the posts with that link:
+     * the post itself, and the crossposts of it, which have no video of their own.
+     */
+    private static String videoPost(Uri link) {
+        try {
+            // Built from the link's host: the e2e tests move a constant "https://v.redd.it/" to their fake Reddit.
+            String video = "https://" + link.getHost() + "/" + link.getPathSegments().get(0);
+            Map<String, String> params = new HashMap<>();
+            params.put("url", video);
+            params.put("raw_json", "1");
+            JSONArray children = new JSONObject(apiGet("api/info", params))
+                    .getJSONObject("data").getJSONArray("children");
+            String crosspostOf = null;
+            for (int index = 0; index < children.length(); index++) {
+                JSONObject post = children.getJSONObject(index).optJSONObject("data");
+                if (post == null) continue;
+                String parent = post.optString("crosspost_parent");
+                if (parent.isEmpty() || post.isNull("crosspost_parent")) {
+                    String id = post.optString("id");
+                    return id.isEmpty() ? null : id;
+                }
+                if (crosspostOf == null) crosspostOf = parent.startsWith("t3_") ? parent.substring(3) : parent;
+            }
+            if (crosspostOf == null) Logger.printInfo(() -> "Reddit knows no post with the video " + link);
+            return crosspostOf;
+        } catch (Exception ex) {
+            Logger.printInfo(() -> "Could not find the post of the video " + link, ex);
+            return null;
+        }
+    }
+
+    /**
+     * A GET to Reddit's API through the app's own request code, RedditApi.httpRequest. With a login, it calls
+     * oauth.reddit.com with the session's token, refreshed when needed, and the app's user agent. Reddit blocks other
+     * requests from apps.
+     */
+    private static String apiGet(String path, Map<String, String> params) throws Exception {
+        Object token = Class.forName("com.onelouder.baconreader.data.SessionManager")
+                .getMethod("getToken").invoke(null);
+        Class<?> requestMethod = Class.forName("com.onelouder.baconreader.RequestMethod");
+        Class<?> api = Class.forName("com.onelouder.baconreader.reddit.RedditApi");
+        Method httpRequest = api.getDeclaredMethod("httpRequest", Context.class, requestMethod, String.class,
+                Map.class, Class.forName("com.onelouder.baconreader.data.SessionToken"));
+        httpRequest.setAccessible(true);
+        // Without a login the app calls www.reddit.com, which needs the .json suffix.
+        if (token == null) path += ".json";
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        Object get = Enum.valueOf((Class<Enum>) requestMethod, "GET");
+        return (String) httpRequest.invoke(null, Utils.getContext(), get, path, params, token);
     }
 
     private static void open(Activity activity, Uri link, String target) {
