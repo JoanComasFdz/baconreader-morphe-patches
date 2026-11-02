@@ -1,3 +1,9 @@
+## [1.6.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.0-dev.1...v1.6.0-dev.2) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* open the comment reply screen for a private message from the inbox, which crashed ([c2d60e6](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/c2d60e68872b987824b3251a51f56cdb4bb9a39e))
+
 ## [1.6.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.5.1...v1.6.0-dev.1) (2026-11-02)
 
 ### ✨ New Features
