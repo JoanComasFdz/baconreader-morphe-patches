@@ -1,3 +1,9 @@
+## [1.6.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.5.1...v1.6.0-dev.1) (2026-11-02)
+
+### ✨ New Features
+
+* describe blurred thumbnails and the media loading state ([97db8a6](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/97db8a6fc78a6a2e29127b9b6bfbaae155bb145b))
+
 ## [1.5.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.5.0...v1.5.1) (2026-11-02)
 
 ### 🐛 Bug Fixes
