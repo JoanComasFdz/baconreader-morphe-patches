@@ -1,3 +1,9 @@
+## [1.5.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.5.0...v1.5.1) (2026-11-02)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** open Reddit links next to a post's title, which Fix Reddit links made do nothing ([b53f710](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/b53f710ea25e027169896dbb8b7758d77139e116))
+
 ## [1.5.1-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.5.0...v1.5.1-dev.1) (2026-11-02)
 
 ### 🐛 Bug Fixes
