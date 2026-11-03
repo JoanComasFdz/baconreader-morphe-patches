@@ -8,6 +8,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLa
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.util.smali.ExternalLabel
+import com.android.tools.smali.dexlib2.iface.instruction.TwoRegisterInstruction
 import io.github.joancomasfdz.patches.baconreader.misc.extension.EXTENSION_PACKAGE
 import io.github.joancomasfdz.patches.baconreader.misc.extension.sharedExtensionPatch
 import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER
@@ -19,7 +20,8 @@ private const val EXTENSION_CLASS_DESCRIPTOR = "$EXTENSION_PACKAGE/links/FixRedd
 // know in its browser. It predates Reddit's share links, /r/<sub>/s/<code>, which say what they open only through a
 // redirect. It also opens /comments/<post> and /gallery/<post> in its browser, and a post on a user's profile,
 // /user/<user>/comments/<post>, as the profile. A video's link, v.redd.it/<video>, opens in its media viewer, which
-// looks the post up through www.reddit.com/video/<video>, and Reddit refuses that.
+// looks the post up through www.reddit.com/video/<video>, and Reddit refuses that. It looks a gallery's post up
+// through www.reddit.com/<post>, which no longer redirects.
 @Suppress("unused")
 val fixRedditLinksPatch = bytecodePatch(
     name = "Fix Reddit links",
@@ -86,5 +88,34 @@ val fixRedditLinksPatch = bytecodePatch(
             0,
             "invoke-static { p1 }, $EXTENSION_CLASS_DESCRIPTOR->keepAppMedia(Ljava/lang/Object;)V",
         )
+
+        // With "Open links inside app" off, a link in a text opens in the browser, Reddit's too.
+        listOf(RedditSpannerLinkFingerprint, RedditSpannerRelativeLinkFingerprint).forEach { fingerprint ->
+            val method = fingerprint.method
+            val index = fingerprint.instructionMatches.first().index
+            val register = method.getInstruction<TwoRegisterInstruction>(index).registerA
+            method.addInstructions(
+                index + 1,
+                """
+                    invoke-static { v$register, p2 }, $EXTENSION_CLASS_DESCRIPTOR->opensInApp(ZLjava/lang/Object;)Z
+                    move-result v$register
+                """,
+            )
+        }
+
+        // The media viewer looks up a post it has only the address of through a redirect Reddit no longer sends.
+        RedditMediaHandlerLookupFingerprint.method.apply {
+            addInstructionsWithLabels(
+                0,
+                """
+                    invoke-static { p0 }, $EXTENSION_CLASS_DESCRIPTOR->mediaPost(Ljava/lang/Object;)Ljava/lang/Object;
+                    move-result-object v0
+                    if-eqz v0, :original
+                    check-cast v0, Lcom/onelouder/baconreader/reddit/Link;
+                    return-object v0
+                """,
+                ExternalLabel("original", getInstruction(0)),
+            )
+        }
     }
 }

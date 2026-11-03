@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
+import android.webkit.WebSettings;
 
 import com.onelouder.baconreader.BrowserActivity;
 import com.onelouder.baconreader.DetailActivity;
@@ -37,12 +38,16 @@ public final class FixRedditLinksPatch {
     /** Share links resolve on www.reddit.com whatever host the link names. */
     private static final String REDDIT = "https://www.reddit.com";
 
-    private static final String VIDEO_HOST = "v.redd.it";
+    private static final String MEDIA_LOOKUP = "com.onelouder.baconreader.reddit.RedditMediaHandler$2";
+    private static final String LINK = "com.onelouder.baconreader.reddit.Link";
 
     private static final String EXTRA_SHARE_LINK = "io.github.joancomasfdz.extension.baconreader.links.SHARE_LINK";
     private static final String EXTRA_VIDEO_LINK = "io.github.joancomasfdz.extension.baconreader.links.VIDEO_LINK";
 
     private static final int TIMEOUT_MS = 10_000;
+
+    /** v.redd.it/<video> to www.reddit.com/video/<video> to the post, with room for one more. */
+    private static final int MAX_REDIRECTS = 4;
 
     /**
      * The ID of a post's own gallery or Reddit video, the last segment of its address, which the app is opening in its
@@ -72,8 +77,9 @@ public final class FixRedditLinksPatch {
             if (keep != null && keep.equals(uri.getLastPathSegment())) return null;
             // v.redd.it/<video>: the app looks up its post through www.reddit.com/video/<video>, which Reddit refuses
             // (403).
-            if (VIDEO_HOST.equals(uri.getHost()) && uri.getPathSegments() != null
-                    && uri.getPathSegments().size() == 1) {
+            // Its own address, not one of its files (DASH_720.mp4, DASHPlaylist.mpd).
+            String video = uri.getLastPathSegment();
+            if (video != null && !video.isEmpty() && !video.contains(".") && isRedditVideo(url)) {
                 return new Intent(context, LinkDispatcher.class).setData(uri).putExtra(EXTRA_VIDEO_LINK, true);
             }
             if (!LinkProcessor.isReddit(url)) return null;
@@ -106,6 +112,12 @@ public final class FixRedditLinksPatch {
         }
     }
 
+    /** Whether the app takes the address for a Reddit video's (RedditVideo.isValid). */
+    private static boolean isRedditVideo(String url) throws ReflectiveOperationException {
+        return (boolean) Class.forName("com.onelouder.baconreader.reddit.RedditVideo")
+                .getMethod("isValid", String.class).invoke(null, url);
+    }
+
     private static Object field(Object processor, String name) throws ReflectiveOperationException {
         Field field = processor.getClass().getDeclaredField(name);
         field.setAccessible(true);
@@ -124,6 +136,29 @@ public final class FixRedditLinksPatch {
         intent.putExtra(DetailActivity.EXTRA_PARENTS, parents);
         if (comment != null && !comment.isEmpty()) intent.putExtra(DetailActivity.EXTRA_COMMENTID, comment);
         return intent;
+    }
+
+    /**
+     * Injected where the text of posts, comments and messages reads "Open links inside app"
+     * (RedditSpanner.internalBrowser) for a link: when it is off, the link opens in the browser. A Reddit link opens in
+     * the app whatever the setting: one to reddit.com, a video's on v.redd.it, or a relative one, /r/<sub> or
+     * /u/<user>. Returns whether the link opens in the app.
+     */
+    public static boolean opensInApp(boolean internalBrowser, Object element) {
+        if (internalBrowser || element == null) return internalBrowser;
+        try {
+            String href = (String) element.getClass().getMethod("getAttribute", String.class).invoke(element, "href");
+            if (href == null) return false;
+            href = href.replace("&amp;", "&");
+            if (href.startsWith("//")) href = "https:" + href;
+            if (href.startsWith("/")) return true;
+            String video = Uri.parse(href).getLastPathSegment();
+            return LinkProcessor.isReddit(href)
+                    || (video != null && !video.isEmpty() && !video.contains(".") && isRedditVideo(href));
+        } catch (Exception ex) {
+            Logger.printInfo(() -> "Could not read the link", ex);
+            return false;
+        }
     }
 
     /**
@@ -196,19 +231,31 @@ public final class FixRedditLinksPatch {
         }
         if (intent.getBooleanExtra(EXTRA_VIDEO_LINK, false)) {
             new Thread(() -> {
-                String post = videoPost(link);
-                activity.runOnUiThread(() -> openVideo(activity, link, post));
+                String target = videoRedirect(activity, link);
+                String post = target == null ? videoPost(link) : null;
+                activity.runOnUiThread(() -> openVideo(activity, link, target, post));
             }).start();
             return true;
         }
         return false;
     }
 
-    private static void openVideo(Activity activity, Uri link, String post) {
+    /**
+     * Opens a video's post: the one its redirect leads to ({@code target}), else the one Reddit's api/info found
+     * ({@code post}), else the video alone in the media viewer.
+     */
+    private static void openVideo(Activity activity, Uri link, String target, String post) {
         try {
-            Intent next = post != null
-                    ? new Intent(activity, DetailActivity.class).putExtra(DetailActivity.EXTRA_LINKID, post)
-                    : new Intent(activity, BrowserActivity.class).setData(link);
+            String address = link.toString();
+            while (address.endsWith("/")) address = address.substring(0, address.length() - 1);
+            Intent next = target != null ? new LinkProcessor(activity, target).getIntent() : null;
+            if (next == null && post != null) {
+                next = new Intent(activity, DetailActivity.class).putExtra(DetailActivity.EXTRA_LINKID, post);
+            }
+            if (next == null) {
+                next = new Intent(activity, BrowserActivity.class).setData(link)
+                        .putExtra("link", (android.os.Parcelable) videoLink(address));
+            }
             activity.startActivity(next);
         } catch (Exception ex) {
             Logger.printInfo(() -> "Could not open the video " + link, ex);
@@ -217,13 +264,50 @@ public final class FixRedditLinksPatch {
     }
 
     /**
+     * The post a v.redd.it link redirects to, or null. v.redd.it/<video> redirects to www.reddit.com/video/<video>,
+     * which redirects a browser to the post; Reddit refuses it (403) to clients it doesn't take for one. The redirects
+     * are followed as the app's own web view, whose user agent they get, up to the post's address.
+     */
+    private static String videoRedirect(Context context, Uri link) {
+        try {
+            URL url = new URL(link.toString());
+            String userAgent = WebSettings.getDefaultUserAgent(context);
+            for (int hop = 0; hop < MAX_REDIRECTS; hop++) {
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                try {
+                    connection.setInstanceFollowRedirects(false);
+                    connection.setConnectTimeout(TIMEOUT_MS);
+                    connection.setReadTimeout(TIMEOUT_MS);
+                    connection.setRequestProperty("User-Agent", userAgent);
+                    int status = connection.getResponseCode();
+                    String location = connection.getHeaderField("Location");
+                    if (status < 300 || status > 399 || location == null || location.isEmpty()) {
+                        URL at = url;
+                        Logger.printInfo(() -> "The video " + link + " answered " + status + " at " + at
+                                + " without leading to a post");
+                        return null;
+                    }
+                    url = new URL(url, location);
+                    if (url.getPath().contains("/comments/")) return url.toString();
+                } finally {
+                    connection.disconnect();
+                }
+            }
+        } catch (Exception ex) {
+            Logger.printInfo(() -> "Could not follow the video " + link, ex);
+        }
+        return null;
+    }
+
+    /**
      * The ID of the post a v.redd.it link was posted in, or null. Reddit's api/info finds the posts with that link:
      * the post itself, and the crossposts of it, which have no video of their own.
      */
     private static String videoPost(Uri link) {
         try {
-            // Built from the link's host: the e2e tests move a constant "https://v.redd.it/" to their fake Reddit.
-            String video = "https://" + link.getHost() + "/" + link.getPathSegments().get(0);
+            // The link as it is, without its query: the e2e tests' fake Reddit serves videos at another address.
+            String video = link.buildUpon().clearQuery().fragment(null).build().toString();
+            while (video.endsWith("/")) video = video.substring(0, video.length() - 1);
             Map<String, String> params = new HashMap<>();
             params.put("url", video);
             params.put("raw_json", "1");
@@ -246,6 +330,76 @@ public final class FixRedditLinksPatch {
             Logger.printInfo(() -> "Could not find the post of the video " + link, ex);
             return null;
         }
+    }
+
+    /**
+     * A post that carries only the video at {@code address}, v.redd.it/<video>, for the app's media viewer to play:
+     * v.redd.it serves its DASH and HLS playlists to anyone.
+     */
+    private static Object videoLink(String address) throws ReflectiveOperationException {
+        Object video = Class.forName("com.onelouder.baconreader.reddit.RedditVideo").getConstructor().newInstance();
+        video.getClass().getField("dashUrl").set(video, address + "/DASHPlaylist.mpd");
+        video.getClass().getField("hlsUrl").set(video, address + "/HLSPlaylist.m3u8");
+        video.getClass().getField("isGif").setBoolean(video, false);
+        Object media = Class.forName("com.onelouder.baconreader.reddit.Media").getConstructor().newInstance();
+        media.getClass().getField("redditVideo").set(media, video);
+        Object post = Class.forName(LINK).getConstructor().newInstance();
+        post.getClass().getField("url").set(post, address);
+        post.getClass().getField("title").set(post, address);
+        post.getClass().getField("media").set(post, media);
+        return post;
+    }
+
+    /**
+     * Injected at the start of the media viewer's lookup of a post it has only the address of,
+     * RedditMediaHandler$2.runTask: www.reddit.com/<post> for a gallery, www.reddit.com/video/<video> for a video. It
+     * expects a redirect to the post, which Reddit no longer sends for the first and refuses (403) for the second. A
+     * gallery's post is fetched through the app's API instead, and a video gets a post that carries it. Returns the
+     * post, or null to let the app look.
+     */
+    public static Object mediaPost(Object task) {
+        if (task == null) return null;
+        String url = null;
+        try {
+            Class<?> lookup = Class.forName(MEDIA_LOOKUP);
+            Field urlField = lookup.getDeclaredField("val$url");
+            urlField.setAccessible(true);
+            url = (String) urlField.get(task);
+            Field contextField = lookup.getDeclaredField("val$context");
+            contextField.setAccessible(true);
+            if (url == null || contextField.get(task) == null) return null;
+            List<String> segments = Uri.parse(url).getPathSegments();
+            if (segments == null) return null;
+            if (segments.size() == 2 && "video".equals(segments.get(0))) {
+                return videoLink("https://v.redd.it/" + segments.get(1));
+            }
+            if (segments.size() == 1) return fetchPost(task, segments.get(0));
+            return null;
+        } catch (Exception ex) {
+            String address = url;
+            Logger.printInfo(() -> "Could not look up the post of " + address, ex);
+            return null;
+        }
+    }
+
+    /** The post {@code id}, from the app's API, parsed as the lookup task parses a post page. */
+    private static Object fetchPost(Object task, String id) throws Exception {
+        Map<String, String> params = new HashMap<>();
+        params.put("limit", "1");
+        String page = apiGet("comments/" + id, params);
+        // The task's own TypeReference: a List of Listings, the post's and its comments'.
+        Class<?> typeReference = Class.forName(MEDIA_LOOKUP + "$1");
+        java.lang.reflect.Constructor<?> constructor = typeReference.getDeclaredConstructor(task.getClass());
+        constructor.setAccessible(true);
+        Object reference = constructor.newInstance(task);
+        List<?> listings = (List<?>) Class.forName("com.onelouder.baconreader.utils.JacksonMapper")
+                .getMethod("parseJson", String.class, typeReference.getSuperclass())
+                .invoke(null, page, reference);
+        if (listings == null || listings.isEmpty() || listings.get(0) == null) return null;
+        Object listing = listings.get(0);
+        List<?> children = (List<?>) listing.getClass().getMethod("getChildren", Class.class)
+                .invoke(listing, Class.forName(LINK));
+        return children == null || children.isEmpty() ? null : children.get(0);
     }
 
     /**
