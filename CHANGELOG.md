@@ -1,3 +1,9 @@
+## [1.6.1-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.0...v1.6.1-dev.1) (2026-11-03)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** show the still images of Imgur albums, which Imgur's API sends with an empty mp4 ([3704021](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/3704021dac2647bb19dbcd9fe00cce2b1c4f65f4))
+
 ## [1.6.0](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.5.1...v1.6.0) (2026-11-03)
 
 ### 🐛 Bug Fixes
