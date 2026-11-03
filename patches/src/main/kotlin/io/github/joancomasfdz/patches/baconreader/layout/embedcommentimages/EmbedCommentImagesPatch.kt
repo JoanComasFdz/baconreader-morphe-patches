@@ -25,7 +25,8 @@ private const val EXTENSION_CLASS_DESCRIPTOR =
 
 /**
  * The views the images and videos are shown in are made in code: these ids, added to the app's ids, name them, a GIF's
- * apart from an image's, and the full-screen viewer, so the e2e tests find them. The extension finds them by name.
+ * apart from an image's, the full-screen viewer, and an Imgur album and its "1 / 3" counter, so the e2e tests find them.
+ * The extension finds them by name.
  */
 private val commentImageIdsResourcePatch = resourcePatch {
     execute {
@@ -36,6 +37,8 @@ private val commentImageIdsResourcePatch = resourcePatch {
                 "baconreader_patches_comment_gif",
                 "baconreader_patches_comment_video",
                 "baconreader_patches_image_viewer",
+                "baconreader_patches_comment_album",
+                "baconreader_patches_album_counter",
             ).forEach { name ->
                 resources.appendChild(
                     ids.createElement("item").apply {
