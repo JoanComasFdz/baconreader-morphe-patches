@@ -28,3 +28,19 @@ internal object ClickableLinkSpanOnClickFingerprint : Fingerprint(
     returnType = "V",
     parameters = listOf("Landroid/view/View;"),
 )
+
+/** The intent that opens a post's media, from its thumbnail: LinkProcessor's intent, for a Reddit link. */
+internal object LinkProcessorGetBrowserIntentFingerprint : Fingerprint(
+    definingClass = "Lcom/onelouder/baconreader/LinkProcessor;",
+    name = "getBrowserIntent",
+    returnType = "Landroid/content/Intent;",
+    parameters = listOf("Landroid/content/Context;", "Lcom/onelouder/baconreader/reddit/Link;"),
+)
+
+/** Opens the media of the post shown, from the thumbnail in its header, through LinkProcessor's intent. */
+internal object DetailLinkHelperOnOpenFingerprint : Fingerprint(
+    definingClass = "Lcom/onelouder/baconreader/adapters/DetailLinkFragment\$DetailLinkHelper;",
+    name = "onOpen",
+    returnType = "V",
+    parameters = listOf("Lcom/onelouder/baconreader/reddit/Link;"),
+)

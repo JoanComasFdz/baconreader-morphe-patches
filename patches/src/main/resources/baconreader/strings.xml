@@ -127,6 +127,7 @@
     <string name="revanced_markdown_rule">Horizontal line</string>
     <string name="revanced_markdown_counter">%1$s / %2$s</string>
     <string name="revanced_markdown_counter_min">%1$s / %2$s (min. %3$s)</string>
+    <string name="revanced_markdown_counter_description">Character count</string>
     <string name="revanced_markdown_counter_not_allowed">No text in r/%s</string>
     <string name="revanced_comment_search_hint">Search comments</string>
     <string name="revanced_comment_search_all">SEARCH ALL</string>
