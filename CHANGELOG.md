@@ -1,3 +1,11 @@
+## [1.6.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.0-dev.2...v1.6.0-dev.3) (2026-11-03)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** Fix Reddit links opens a post's own gallery or video in the media viewer, and v.redd.it links in the app ([cf7d244](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/cf7d244ae6a444fc7bd0c4f41acfd40374292fe5))
+* **baconreader:** Improve post media loading shows its red bar when a long image fails ([34fe90d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/34fe90d1155a1a9e6b57558ea38b4d3b081cc1c3))
+* **baconreader:** Markdown editor describes its character counter ([bc0789b](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/bc0789bc1605b8b1f529a1e7db2ef600660501e5))
+
 ## [1.6.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.0-dev.1...v1.6.0-dev.2) (2026-11-02)
 
 ### 🐛 Bug Fixes
