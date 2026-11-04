@@ -950,6 +950,22 @@ public final class EmbedCommentImagesPatch {
     }
 
     /**
+     * Called right after card mode inflates a row of the post's text. The row is the TextView alone, so it is put in a
+     * vertical LinearLayout, where the images go under it. The column keeps the row's layout params; the text fills
+     * its width.
+     */
+    public static View columnFor(View row) {
+        if (!(row instanceof TextView) || row.getParent() != null) return row;
+        LinearLayout column = new LinearLayout(row.getContext());
+        column.setOrientation(LinearLayout.VERTICAL);
+        ViewGroup.LayoutParams params = row.getLayoutParams();
+        if (params != null) column.setLayoutParams(params);
+        column.addView(row, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        return column;
+    }
+
+    /**
      * A slot under {@code textView}, {@code width} wide, sits in the text's column. A comment's
      * text is inset by its container's padding, which the slot shares; a post's text by its own
      * margins (24 dp), which the slot copies, or it runs from the screen's edge to the other. A

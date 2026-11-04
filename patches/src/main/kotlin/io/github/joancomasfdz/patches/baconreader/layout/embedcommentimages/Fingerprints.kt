@@ -30,7 +30,7 @@ internal object DetailLinkFragmentUpdateSelftextFingerprint : Fingerprint(
     filters = listOf(setText()),
 )
 
-/** In card mode, the post text is shown by this list adapter, one paragraph per row. */
+/** In card mode, the post text is shown by this list adapter, in rows of about 1000 characters. */
 internal object SelftextAdapterGetViewFingerprint : Fingerprint(
     definingClass = "Lcom/onelouder/baconreader/adapters/SelftextAdapter;",
     name = "getView",

@@ -6,12 +6,18 @@ package io.github.joancomasfdz.patches.baconreader.layout.embedcommentimages
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.morphe.patcher.patch.resourcePatch
 import app.morphe.patcher.util.smali.ExternalLabel
+import app.morphe.util.getReference
+import app.morphe.util.indexOfFirstInstructionOrThrow
+import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import io.github.joancomasfdz.patches.baconreader.fix.imgur.fixImgurApiPatch
 import io.github.joancomasfdz.patches.baconreader.misc.extension.EXTENSION_PACKAGE
 import io.github.joancomasfdz.patches.baconreader.misc.extension.sharedExtensionPatch
@@ -96,9 +102,24 @@ val embedCommentImagesPatch = bytecodePatch(
         )
 
         DetailLinkFragmentUpdateSelftextFingerprint.embedAfterSetText()
-        // Card mode shows the post text in a list, one TextView per row: YouTube titles and thumbnails are
-        // drawn in the text, but there is no room for images under it, so they stay links.
-        SelftextAdapterGetViewFingerprint.embedAfterSetText()
+        // Card mode shows the post text in a list whose rows are a TextView alone, so each row is put in a
+        // column where its images go under the text. The column goes in after the call above, which finds
+        // setText by its index in the unchanged method.
+        SelftextAdapterGetViewFingerprint.embedAfterSetText().apply {
+            val inflateIndex = indexOfFirstInstructionOrThrow {
+                opcode == Opcode.INVOKE_VIRTUAL && getReference<MethodReference>()?.let {
+                    it.definingClass == "Landroid/view/LayoutInflater;" && it.name == "inflate"
+                } == true
+            }
+            val rowRegister = getInstruction<OneRegisterInstruction>(inflateIndex + 1).registerA
+            addInstructions(
+                inflateIndex + 2,
+                """
+                    invoke-static { v$rowRegister }, $EXTENSION_CLASS_DESCRIPTOR->columnFor(Landroid/view/View;)Landroid/view/View;
+                    move-result-object v$rowRegister
+                """,
+            )
+        }
         // Image, GIF and video posts show their text under the media.
         PostMediaHandlerConstructorFingerprint.embedAfterSetText()
     }
