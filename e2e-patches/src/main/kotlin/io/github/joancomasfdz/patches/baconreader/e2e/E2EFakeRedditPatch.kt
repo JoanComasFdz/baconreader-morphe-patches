@@ -44,7 +44,7 @@ private val REDDIT_ORIGINS = listOf(
 // link to as Reddit's do. Moved, "Fix Reddit links" would not take them for Reddit links, as it does on Reddit.
 private const val REDDIT_GALLERY = "https://www.reddit.com/gallery"
 
-private val MEDIA_HOSTS = listOf("i.redd.it", "preview.redd.it", "v.redd.it", "i.imgur.com")
+private val MEDIA_HOSTS = listOf("i.redd.it", "preview.redd.it", "v.redd.it", "i.imgur.com", "i.ytimg.com")
 
 // Imgur's API, which "Fix Imgur API" calls instead of BaconReader's RapidAPI proxy.
 private const val IMGUR_API = "https://api.imgur.com/"
@@ -55,13 +55,18 @@ private const val REDGIFS_API_HOST = "api.redgifs.com"
 private const val REDGIFS_OAUTH_PATH = "/v2/oauth/client"
 private const val REDGIFS_PATH = "/_redgifs"
 
+// YouTube's oEmbed endpoint, where "Embed comment images" asks for a video's title. Only this
+// address moves: comments and posts link YouTube at its own, which the patches recognize.
+private const val YOUTUBE_OEMBED = "https://www.youtube.com/oembed"
+
 // Each full URL prefix and what it becomes; paths after it are kept.
 private fun redditPrefixes(baseUrl: String): List<Pair<String, String>> =
     REDDIT_ORIGINS.map { it to baseUrl } +
         MEDIA_HOSTS.map { "https://$it/" to "$baseUrl/_media/$it/" } +
         ("https://cf-baconreader.onelouder.com/" to "$baseUrl/_onelouder/") +
         (IMGUR_API to "$baseUrl/_imgur/") +
-        (REDGIFS_API to "$baseUrl$REDGIFS_PATH/")
+        (REDGIFS_API to "$baseUrl$REDGIFS_PATH/") +
+        (YOUTUBE_OEMBED to "$baseUrl/_youtube/oembed")
 
 // Where the fake Reddit serves what v.redd.it serves, and its media.
 private const val MOVED_VIDEO_PATH = "/_media/v.redd.it/"
@@ -85,9 +90,9 @@ internal object SaveImageGetVideoFilenameFingerprint : Fingerprint(
 
 // Reddit detects automation, rate-limits logins and changes its content, so the e2e tests talk to
 // a fake Reddit server in the test process instead, which the phone reaches through
-// `adb reverse`. It answers the third-party services the patches fetch from too (Imgur, RedGIFs). Only
-// full URL prefixes move: BaconReader recognizes Reddit and Imgur links in posts by bare domains
-// (reddit.com, v.redd.it, imgur.com), and those stay.
+// `adb reverse`. It answers the third-party services the patches fetch from too (Imgur, RedGIFs,
+// YouTube). Only full URL prefixes move: BaconReader recognizes Reddit and Imgur links in posts by
+// bare domains (reddit.com, v.redd.it, imgur.com), and those stay.
 @Suppress("unused")
 val e2eFakeRedditPatch = bytecodePatch(
     name = "E2E fake Reddit",
