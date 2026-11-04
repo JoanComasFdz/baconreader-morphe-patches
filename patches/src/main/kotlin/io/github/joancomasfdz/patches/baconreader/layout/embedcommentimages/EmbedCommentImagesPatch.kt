@@ -96,13 +96,26 @@ val embedCommentImagesPatch = bytecodePatch(
             )
         }
 
-        // The comment's markdown, to find the real emote images (p1 is the Comment).
-        CommentHolderUpdateViewFingerprint.embedAfterSetText().addInstruction(
+        // The comment's markdown, to find the real emote images (p1 is the Comment). A comment's text is cut at
+        // its bare media links, which its media replace.
+        CommentHolderUpdateViewFingerprint.embedAfterSetText("embedComment").addInstruction(
             0,
             "invoke-static { p1 }, $EXTENSION_CLASS_DESCRIPTOR->setCommentSource(Ljava/lang/Object;)V",
         )
 
-        // A post's text is cut at its bare media links, which its media replace.
+        // The copies of the comment body that show the text after a media link get its touch listener too.
+        CommentHolderConstructorFingerprint.method.apply {
+            val setTouchListenerIndex = CommentHolderConstructorFingerprint.instructionMatches[1].index
+            val setTouchListener = getInstruction<FiveRegisterInstruction>(setTouchListenerIndex)
+            addInstruction(
+                setTouchListenerIndex + 1,
+                "invoke-static { v${setTouchListener.registerC}, v${setTouchListener.registerD} }, " +
+                    "$EXTENSION_CLASS_DESCRIPTOR->rememberTouch(Landroid/view/View;Landroid/view/View\$OnTouchListener;)V",
+            )
+        }
+
+        // A post's text is cut at its bare media links, which its media replace, and its images start at full
+        // width.
         DetailLinkFragmentUpdateSelftextFingerprint.embedAfterSetText("embedPostText")
         // Card mode shows the post text in a list whose rows are a TextView alone, so each row is put in a
         // column where its images go under the text. The column goes in after the call above, which finds

@@ -145,13 +145,28 @@ public final class EmbedCommentImagesPatch {
     }
 
     /**
-     * Injected right after the app sets the text of a comment (CommentHolder.updateView)
-     * or of a post (DetailLinkFragment.updateSelftext). Images are inserted right after
-     * the TextView, which must be inside a vertical LinearLayout.
+     * Injected right after the app sets the text of an image, GIF or video post, under its media
+     * (PostMediaHandler). Images are inserted right after the TextView, which must be inside a vertical
+     * LinearLayout, and start at full width.
      */
     public static void embed(TextView textView) {
+        pendingMarkdown = null;
+        markPostText(textView);
+        embedText(textView, Collections.<String>emptyList());
+    }
+
+    /**
+     * Injected right after the app sets the text of a comment (CommentHolder.updateView), after setCommentSource.
+     * The media of its bare links show where the links are.
+     */
+    public static void embedComment(TextView textView) {
         String markdown = pendingMarkdown;
         pendingMarkdown = null;
+        embedInPlace(textView, markdown);
+    }
+
+    /** Embeds the media of the text, with the ids of its emotes, in order. */
+    private static void embedText(TextView textView, List<String> emoteIds) {
         // The app shows the comment again on every change (a vote, a collapsed reply...). Its images are
         // kept when they did not change: new ones would start small and make the list jump.
         List<View> previousSlots = SLOTS.remove(textView);
@@ -257,7 +272,6 @@ public final class EmbedCommentImagesPatch {
                 }
             }
 
-            List<String> emoteIds = emoteIds(markdown);
             if (emoteIds.size() == emoteUrls.size()) {
                 for (int i = 0; i < emoteUrls.size(); i++) {
                     emoteUrls.set(i, emoteUrl(emoteIds.get(i), emoteUrls.get(i)));
@@ -294,7 +308,7 @@ public final class EmbedCommentImagesPatch {
             List<SocialPosts.Pending> pendingPosts = SocialPosts.prepare(textView, builder, postLinks, postPhotosOn,
                     postImages);
             List<YoutubeTitles.Thumbnail> thumbnails = YoutubeTitles.insertThumbnails(textView, builder, thumbnailLinks,
-                    Settings.IMAGES_FULL_WIDTH.get());
+                    fullWidthFor(textView));
             trimWhitespace(builder);
 
             if (builder.length() == 0) {
@@ -333,7 +347,7 @@ public final class EmbedCommentImagesPatch {
                 parent.addView(slot, index++);
                 slots.add(slot);
             }
-            boolean fullWidth = Settings.IMAGES_FULL_WIDTH.get();
+            boolean fullWidth = fullWidthFor(textView);
             int maxHeight = (int) (textView.getResources().getDisplayMetrics().heightPixels * EXPANDED_MAX_SCREEN_HEIGHT);
             boolean loadPreviews = !(Settings.IMAGES_WIFI_ONLY.get() && isMetered(context));
             for (String videoId : videoIds) {
@@ -352,17 +366,25 @@ public final class EmbedCommentImagesPatch {
     }
 
     /**
-     * The views put in a post text's column in place of its bare media links: each link's media, then a copy of the
+     * The views put in a text's column in place of its bare media links: each link's media, then a copy of the
      * TextView with the text up to the next link. Only used on the main thread.
      */
     private static final Map<TextView, List<View>> IN_PLACE_VIEWS = new WeakHashMap<>();
+    /** What the views in place of a text's links show, to keep them when the same text is shown again. */
+    private static final Map<TextView, String> IN_PLACE_KEYS = new WeakHashMap<>();
+    /** The TextView each copy shows the rest of. */
+    private static final Map<TextView, TextView> COPY_SOURCES = new WeakHashMap<>();
+    /** The texts of posts, and their copies: their images start at full width. */
+    private static final Map<TextView, Boolean> POST_TEXTS = new WeakHashMap<>();
+    /** The touch listener the app gives each comment's TextView, for the TextView's copies. */
+    private static final Map<View, View.OnTouchListener> TOUCH_LISTENERS = new WeakHashMap<>();
 
     /** Makes the media that replaces a bare link, under the given TextView. */
     private interface SlotMaker {
         View make(TextView textView) throws Exception;
     }
 
-    /** A bare link to media in a post's text: where it is, and the media that replaces it. */
+    /** A bare link to media in a text: where it is, and the media that replaces it. */
     private static final class Anchor {
         final int start;
         final int end;
@@ -378,48 +400,123 @@ public final class EmbedCommentImagesPatch {
     /**
      * Injected right after the app sets the text of a text post, in its detail view
      * (DetailLinkFragment.updateSelftext) and in card mode (SelftextAdapter.getView). The media of its bare links
-     * show where the links are: the text is cut at each link, the part before the first one stays in the TextView,
-     * and each link's media goes under it, followed by the text up to the next link in a copy of the TextView.
+     * show where the links are, and its images start at full width.
      */
     public static void embedPostText(TextView textView) {
-        removeInPlace(textView);
+        pendingMarkdown = null;
+        markPostText(textView);
+        embedInPlace(textView, null);
+    }
+
+    /** Injected right after CommentHolder gives the comment body its touch listener, for the body's copies. */
+    public static void rememberTouch(View view, View.OnTouchListener listener) {
+        if (listener == null) TOUCH_LISTENERS.remove(view);
+        else TOUCH_LISTENERS.put(view, listener);
+    }
+
+    static void markPostText(TextView textView) {
+        POST_TEXTS.put(textView, Boolean.TRUE);
+    }
+
+    /** Whether the images under the TextView start at full width: always in posts, by the setting in comments. */
+    static boolean fullWidthFor(TextView textView) {
+        return POST_TEXTS.containsKey(textView) || Settings.IMAGES_FULL_WIDTH.get();
+    }
+
+    /**
+     * Shows the media of the bare links of a comment's or post's text where the links are: the text is cut at each
+     * link, the part before the first one stays in the TextView, and each link's media goes under it, followed by
+     * the text up to the next link in a copy of the TextView.
+     */
+    private static void embedInPlace(TextView textView, String markdown) {
         try {
             CharSequence full = fullText(textView);
             List<Anchor> anchors = full instanceof Spanned && !isExpandable(textView)
                     ? anchors(textView, (Spanned) full) : Collections.<Anchor>emptyList();
             if (anchors.isEmpty()) {
-                embed(textView);
+                removeInPlace(textView);
+                embedText(textView, emoteIds(markdown));
                 return;
             }
             Spanned text = (Spanned) full;
             LinearLayout parent = (LinearLayout) textView.getParent();
-            textView.setText(piece(text, 0, anchors.get(0).start), TextView.BufferType.SPANNABLE);
-            embed(textView);
+            List<String> ids = emoteIds(markdown);
+            List<SpannableStringBuilder> pieces = new ArrayList<>();
+            pieces.add(piece(text, 0, anchors.get(0).start));
+            for (int i = 0; i < anchors.size(); i++) {
+                int end = i + 1 < anchors.size() ? anchors.get(i + 1).start : text.length();
+                pieces.add(piece(text, anchors.get(i).end, end));
+            }
+            // Each piece gets the ids of its own emotes, when they add up.
+            int total = 0;
+            int[] counts = new int[pieces.size()];
+            for (int i = 0; i < pieces.size(); i++) {
+                counts[i] = emoteCount(pieces.get(i));
+                total += counts[i];
+            }
+            List<List<String>> pieceIds = new ArrayList<>();
+            int from = 0;
+            for (int count : counts) {
+                pieceIds.add(total == ids.size()
+                        ? new ArrayList<>(ids.subList(from, from + count)) : Collections.<String>emptyList());
+                from += count;
+            }
+
+            textView.setText(pieces.get(0), TextView.BufferType.SPANNABLE);
+            embedText(textView, pieceIds.get(0));
             if (textView.getText().length() == 0) textView.setVisibility(View.GONE);
+
+            // The app shows a comment again on every change (a vote, a collapsed reply...): the media and the
+            // copies are kept when the text did not change, or the list would jump.
+            StringBuilder key = new StringBuilder(text.toString()).append('\u0000');
+            for (Anchor anchor : anchors) key.append(anchor.start).append(',');
+            List<View> previous = IN_PLACE_VIEWS.get(textView);
+            if (key.toString().equals(IN_PLACE_KEYS.get(textView)) && previous != null) {
+                boolean attached = true;
+                for (View view : previous) {
+                    if (view.getParent() != parent || REMOVED_SLOTS.containsKey(view)) attached = false;
+                }
+                if (attached) return;
+            }
+            removeInPlace(textView);
 
             List<View> added = new ArrayList<>();
             List<View> textSlots = SLOTS.get(textView);
             int index = parent.indexOfChild(textView) + 1 + (textSlots != null ? textSlots.size() : 0);
             for (int i = 0; i < anchors.size(); i++) {
-                Anchor anchor = anchors.get(i);
-                View slot = anchor.slot.make(textView);
+                View slot = anchors.get(i).slot.make(textView);
                 parent.addView(slot, index++);
                 added.add(slot);
-                int end = i + 1 < anchors.size() ? anchors.get(i + 1).start : text.length();
-                SpannableStringBuilder rest = piece(text, anchor.end, end);
+                SpannableStringBuilder rest = pieces.get(i + 1);
                 if (rest.length() == 0) continue;
                 TextView copy = copyOf(textView);
                 copy.setText(rest, TextView.BufferType.SPANNABLE);
                 parent.addView(copy, index++);
                 added.add(copy);
-                embed(copy);
+                embedText(copy, pieceIds.get(i + 1));
                 List<View> copySlots = SLOTS.get(copy);
                 index += copySlots != null ? copySlots.size() : 0;
             }
             IN_PLACE_VIEWS.put(textView, added);
+            IN_PLACE_KEYS.put(textView, key.toString());
         } catch (Throwable t) {
-            ErrorDialog.printException(() -> "embedPostText failed", t);
+            ErrorDialog.printException(() -> "embedInPlace failed", t);
         }
+    }
+
+    /** How many emotes, small <img> tags outside links, the text has. */
+    private static int emoteCount(Spanned text) {
+        URLSpan[] links = text.getSpans(0, text.length(), URLSpan.class);
+        Matcher img = IMG_TAG.matcher(text);
+        int count = 0;
+        while (img.find()) {
+            boolean inLink = false;
+            for (URLSpan link : links) {
+                if (img.start() >= text.getSpanStart(link) && img.start() < text.getSpanEnd(link)) inLink = true;
+            }
+            if (!inLink && isEmote(width(img.group()), height(img.group()))) count++;
+        }
+        return count;
     }
 
     /** The bare links of the text whose media are shown, in the order of the text, as embed finds them. */
@@ -455,7 +552,7 @@ public final class EmbedCommentImagesPatch {
             if (videoId != null) {
                 final boolean loadPreviews = !(Settings.IMAGES_WIFI_ONLY.get() && isMetered(textView.getContext()));
                 result.add(new Anchor(start, end, view -> CommentVideo.createSlot(view, videoId,
-                        Settings.IMAGES_FULL_WIDTH.get(), dp(view, IMAGE_SIZE_DP),
+                        fullWidthFor(view), dp(view, IMAGE_SIZE_DP),
                         (int) (view.getResources().getDisplayMetrics().heightPixels * EXPANDED_MAX_SCREEN_HEIGHT),
                         loadPreviews)));
                 continue;
@@ -489,7 +586,7 @@ public final class EmbedCommentImagesPatch {
         return builder;
     }
 
-    /** A TextView that shows text like the given one does, in its column. */
+    /** A TextView that shows text like the given one does, in its column, and reacts to touches like it. */
     private static TextView copyOf(TextView textView) {
         Context context = textView.getContext();
         TextView copy;
@@ -508,6 +605,9 @@ public final class EmbedCommentImagesPatch {
         copy.setPadding(textView.getPaddingLeft(), textView.getPaddingTop(), textView.getPaddingRight(),
                 textView.getPaddingBottom());
         copy.setMovementMethod(textView.getMovementMethod());
+        copy.setOnTouchListener(TOUCH_LISTENERS.get(textView));
+        COPY_SOURCES.put(copy, textView);
+        if (POST_TEXTS.containsKey(textView)) POST_TEXTS.put(copy, Boolean.TRUE);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.topMargin = dp(textView, 8);
@@ -520,8 +620,9 @@ public final class EmbedCommentImagesPatch {
         return copy;
     }
 
-    /** Removes the media and the copies embedPostText put in the column of the TextView. */
+    /** Removes the media and the copies embedInPlace put in the column of the TextView. */
     private static void removeInPlace(TextView textView) {
+        IN_PLACE_KEYS.remove(textView);
         List<View> old = IN_PLACE_VIEWS.remove(textView);
         if (old == null) return;
         for (View view : old) {
@@ -657,7 +758,7 @@ public final class EmbedCommentImagesPatch {
         slot.addView(progress.root, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM));
 
-        final boolean[] expanded = {isExpanded(context, image)};
+        final boolean[] expanded = {isExpanded(textView, image)};
         final boolean[] fullLoaded = {false};
         final boolean[] loadStarted = {false};
         final Runnable applySize = new Runnable() {
@@ -760,13 +861,9 @@ public final class EmbedCommentImagesPatch {
         if (expanded != null && !SIZE_OVERRIDES.containsKey(to.previewUrl)) SIZE_OVERRIDES.put(to.previewUrl, expanded);
     }
 
-    static boolean isFullWidthDefault() {
-        return Settings.IMAGES_FULL_WIDTH.get();
-    }
-
-    static boolean isExpanded(Context context, ImageRef image) {
+    static boolean isExpanded(TextView textView, ImageRef image) {
         Boolean override = SIZE_OVERRIDES.get(image.previewUrl);
-        return override != null ? override : Settings.IMAGES_FULL_WIDTH.get();
+        return override != null ? override : fullWidthFor(textView);
     }
 
     /**
@@ -1165,8 +1262,9 @@ public final class EmbedCommentImagesPatch {
         if (textView.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams text =
                     (ViewGroup.MarginLayoutParams) textView.getLayoutParams();
+            TextView source = COPY_SOURCES.containsKey(textView) ? COPY_SOURCES.get(textView) : textView;
             boolean comment =
-                    textView.getId() == ResourceUtils.getIdentifier(ResourceType.ID, "commentBody");
+                    source.getId() == ResourceUtils.getIdentifier(ResourceType.ID, "commentBody");
             params.leftMargin = text.leftMargin;
             params.rightMargin = comment ? 0 : text.rightMargin;
         }

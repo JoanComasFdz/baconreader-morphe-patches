@@ -5,6 +5,8 @@
 package io.github.joancomasfdz.patches.baconreader.layout.embedcommentimages
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.InstructionLocation.MatchAfterWithin
+import app.morphe.patcher.fieldAccess
 import app.morphe.patcher.methodCall
 import com.android.tools.smali.dexlib2.Opcode
 
@@ -14,6 +16,16 @@ internal object HandleGifLinkInCommentFingerprint : Fingerprint(
     definingClass = COMMENT_HOLDER_CLASS_DESCRIPTOR,
     name = "handleGifLinkInComment",
     returnType = "V",
+)
+
+/** Sets the touch listener of the comment body: this.commentBody, then setOnTouchListener. */
+internal object CommentHolderConstructorFingerprint : Fingerprint(
+    definingClass = COMMENT_HOLDER_CLASS_DESCRIPTOR,
+    name = "<init>",
+    filters = listOf(
+        fieldAccess(name = "commentBody", opcode = Opcode.IGET_OBJECT),
+        methodCall(name = "setOnTouchListener", opcode = Opcode.INVOKE_VIRTUAL, location = MatchAfterWithin(4)),
+    ),
 )
 
 internal object CommentHolderUpdateViewFingerprint : Fingerprint(
