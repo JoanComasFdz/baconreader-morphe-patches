@@ -1,3 +1,14 @@
+## [1.7.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.1-dev.2...v1.7.0-dev.1) (2026-11-04)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** Embed comment images shows the images of a post's text in card mode ([8743b80](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/8743b80b2952641f548d688cd5823194d7cafb91))
+
+### ✨ New Features
+
+* **baconreader:** Embed comment images shows the media of a comment's bare links where the links are, and a post's images at full width ([67aa3d5](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/67aa3d5a2c61605345d48c71e61fe85d7dfc9893))
+* **baconreader:** Embed comment images shows the media of a post's bare links where the links are ([90d8a10](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/90d8a10ee0c0aea3b12d017aeae853d8fd1c0354))
+
 ## [1.6.1-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.1-dev.1...v1.6.1-dev.2) (2026-11-04)
 
 ### 🐛 Bug Fixes
