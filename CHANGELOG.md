@@ -1,3 +1,9 @@
+## [1.7.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0-dev.1...v1.7.0-dev.2) (2026-11-04)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** show the first photo of a Bluesky gallery post ([c357f68](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/c357f68de9cc51b217d279602a174d2cc45f1206))
+
 ## [1.7.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.1-dev.2...v1.7.0-dev.1) (2026-11-04)
 
 ### 🐛 Bug Fixes
