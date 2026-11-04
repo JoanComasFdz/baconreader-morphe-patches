@@ -27,7 +27,7 @@ Errors of the patches show in a dialog over the current screen, with the details
 | Section | Setting | Key | Default |
 |---|---|---|---|
 | Images and videos | Show images | `revanced_baconreader_show_images` | On |
-| Images and videos | Full width by default | `revanced_baconreader_images_full_width` | Off. Needs Show images |
+| Images and videos | Full width by default | `revanced_baconreader_images_full_width` | Off. Needs Show images. Comments only: images in posts always start at full width |
 | Images and videos | Long press to download | `revanced_baconreader_images_long_press_download` | On. Needs Show images |
 | Images and videos | Load images only on Wi-Fi | `revanced_baconreader_images_wifi_only` | Off. Needs Show images |
 | Images and videos | Play videos in comments | `revanced_baconreader_show_videos` | On |

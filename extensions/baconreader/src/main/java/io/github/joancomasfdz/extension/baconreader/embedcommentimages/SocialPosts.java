@@ -353,7 +353,7 @@ final class SocialPosts {
 
     /** The photo's size in the text: the width of a YouTube thumbnail, narrower when the photo is tall. */
     private static int[] imageSize(TextView textView, int width, int height) {
-        int baseWidth = EmbedCommentImagesPatch.isFullWidthDefault() ? contentWidth(textView) : dp(textView, IMAGE_WIDTH_DP);
+        int baseWidth = EmbedCommentImagesPatch.fullWidthFor(textView) ? contentWidth(textView) : dp(textView, IMAGE_WIDTH_DP);
         float ratio = width > 0 && height > 0 ? (float) height / width : 9f / 16f;
         int w = baseWidth;
         int h = Math.round(w * ratio);
