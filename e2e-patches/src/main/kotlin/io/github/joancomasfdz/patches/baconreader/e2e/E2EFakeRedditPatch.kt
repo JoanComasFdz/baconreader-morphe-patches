@@ -49,12 +49,19 @@ private val MEDIA_HOSTS = listOf("i.redd.it", "preview.redd.it", "v.redd.it", "i
 // Imgur's API, which "Fix Imgur API" calls instead of BaconReader's RapidAPI proxy.
 private const val IMGUR_API = "https://api.imgur.com/"
 
+// RedGIFs' API, which BaconReader calls with the temporary tokens "Fix Redgifs API" fetches.
+private const val REDGIFS_API = "https://api.redgifs.com/"
+private const val REDGIFS_API_HOST = "api.redgifs.com"
+private const val REDGIFS_OAUTH_PATH = "/v2/oauth/client"
+private const val REDGIFS_PATH = "/_redgifs"
+
 // Each full URL prefix and what it becomes; paths after it are kept.
 private fun redditPrefixes(baseUrl: String): List<Pair<String, String>> =
     REDDIT_ORIGINS.map { it to baseUrl } +
         MEDIA_HOSTS.map { "https://$it/" to "$baseUrl/_media/$it/" } +
         ("https://cf-baconreader.onelouder.com/" to "$baseUrl/_onelouder/") +
-        (IMGUR_API to "$baseUrl/_imgur/")
+        (IMGUR_API to "$baseUrl/_imgur/") +
+        (REDGIFS_API to "$baseUrl$REDGIFS_PATH/")
 
 // Where the fake Reddit serves what v.redd.it serves, and its media.
 private const val MOVED_VIDEO_PATH = "/_media/v.redd.it/"
@@ -78,7 +85,7 @@ internal object SaveImageGetVideoFilenameFingerprint : Fingerprint(
 
 // Reddit detects automation, rate-limits logins and changes its content, so the e2e tests talk to
 // a fake Reddit server in the test process instead, which the phone reaches through
-// `adb reverse`. It answers the third-party services the patches fetch from too (Imgur). Only
+// `adb reverse`. It answers the third-party services the patches fetch from too (Imgur, RedGIFs). Only
 // full URL prefixes move: BaconReader recognizes Reddit and Imgur links in posts by bare domains
 // (reddit.com, v.redd.it, imgur.com), and those stay.
 @Suppress("unused")
@@ -144,7 +151,8 @@ val e2eFakeRedditPatch = bytecodePatch(
     // www.reddit.com) and the extensions merged by later patches come after this one. Finalize
     // blocks run once every patch has executed.
     finalize {
-        val prefixes = redditPrefixes(baseUrlOption.value!!.trimEnd('/'))
+        val baseUrl = baseUrlOption.value!!.trimEnd('/')
+        val prefixes = redditPrefixes(baseUrl)
 
         prefixes.forEach { (old, new) ->
             string(old, StringComparisonType.CONTAINS).matchAllMethodIndicesForEach(false) { index ->
@@ -153,6 +161,18 @@ val e2eFakeRedditPatch = bytecodePatch(
                 if (value.startsWith(REDDIT_GALLERY)) return@matchAllMethodIndicesForEach
                 val moved = ImmutableStringReference(value.replace(old, new))
                 replaceInstruction(index, BuilderInstruction21c(Opcode.CONST_STRING, register, moved))
+            }
+        }
+
+        // "Fix Redgifs API" authenticates only requests to RedGIFs' API host, and answers its old
+        // OAuth path itself: moved, both checks name the fake's host and path.
+        listOf(
+            REDGIFS_API_HOST to java.net.URI(baseUrl).host,
+            REDGIFS_OAUTH_PATH to REDGIFS_PATH + REDGIFS_OAUTH_PATH,
+        ).forEach { (old, new) ->
+            string(old, StringComparisonType.EQUALS).matchAllMethodIndicesForEach(false) { index ->
+                val register = getInstruction<OneRegisterInstruction>(index).registerA
+                replaceInstruction(index, BuilderInstruction21c(Opcode.CONST_STRING, register, ImmutableStringReference(new)))
             }
         }
 
