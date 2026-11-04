@@ -85,13 +85,14 @@ val embedCommentImagesPatch = bytecodePatch(
             )
         }
 
-        /** Calls the extension right after the matched TextView.setText. */
-        fun Fingerprint.embedAfterSetText() = method.apply {
+        /** Calls the extension's [extensionMethod] right after the matched TextView.setText. */
+        fun Fingerprint.embedAfterSetText(extensionMethod: String = "embed") = method.apply {
             val index = instructionMatches[0].index
             val textViewRegister = getInstruction<FiveRegisterInstruction>(index).registerC
             addInstruction(
                 index + 1,
-                "invoke-static { v$textViewRegister }, $EXTENSION_CLASS_DESCRIPTOR->embed(Landroid/widget/TextView;)V",
+                "invoke-static { v$textViewRegister }, " +
+                    "$EXTENSION_CLASS_DESCRIPTOR->$extensionMethod(Landroid/widget/TextView;)V",
             )
         }
 
@@ -101,11 +102,12 @@ val embedCommentImagesPatch = bytecodePatch(
             "invoke-static { p1 }, $EXTENSION_CLASS_DESCRIPTOR->setCommentSource(Ljava/lang/Object;)V",
         )
 
-        DetailLinkFragmentUpdateSelftextFingerprint.embedAfterSetText()
+        // A post's text is cut at its bare media links, which its media replace.
+        DetailLinkFragmentUpdateSelftextFingerprint.embedAfterSetText("embedPostText")
         // Card mode shows the post text in a list whose rows are a TextView alone, so each row is put in a
         // column where its images go under the text. The column goes in after the call above, which finds
         // setText by its index in the unchanged method.
-        SelftextAdapterGetViewFingerprint.embedAfterSetText().apply {
+        SelftextAdapterGetViewFingerprint.embedAfterSetText("embedPostText").apply {
             val inflateIndex = indexOfFirstInstructionOrThrow {
                 opcode == Opcode.INVOKE_VIRTUAL && getReference<MethodReference>()?.let {
                     it.definingClass == "Landroid/view/LayoutInflater;" && it.name == "inflate"

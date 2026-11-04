@@ -351,6 +351,192 @@ public final class EmbedCommentImagesPatch {
         }
     }
 
+    /**
+     * The views put in a post text's column in place of its bare media links: each link's media, then a copy of the
+     * TextView with the text up to the next link. Only used on the main thread.
+     */
+    private static final Map<TextView, List<View>> IN_PLACE_VIEWS = new WeakHashMap<>();
+
+    /** Makes the media that replaces a bare link, under the given TextView. */
+    private interface SlotMaker {
+        View make(TextView textView) throws Exception;
+    }
+
+    /** A bare link to media in a post's text: where it is, and the media that replaces it. */
+    private static final class Anchor {
+        final int start;
+        final int end;
+        final SlotMaker slot;
+
+        Anchor(int start, int end, SlotMaker slot) {
+            this.start = start;
+            this.end = end;
+            this.slot = slot;
+        }
+    }
+
+    /**
+     * Injected right after the app sets the text of a text post, in its detail view
+     * (DetailLinkFragment.updateSelftext) and in card mode (SelftextAdapter.getView). The media of its bare links
+     * show where the links are: the text is cut at each link, the part before the first one stays in the TextView,
+     * and each link's media goes under it, followed by the text up to the next link in a copy of the TextView.
+     */
+    public static void embedPostText(TextView textView) {
+        removeInPlace(textView);
+        try {
+            CharSequence full = fullText(textView);
+            List<Anchor> anchors = full instanceof Spanned && !isExpandable(textView)
+                    ? anchors(textView, (Spanned) full) : Collections.<Anchor>emptyList();
+            if (anchors.isEmpty()) {
+                embed(textView);
+                return;
+            }
+            Spanned text = (Spanned) full;
+            LinearLayout parent = (LinearLayout) textView.getParent();
+            textView.setText(piece(text, 0, anchors.get(0).start), TextView.BufferType.SPANNABLE);
+            embed(textView);
+            if (textView.getText().length() == 0) textView.setVisibility(View.GONE);
+
+            List<View> added = new ArrayList<>();
+            List<View> textSlots = SLOTS.get(textView);
+            int index = parent.indexOfChild(textView) + 1 + (textSlots != null ? textSlots.size() : 0);
+            for (int i = 0; i < anchors.size(); i++) {
+                Anchor anchor = anchors.get(i);
+                View slot = anchor.slot.make(textView);
+                parent.addView(slot, index++);
+                added.add(slot);
+                int end = i + 1 < anchors.size() ? anchors.get(i + 1).start : text.length();
+                SpannableStringBuilder rest = piece(text, anchor.end, end);
+                if (rest.length() == 0) continue;
+                TextView copy = copyOf(textView);
+                copy.setText(rest, TextView.BufferType.SPANNABLE);
+                parent.addView(copy, index++);
+                added.add(copy);
+                embed(copy);
+                List<View> copySlots = SLOTS.get(copy);
+                index += copySlots != null ? copySlots.size() : 0;
+            }
+            IN_PLACE_VIEWS.put(textView, added);
+        } catch (Throwable t) {
+            ErrorDialog.printException(() -> "embedPostText failed", t);
+        }
+    }
+
+    /** The bare links of the text whose media are shown, in the order of the text, as embed finds them. */
+    private static List<Anchor> anchors(final TextView textView, Spanned text) {
+        List<Anchor> result = new ArrayList<>();
+        if (!(textView.getParent() instanceof LinearLayout)
+                || ((LinearLayout) textView.getParent()).getOrientation() != LinearLayout.VERTICAL) {
+            return result;
+        }
+        boolean imagesOn = Settings.SHOW_IMAGES.get();
+        boolean videosOn = Settings.SHOW_VIDEOS.get();
+        boolean xPostsOn = Settings.X_POSTS.get();
+        boolean blueskyPostsOn = Settings.BLUESKY_POSTS.get();
+        String plain = text.toString();
+        URLSpan[] spans = text.getSpans(0, text.length(), URLSpan.class);
+        final Spanned spanned = text;
+        java.util.Arrays.sort(spans, new Comparator<URLSpan>() {
+            @Override
+            public int compare(URLSpan a, URLSpan b) {
+                return Integer.compare(spanned.getSpanStart(a), spanned.getSpanStart(b));
+            }
+        });
+        for (URLSpan span : spans) {
+            int start = text.getSpanStart(span);
+            int end = text.getSpanEnd(span);
+            if (!result.isEmpty() && start < result.get(result.size() - 1).end) continue;
+            String linkText = plain.substring(start, end);
+            final String link = normalizeLink(span.getURL());
+            Matcher img = IMG_TAG.matcher(linkText);
+            boolean giphy = imagesOn && link != null && img.find();
+            if (!giphy && !linkText.trim().startsWith("http")) continue;
+            final String videoId = videosOn ? CommentVideo.videoId(link) : null;
+            if (videoId != null) {
+                final boolean loadPreviews = !(Settings.IMAGES_WIFI_ONLY.get() && isMetered(textView.getContext()));
+                result.add(new Anchor(start, end, view -> CommentVideo.createSlot(view, videoId,
+                        Settings.IMAGES_FULL_WIDTH.get(), dp(view, IMAGE_SIZE_DP),
+                        (int) (view.getResources().getDisplayMetrics().heightPixels * EXPANDED_MAX_SCREEN_HEIGHT),
+                        loadPreviews)));
+                continue;
+            }
+            if (SocialPosts.postKey(link, xPostsOn, blueskyPostsOn) != null) continue;
+            if (YoutubeTitles.isYoutubeUrl(link)) continue;
+            if (!imagesOn || link == null) continue;
+            if (ImgurAlbum.isAlbum(link)) {
+                result.add(new Anchor(start, end, view -> ImgurAlbum.createSlot(view, link)));
+                continue;
+            }
+            final ImageRef image;
+            if (giphy) {
+                String preview = unescape(img.group(1));
+                String full = toImageUrl(link);
+                image = new ImageRef(preview, full != null ? full : preview, width(img.group()), height(img.group()));
+            } else {
+                String imageUrl = toImageUrl(link);
+                if (imageUrl == null) continue;
+                image = new ImageRef(imageUrl, imageUrl, 0, 0);
+            }
+            result.add(new Anchor(start, end, view -> createImageSlot(view, image)));
+        }
+        return result;
+    }
+
+    /** [start, end) of the text, with its spans, without the blank lines around it. */
+    private static SpannableStringBuilder piece(Spanned text, int start, int end) {
+        SpannableStringBuilder builder = new SpannableStringBuilder(text, start, end);
+        trimWhitespace(builder);
+        return builder;
+    }
+
+    /** A TextView that shows text like the given one does, in its column. */
+    private static TextView copyOf(TextView textView) {
+        Context context = textView.getContext();
+        TextView copy;
+        // The app's ClickableTextView handles the taps on its links itself.
+        try {
+            copy = textView.getClass().getConstructor(Context.class).newInstance(context);
+        } catch (Exception ex) {
+            Logger.printInfo(() -> "Could not copy the post's TextView", ex);
+            copy = new TextView(context);
+        }
+        copy.setTextSize(TypedValue.COMPLEX_UNIT_PX, textView.getTextSize());
+        copy.setTextColor(textView.getTextColors());
+        if (textView.getLinkTextColors() != null) copy.setLinkTextColor(textView.getLinkTextColors());
+        copy.setTypeface(textView.getTypeface());
+        copy.setLineSpacing(textView.getLineSpacingExtra(), textView.getLineSpacingMultiplier());
+        copy.setPadding(textView.getPaddingLeft(), textView.getPaddingTop(), textView.getPaddingRight(),
+                textView.getPaddingBottom());
+        copy.setMovementMethod(textView.getMovementMethod());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.topMargin = dp(textView, 8);
+        if (textView.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams text = (ViewGroup.MarginLayoutParams) textView.getLayoutParams();
+            params.leftMargin = text.leftMargin;
+            params.rightMargin = text.rightMargin;
+        }
+        copy.setLayoutParams(params);
+        return copy;
+    }
+
+    /** Removes the media and the copies embedPostText put in the column of the TextView. */
+    private static void removeInPlace(TextView textView) {
+        List<View> old = IN_PLACE_VIEWS.remove(textView);
+        if (old == null) return;
+        for (View view : old) {
+            if (view instanceof TextView) {
+                removeSlots(SLOTS.remove(view));
+                SLOT_KEYS.remove(view);
+                GENERATIONS.remove(view);
+                ViewGroup parent = (ViewGroup) view.getParent();
+                if (parent != null) parent.removeView(view);
+            } else {
+                removeSlots(Collections.singletonList(view));
+            }
+        }
+    }
+
     /** Identifies the images, albums and videos shown under a text. */
     private static String slotKey(List<ImageRef> images, List<String> albums, List<String> videoIds) {
         StringBuilder key = new StringBuilder();
