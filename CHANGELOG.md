@@ -1,3 +1,9 @@
+## [1.6.1-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.1-dev.1...v1.6.1-dev.2) (2026-11-04)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** ask Redgifs for a new token when it refuses the one it gave ([896e952](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/896e952172d01209645d5e3c61ed9c5bc4329aae))
+
 ## [1.6.1-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.0...v1.6.1-dev.1) (2026-11-03)
 
 ### 🐛 Bug Fixes
