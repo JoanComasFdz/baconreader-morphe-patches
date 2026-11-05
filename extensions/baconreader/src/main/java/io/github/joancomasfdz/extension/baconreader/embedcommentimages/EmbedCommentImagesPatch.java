@@ -668,6 +668,8 @@ public final class EmbedCommentImagesPatch {
         copy.setPadding(textView.getPaddingLeft(), textView.getPaddingTop(), textView.getPaddingRight(),
                 textView.getPaddingBottom());
         copy.setMovementMethod(textView.getMovementMethod());
+        // The e2e tests find the text after a media link by it.
+        copy.setId(resourceId("baconreader_patches_text_after_media"));
         copy.setOnTouchListener(TOUCH_LISTENERS.get(textView));
         COPY_SOURCES.put(copy, textView);
         if (POST_TEXTS.containsKey(textView)) POST_TEXTS.put(copy, Boolean.TRUE);
