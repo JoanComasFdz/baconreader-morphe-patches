@@ -1,3 +1,9 @@
+## [1.7.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0-dev.2...v1.7.0-dev.3) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** show emotes with "Show images" off, instead of their HTML tags ([669e112](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/669e112f155ee4b7a5bb00210f227d010da46e10))
+
 ## [1.7.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0-dev.1...v1.7.0-dev.2) (2026-11-04)
 
 ### 🐛 Bug Fixes
