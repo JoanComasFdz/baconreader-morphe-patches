@@ -44,7 +44,16 @@ private val REDDIT_ORIGINS = listOf(
 // link to as Reddit's do. Moved, "Fix Reddit links" would not take them for Reddit links, as it does on Reddit.
 private const val REDDIT_GALLERY = "https://www.reddit.com/gallery"
 
-private val MEDIA_HOSTS = listOf("i.redd.it", "preview.redd.it", "v.redd.it", "i.imgur.com", "i.ytimg.com", "pbs.twimg.com")
+// www.redditstatic.com: the Snoomoji emotes, whose GIF "Embed comment images" finds from an emote's name.
+private val MEDIA_HOSTS = listOf(
+    "i.redd.it",
+    "preview.redd.it",
+    "v.redd.it",
+    "i.imgur.com",
+    "i.ytimg.com",
+    "pbs.twimg.com",
+    "www.redditstatic.com",
+)
 
 // Imgur's API, which "Fix Imgur API" calls instead of BaconReader's RapidAPI proxy.
 private const val IMGUR_API = "https://api.imgur.com/"
@@ -98,8 +107,9 @@ internal object SaveImageGetVideoFilenameFingerprint : Fingerprint(
 // Reddit detects automation, rate-limits logins and changes its content, so the e2e tests talk to
 // a fake Reddit server in the test process instead, which the phone reaches through
 // `adb reverse`. It answers the third-party services the patches fetch from too (Imgur, RedGIFs,
-// YouTube, X, Bluesky). Only full URL prefixes move: BaconReader recognizes Reddit and Imgur links
-// in posts by bare domains (reddit.com, v.redd.it, imgur.com), and those stay.
+// YouTube, X, Bluesky, Reddit's emotes). Only full URL prefixes move: BaconReader recognizes
+// Reddit and Imgur links in posts by bare domains (reddit.com, v.redd.it, imgur.com), and those
+// stay.
 @Suppress("unused")
 val e2eFakeRedditPatch = bytecodePatch(
     name = "E2E fake Reddit",
