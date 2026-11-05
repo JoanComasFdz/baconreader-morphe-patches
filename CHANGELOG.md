@@ -1,3 +1,9 @@
+## [1.7.0-dev.4](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0-dev.3...v1.7.0-dev.4) (2026-11-05)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** drop the chat's unread count from the menu once the chat shows ([e6799c9](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/e6799c903e46ec09d1192bddc3558e85a9925f85))
+
 ## [1.7.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0-dev.2...v1.7.0-dev.3) (2026-11-05)
 
 ### 🐛 Bug Fixes
