@@ -40,9 +40,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,6 +77,10 @@ public final class EmbedCommentImagesPatch {
     /** <img> tags up to this size (in Reddit's width/height attributes) are emotes. */
     static final int EMOTE_MAX_SIZE = 64;
 
+    // i.redd.it/<id>.<ext> and preview.redd.it/<id>.<ext>?width=..., also under the e2e tests' fake Reddit, which
+    // serves them at <fake>/_media/<host>/.
+    private static final Pattern REDDIT_MEDIA_ID =
+            Pattern.compile("(?i)/(?:i|preview)\\.redd\\.it/([a-z0-9]+)\\.[a-z0-9]+(?:[?#]|$)");
     static final Pattern IMG_TAG = Pattern.compile("<img\\b[^>]*?\\bsrc=\"([^\"]+)\"[^>]*>");
     private static final Pattern WIDTH_ATTR = Pattern.compile("\\bwidth=\"(\\d+)\"");
     private static final Pattern HEIGHT_ATTR = Pattern.compile("\\bheight=\"(\\d+)\"");
@@ -167,6 +173,14 @@ public final class EmbedCommentImagesPatch {
 
     /** Embeds the media of the text, with the ids of its emotes, in order. */
     private static void embedText(TextView textView, List<String> emoteIds) {
+        embedText(textView, emoteIds, Collections.<String>emptySet());
+    }
+
+    /**
+     * Embeds the media of the text, with the ids of its emotes, in order. Media whose mediaKey is in shown, or that
+     * the text shows earlier, are not added again.
+     */
+    private static void embedText(TextView textView, List<String> emoteIds, Set<String> shown) {
         // The app shows the comment again on every change (a vote, a collapsed reply...). Its images are
         // kept when they did not change: new ones would start small and make the list jump.
         List<View> previousSlots = SLOTS.remove(textView);
@@ -208,6 +222,7 @@ public final class EmbedCommentImagesPatch {
             List<URLSpan> postLinks = new ArrayList<>();
             List<String> videoIds = new ArrayList<>();
             List<String> albums = new ArrayList<>();
+            Set<String> keys = new HashSet<>(shown);
 
             // Links: either wrap an <img> tag (giphy comments) or point straight at an image.
             for (URLSpan span : builder.getSpans(0, builder.length(), URLSpan.class)) {
@@ -217,7 +232,7 @@ public final class EmbedCommentImagesPatch {
                 String link = normalizeLink(span.getURL());
                 String videoId = videosOn ? CommentVideo.videoId(link) : null;
                 if (videoId != null) {
-                    videoIds.add(videoId);
+                    if (keys.add(videoKey(videoId))) videoIds.add(videoId);
                     // Only drop the text when it is the bare link, keep words that were linked.
                     if (linkText.trim().startsWith("http")) edits.add(new int[]{start, end, -1});
                     continue;
@@ -234,7 +249,7 @@ public final class EmbedCommentImagesPatch {
                 if (!imagesOn) continue;
 
                 if (ImgurAlbum.isAlbum(link)) {
-                    albums.add(link);
+                    if (keys.add(albumKey(link))) albums.add(link);
                     // Only drop the text when it is the bare link, keep words that were linked.
                     if (linkText.trim().startsWith("http")) edits.add(new int[]{start, end, -1});
                     continue;
@@ -245,15 +260,17 @@ public final class EmbedCommentImagesPatch {
                     // Giphy comments: the <img> is a small preview, the link is the full GIF.
                     String preview = unescape(img.group(1));
                     String full = toImageUrl(normalizeLink(span.getURL()));
-                    images.add(new ImageRef(preview, full != null ? full : preview,
-                            width(img.group()), height(img.group())));
+                    if (full == null) full = preview;
+                    if (keys.add(mediaKey(full))) {
+                        images.add(new ImageRef(preview, full, width(img.group()), height(img.group())));
+                    }
                     edits.add(new int[]{start, end, -1});
                     continue;
                 }
 
                 String imageUrl = toImageUrl(normalizeLink(span.getURL()));
                 if (imageUrl == null) continue;
-                images.add(new ImageRef(imageUrl, imageUrl, 0, 0));
+                if (keys.add(mediaKey(imageUrl))) images.add(new ImageRef(imageUrl, imageUrl, 0, 0));
                 // Only drop the text when it is the bare link, keep words that were linked.
                 if (linkText.trim().startsWith("http")) edits.add(new int[]{start, end, -1});
             }
@@ -270,7 +287,7 @@ public final class EmbedCommentImagesPatch {
                     edits.add(new int[]{img.start(), img.end(), emoteUrls.size()});
                     emoteUrls.add(src);
                 } else if (imagesOn) {
-                    images.add(new ImageRef(src, src, width, height));
+                    if (keys.add(mediaKey(src))) images.add(new ImageRef(src, src, width, height));
                     edits.add(new int[]{img.start(), img.end(), -1});
                 }
             }
@@ -387,15 +404,20 @@ public final class EmbedCommentImagesPatch {
         View make(TextView textView) throws Exception;
     }
 
-    /** A bare link to media in a text: where it is, and the media that replaces it. */
+    /**
+     * A bare link to media in a text: where it is, its media's mediaKey, and what makes the view that shows the media
+     * in its place, or null when an earlier link of the text shows the same media.
+     */
     private static final class Anchor {
         final int start;
         final int end;
+        final String key;
         final SlotMaker slot;
 
-        Anchor(int start, int end, SlotMaker slot) {
+        Anchor(int start, int end, String key, SlotMaker slot) {
             this.start = start;
             this.end = end;
+            this.key = key;
             this.slot = slot;
         }
     }
@@ -465,8 +487,11 @@ public final class EmbedCommentImagesPatch {
                 from += count;
             }
 
+            // The media shown in place of the links are not added again under the pieces.
+            Set<String> shown = new HashSet<>();
+            for (Anchor anchor : anchors) shown.add(anchor.key);
             textView.setText(pieces.get(0), TextView.BufferType.SPANNABLE);
-            embedText(textView, pieceIds.get(0));
+            embedText(textView, pieceIds.get(0), shown);
             if (textView.getText().length() == 0) textView.setVisibility(View.GONE);
 
             // The app shows a comment again on every change (a vote, a collapsed reply...): the media and the
@@ -487,16 +512,19 @@ public final class EmbedCommentImagesPatch {
             List<View> textSlots = SLOTS.get(textView);
             int index = parent.indexOfChild(textView) + 1 + (textSlots != null ? textSlots.size() : 0);
             for (int i = 0; i < anchors.size(); i++) {
-                View slot = anchors.get(i).slot.make(textView);
-                parent.addView(slot, index++);
-                added.add(slot);
+                SlotMaker maker = anchors.get(i).slot;
+                if (maker != null) {
+                    View slot = maker.make(textView);
+                    parent.addView(slot, index++);
+                    added.add(slot);
+                }
                 SpannableStringBuilder rest = pieces.get(i + 1);
                 if (rest.length() == 0) continue;
                 TextView copy = copyOf(textView);
                 copy.setText(rest, TextView.BufferType.SPANNABLE);
                 parent.addView(copy, index++);
                 added.add(copy);
-                embedText(copy, pieceIds.get(i + 1));
+                embedText(copy, pieceIds.get(i + 1), shown);
                 List<View> copySlots = SLOTS.get(copy);
                 index += copySlots != null ? copySlots.size() : 0;
             }
@@ -525,6 +553,7 @@ public final class EmbedCommentImagesPatch {
     /** The bare links of the text whose media are shown, in the order of the text, as embed finds them. */
     private static List<Anchor> anchors(final TextView textView, Spanned text) {
         List<Anchor> result = new ArrayList<>();
+        Set<String> keys = new HashSet<>();
         if (!(textView.getParent() instanceof LinearLayout)
                 || ((LinearLayout) textView.getParent()).getOrientation() != LinearLayout.VERTICAL) {
             return result;
@@ -554,17 +583,17 @@ public final class EmbedCommentImagesPatch {
             final String videoId = videosOn ? CommentVideo.videoId(link) : null;
             if (videoId != null) {
                 final boolean loadPreviews = !(Settings.IMAGES_WIFI_ONLY.get() && isMetered(textView.getContext()));
-                result.add(new Anchor(start, end, view -> CommentVideo.createSlot(view, videoId,
+                addAnchor(result, keys, start, end, videoKey(videoId), view -> CommentVideo.createSlot(view, videoId,
                         fullWidthFor(view), dp(view, IMAGE_SIZE_DP),
                         (int) (view.getResources().getDisplayMetrics().heightPixels * EXPANDED_MAX_SCREEN_HEIGHT),
-                        loadPreviews)));
+                        loadPreviews));
                 continue;
             }
             if (SocialPosts.postKey(link, xPostsOn, blueskyPostsOn) != null) continue;
             if (YoutubeTitles.isYoutubeUrl(link)) continue;
             if (!imagesOn || link == null) continue;
             if (ImgurAlbum.isAlbum(link)) {
-                result.add(new Anchor(start, end, view -> ImgurAlbum.createSlot(view, link)));
+                addAnchor(result, keys, start, end, albumKey(link), view -> ImgurAlbum.createSlot(view, link));
                 continue;
             }
             final ImageRef image;
@@ -577,16 +606,47 @@ public final class EmbedCommentImagesPatch {
                 if (imageUrl == null) continue;
                 image = new ImageRef(imageUrl, imageUrl, 0, 0);
             }
-            result.add(new Anchor(start, end, view -> createImageSlot(view, image)));
+            addAnchor(result, keys, start, end, mediaKey(image.fullUrl), view -> createImageSlot(view, image));
         }
         return result;
+    }
+
+    /**
+     * Adds the anchor of a link. A media an earlier link of the text shows: its link is cut, and nothing takes its
+     * place.
+     */
+    private static void addAnchor(List<Anchor> anchors, Set<String> keys, int start, int end, String key,
+                                  SlotMaker slot) {
+        anchors.add(new Anchor(start, end, key, keys.add(key) ? slot : null));
     }
 
     /** [start, end) of the text, with its spans, without the blank lines around it. */
     private static SpannableStringBuilder piece(Spanned text, int start, int end) {
         SpannableStringBuilder builder = new SpannableStringBuilder(text, start, end);
+        // An empty range keeps the spans that touch it, emptied: a link at the start of the text would be in the
+        // piece before it, with no text, and its media would show twice.
+        for (URLSpan link : builder.getSpans(0, builder.length(), URLSpan.class)) {
+            if (builder.getSpanStart(link) == builder.getSpanEnd(link)) builder.removeSpan(link);
+        }
         trimWhitespace(builder);
         return builder;
+    }
+
+    /**
+     * What names a media across the links and tags of a text: Reddit's id of an uploaded image or GIF, which its
+     * i.redd.it and preview.redd.it addresses and its media_metadata entry share, or else its address.
+     */
+    private static String mediaKey(String url) {
+        Matcher id = REDDIT_MEDIA_ID.matcher(url);
+        return id.find() ? "reddit:" + id.group(1).toLowerCase(Locale.ROOT) : url;
+    }
+
+    private static String videoKey(String videoId) {
+        return "video:" + videoId;
+    }
+
+    private static String albumKey(String link) {
+        return "album:" + link;
     }
 
     /** A TextView that shows text like the given one does, in its column, and reacts to touches like it. */
