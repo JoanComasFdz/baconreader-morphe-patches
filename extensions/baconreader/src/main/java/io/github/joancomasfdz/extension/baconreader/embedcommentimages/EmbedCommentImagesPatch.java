@@ -190,10 +190,12 @@ public final class EmbedCommentImagesPatch {
                     && !(Settings.IMAGES_WIFI_ONLY.get() && isMetered(context));
             boolean xPostsOn = Settings.X_POSTS.get();
             boolean blueskyPostsOn = Settings.BLUESKY_POSTS.get();
-            if (!imagesOn && !videosOn && !titlesOn && !thumbnailsOn && !xPostsOn && !blueskyPostsOn) return;
-
             CharSequence text = fullText(textView);
             if (!(text instanceof Spanned)) return;
+            // Emotes are part of the text, drawn whatever "Show images" says: BaconReader would show their <img> tags
+            // as text.
+            if (!imagesOn && !videosOn && !titlesOn && !thumbnailsOn && !xPostsOn && !blueskyPostsOn
+                    && !text.toString().contains("<img")) return;
 
             SpannableStringBuilder builder = new SpannableStringBuilder(text);
             String plain = builder.toString();
@@ -256,9 +258,10 @@ public final class EmbedCommentImagesPatch {
                 if (linkText.trim().startsWith("http")) edits.add(new int[]{start, end, -1});
             }
 
-            // <img> tags that are not inside a link: emotes inline, anything bigger below the text.
+            // <img> tags that are not inside a link: emotes inline, always; anything bigger below the text, with
+            // "Show images" on.
             Matcher img = IMG_TAG.matcher(plain);
-            while (imagesOn && img.find()) {
+            while (img.find()) {
                 if (isInside(edits, img.start())) continue;
                 String src = unescape(img.group(1));
                 int width = width(img.group());
@@ -266,7 +269,7 @@ public final class EmbedCommentImagesPatch {
                 if (isEmote(width, height)) {
                     edits.add(new int[]{img.start(), img.end(), emoteUrls.size()});
                     emoteUrls.add(src);
-                } else {
+                } else if (imagesOn) {
                     images.add(new ImageRef(src, src, width, height));
                     edits.add(new int[]{img.start(), img.end(), -1});
                 }
