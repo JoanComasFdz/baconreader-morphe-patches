@@ -45,6 +45,7 @@ private val REDDIT_ORIGINS = listOf(
 private const val REDDIT_GALLERY = "https://www.reddit.com/gallery"
 
 // www.redditstatic.com: the Snoomoji emotes, whose GIF "Embed comment images" finds from an emote's name.
+// i.imgflip.com: the meme templates "Fix meme templates" shows.
 private val MEDIA_HOSTS = listOf(
     "i.redd.it",
     "preview.redd.it",
@@ -53,6 +54,7 @@ private val MEDIA_HOSTS = listOf(
     "i.ytimg.com",
     "pbs.twimg.com",
     "www.redditstatic.com",
+    "i.imgflip.com",
 )
 
 // Imgur's API, which "Fix Imgur API" calls instead of BaconReader's RapidAPI proxy.
@@ -107,9 +109,9 @@ internal object SaveImageGetVideoFilenameFingerprint : Fingerprint(
 // Reddit detects automation, rate-limits logins and changes its content, so the e2e tests talk to
 // a fake Reddit server in the test process instead, which the phone reaches through
 // `adb reverse`. It answers the third-party services the patches fetch from too (Imgur, RedGIFs,
-// YouTube, X, Bluesky, Reddit's emotes). Only full URL prefixes move: BaconReader recognizes
-// Reddit and Imgur links in posts by bare domains (reddit.com, v.redd.it, imgur.com), and those
-// stay.
+// YouTube, X, Bluesky, Reddit's emotes, Imgflip). Only full URL prefixes move: BaconReader
+// recognizes Reddit and Imgur links in posts by bare domains (reddit.com, v.redd.it, imgur.com),
+// and those stay.
 @Suppress("unused")
 val e2eFakeRedditPatch = bytecodePatch(
     name = "E2E fake Reddit",
