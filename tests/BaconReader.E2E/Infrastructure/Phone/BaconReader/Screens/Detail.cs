@@ -563,8 +563,8 @@ public sealed class Comments(AndroidDriver driver)
             () => FindComment(text) is { } comment
                 && comment.FindElements(Position).FirstOrDefault()?.Text is { Length: > 0 } position
                 && position == comment.FindElements(Duration).FirstOrDefault()?.Text,
-            // A 10 s video, and, with "Load images only when tapped", the time to fetch its size and first frame
-            // after the tap: recorded on the phone's slow link, that once took more than 30 s.
+            // A 10 s video over the phone's slow link: while recording, one run took more than 30 s from the tap
+            // to the video's end.
             TimeSpan.FromSeconds(60),
             $"The video of the comment \"{text}\" playing to its end");
 
