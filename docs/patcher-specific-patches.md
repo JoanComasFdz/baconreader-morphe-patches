@@ -115,4 +115,5 @@ The ports follow ReVanced's BaconReader merge requests !6989 and !6998 closely: 
   - Reddit chat, ported from baconreader-reseam-patches;
   - Video autoplay in detail view, ported from baconreader-reseam-patches;
   - Disable final release announcement;
+  - Remove Log out;
   - the drawer's version footer.
