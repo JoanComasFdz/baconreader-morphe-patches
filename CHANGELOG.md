@@ -1,3 +1,9 @@
+## [1.7.0-dev.5](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0-dev.4...v1.7.0-dev.5) (2026-11-06)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** Embed comment images shows the media of a text that starts with a bare media link once, not twice ([c544f5d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/c544f5d6f94401e76e8e828748638a6c7ec40890))
+
 ## [1.7.0-dev.4](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0-dev.3...v1.7.0-dev.4) (2026-11-05)
 
 ### 🐛 Bug Fixes
