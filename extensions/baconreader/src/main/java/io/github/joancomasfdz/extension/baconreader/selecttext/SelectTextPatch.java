@@ -12,6 +12,7 @@ import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
+import android.text.style.BackgroundColorSpan;
 import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
 import android.util.TypedValue;
@@ -51,7 +52,10 @@ public final class SelectTextPatch {
     /** The id the patch adds for the dialog's text. */
     private static final String SELECTED_TEXT = "baconreader_patches_selected_text";
 
-    /** The app's spoiler: it paints its text the color of the box behind it, until tapped. */
+    /**
+     * The app's spoiler: over a box (a BackgroundColorSpan) of the same range, it paints its text the box's color
+     * until tapped.
+     */
     private static final String SPOILER_SPAN = "com.onelouder.baconreader.parser.SpoilerClickableSpan";
 
     private SelectTextPatch() {
@@ -185,10 +189,16 @@ public final class SelectTextPatch {
             text.removeSpan(table);
             text.replace(start, end, table.toString());
         }
-        // Spoilers show in plain sight, on their box: the text is shown to be selected. A link inside one opens with
-        // the first tap, which the spoiler took.
+        // Spoilers show as plain text, without their box: the text is shown to be selected. A link inside one opens
+        // with the first tap, which the spoiler took.
         for (ClickableSpan spoiler : text.getSpans(0, text.length(), ClickableSpan.class)) {
-            if (SPOILER_SPAN.equals(spoiler.getClass().getName())) text.removeSpan(spoiler);
+            if (!SPOILER_SPAN.equals(spoiler.getClass().getName())) continue;
+            int spoilerStart = text.getSpanStart(spoiler);
+            int spoilerEnd = text.getSpanEnd(spoiler);
+            text.removeSpan(spoiler);
+            for (BackgroundColorSpan box : text.getSpans(spoilerStart, spoilerEnd, BackgroundColorSpan.class)) {
+                if (text.getSpanStart(box) == spoilerStart && text.getSpanEnd(box) == spoilerEnd) text.removeSpan(box);
+            }
         }
         int start = 0;
         int end = text.length();
