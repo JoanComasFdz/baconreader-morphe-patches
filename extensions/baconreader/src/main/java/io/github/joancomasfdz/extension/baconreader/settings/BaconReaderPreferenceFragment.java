@@ -94,6 +94,11 @@ public class BaconReaderPreferenceFragment extends PreferenceFragment {
                 chat.addPreference(switchPreference(context, Settings.CHECK_CHAT_MESSAGES));
             }
 
+            PreferenceCategory accountColors = category(screen, "revanced_settings_baconreader_screen_5_account_colors_title");
+            if (IncludedPatches.accountColors()) {
+                accountColors.addPreference(switchPreference(context, Settings.ACCOUNT_COLORS));
+            }
+
             PreferenceCategory about = category(screen, "revanced_settings_baconreader_screen_0_about_title");
             Preference version = new Preference(context);
             version.setTitle("BaconReader Patches");
@@ -102,7 +107,7 @@ public class BaconReaderPreferenceFragment extends PreferenceFragment {
             about.addPreference(version);
 
             // Sections without settings, because their patches were not applied.
-            for (PreferenceCategory category : new PreferenceCategory[]{images, links, comments, chat}) {
+            for (PreferenceCategory category : new PreferenceCategory[]{images, links, comments, chat, accountColors}) {
                 if (category.getPreferenceCount() == 0) screen.removePreference(category);
             }
 
