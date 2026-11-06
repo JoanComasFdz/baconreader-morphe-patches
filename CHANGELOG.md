@@ -1,3 +1,9 @@
+## [1.8.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.2...v1.8.0-dev.3) (2026-11-06)
+
+### ✨ New Features
+
+* **baconreader:** Show user avatars puts each account's avatar before its name in the drawer ([36a2234](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/36a2234fad991ae5f71c8f78f47ba61f500be622))
+
 ## [1.8.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.1...v1.8.0-dev.2) (2026-11-06)
 
 ### ✨ New Features
