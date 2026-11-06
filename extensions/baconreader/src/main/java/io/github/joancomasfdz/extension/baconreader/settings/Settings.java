@@ -38,7 +38,9 @@ public class Settings extends BaseSettings {
     public static final IntegerSetting COMMENT_LIMIT = new IntegerSetting("revanced_baconreader_comment_limit", 500);
     public static final IntegerSetting AUTO_LOAD_MORE_COMMENTS = new IntegerSetting("revanced_baconreader_auto_load_more_comments", 2);
 
-    // Improve post media loading: JavaScript in the web view of link posts.
+    // Improve post media loading: the preview while post media loads, and JavaScript in the web
+    // view of link posts.
+    public static final BooleanSetting LOADING_PREVIEW = new BooleanSetting("revanced_baconreader_loading_preview", TRUE);
     public static final BooleanSetting LINK_PREVIEW_JAVASCRIPT = new BooleanSetting("revanced_baconreader_link_preview_javascript", TRUE);
     public static final StringSetting LINK_PREVIEW_JAVASCRIPT_BLOCKED = new StringSetting("revanced_baconreader_link_preview_javascript_blocked",
             "", parent(LINK_PREVIEW_JAVASCRIPT));
