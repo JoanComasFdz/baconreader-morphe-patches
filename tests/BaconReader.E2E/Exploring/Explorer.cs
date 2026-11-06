@@ -229,6 +229,7 @@ public sealed class Explorer : BaseE2E
                 case "crosspost": Reddit.HasACrosspostOf(command.Argument(1), command.Argument(0), command.Argument(2)); break;
                 case "link post to video": Reddit.HasALinkPostLinkingToTheVideoOf(command.Argument(1), command.Argument(0), command.Argument(2)); break;
                 case "avatar": Reddit.TheUserHasAnAvatar(command.Argument(0)); break;
+                case "second account": Reddit.HasASecondAccount(command.Argument(0)); break;
                 case "late media": Reddit.AnswersTheMediaOfThePostLate(command.Argument(0), int.Parse(command.Argument(1), CultureInfo.InvariantCulture)); break;
                 case "fail media": Reddit.AnswersTheMediaOfThePostWith(command.Argument(0), command.Argument(1)); break;
                 case "fail thumbnail": Reddit.AnswersTheThumbnailOfThePostWithTheFirstTimes(command.Argument(0), command.Argument(1), int.Parse(command.Argument(2), CultureInfo.InvariantCulture)); break;
