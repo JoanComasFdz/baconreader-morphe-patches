@@ -30,6 +30,7 @@ Errors of the patches show in a dialog over the current screen, with the details
 | Images and videos | Full width by default | `revanced_baconreader_images_full_width` | Off. Needs Show images. Comments only: images in posts always start at full width |
 | Images and videos | Long press to download | `revanced_baconreader_images_long_press_download` | On. Needs Show images |
 | Images and videos | Load images only on Wi-Fi | `revanced_baconreader_images_wifi_only` | Off. Needs Show images |
+| Images and videos | Load images only when tapped | `revanced_baconreader_images_tap_to_load` | Off. Needs Show images |
 | Images and videos | Play videos in comments | `revanced_baconreader_show_videos` | On |
 | Images and videos | Gestures: text only | None | |
 | Links | Show YouTube video titles | `revanced_baconreader_youtube_titles` | On |
@@ -129,6 +130,7 @@ The ports follow ReVanced's BaconReader merge requests !6989 and !6998 closely: 
 - **Links in spoilers.** In ReVanced, a tap on a link in a hidden spoiler opens the link without showing the spoiler: the app's touch handler takes the link first. Here the link waits until the spoiler shows.
 - **Hidden spoilers and accessibility.** ReVanced only paints a hidden spoiler over, so TalkBack reads it aloud. Here, while a spoiler is hidden, the text's description reads it as "spoiler".
 - **Comment search buttons.** ReVanced's find bar names only its text field and its filter button. Here its arrows and its close button are named too: "Previous match", "Next match" and "Close search".
+- **Load images only when tapped.** ReVanced's Embed comment images loads images and video previews on its own, or waits for a tap only on mobile data with "Load images only on Wi-Fi". This port adds a setting that makes them wait for a tap on every network, for users who don't want media to load until they ask for it.
 - **Not from ReVanced:**
   - Reddit chat, ported from baconreader-reseam-patches;
   - Video autoplay in detail view, ported from baconreader-reseam-patches;

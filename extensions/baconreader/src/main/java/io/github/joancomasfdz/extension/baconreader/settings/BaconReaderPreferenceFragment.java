@@ -52,6 +52,7 @@ public class BaconReaderPreferenceFragment extends PreferenceFragment {
                 images.addPreference(switchPreference(context, Settings.IMAGES_FULL_WIDTH));
                 images.addPreference(switchPreference(context, Settings.IMAGES_LONG_PRESS_DOWNLOAD));
                 images.addPreference(switchPreference(context, Settings.IMAGES_WIFI_ONLY));
+                images.addPreference(switchPreference(context, Settings.IMAGES_TAP_TO_LOAD));
                 images.addPreference(switchPreference(context, Settings.SHOW_VIDEOS));
                 images.addPreference(textPreference(context, "revanced_baconreader_images_gestures"));
             }

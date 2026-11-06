@@ -102,7 +102,7 @@ final class CommentVideo {
      * A box with the first frame of the video and a play button. Tapping it plays the video in place.
      *
      * @param fullWidth   If the video is as wide as the comment, else at most {@code boxSize} wide and high.
-     * @param loadPreview If the first frame and size can be loaded now (not on metered data with "Wi-Fi only").
+     * @param loadPreview If the first frame and size can be loaded now (not where images load on tap).
      */
     static View createSlot(final TextView textView, final String id, boolean fullWidth, int boxSize,
                            int maxHeight, boolean loadPreview) {

@@ -19,6 +19,9 @@
     <string name="revanced_baconreader_images_wifi_only_title">Load images only on Wi-Fi</string>
     <string name="revanced_baconreader_images_wifi_only_summary_on">On mobile data, images and video previews load when tapped</string>
     <string name="revanced_baconreader_images_wifi_only_summary_off">Images load on any network</string>
+    <string name="revanced_baconreader_images_tap_to_load_title">Load images only when tapped</string>
+    <string name="revanced_baconreader_images_tap_to_load_summary_on">Images and video previews load when tapped, on Wi-Fi and on mobile data</string>
+    <string name="revanced_baconreader_images_tap_to_load_summary_off">Images load without a tap, except on mobile data with Load images only on Wi-Fi</string>
     <string name="revanced_baconreader_show_videos_title">Play videos in comments</string>
     <string name="revanced_baconreader_show_videos_summary_on">Videos uploaded in comments and video links are played in the comment</string>
     <string name="revanced_baconreader_show_videos_summary_off">Videos uploaded in comments and video links are shown as links</string>
