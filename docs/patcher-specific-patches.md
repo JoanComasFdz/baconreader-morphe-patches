@@ -77,6 +77,8 @@ In the Comments section:
 | Avatar size: Normal, Medium, Large or Extra large | `revanced_baconreader_user_avatar_size` | Normal (`0`). Needs Show user avatars |
 | Avatar background | `revanced_baconreader_user_avatar_background` | On. Needs Show user avatars |
 
+The avatars of the drawer's accounts show whether Show user avatars is on or off; Avatar size and Avatar background apply to them too, though the settings screen greys them out while Show user avatars is off. The drawer has no setting of its own.
+
 ### Video autoplay in detail view settings
 
 In the Images and videos section:
