@@ -1,3 +1,9 @@
+## [1.8.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0...v1.8.0-dev.1) (2026-11-06)
+
+### ✨ New Features
+
+* add "Remove Log out" patch ([aa79890](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/aa798908551d73041a9e0da185147d168ace8be9))
+
 ## [1.7.0](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.0...v1.7.0) (2026-11-06)
 
 ### 🐛 Bug Fixes
