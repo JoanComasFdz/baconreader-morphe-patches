@@ -1,3 +1,9 @@
+## [1.8.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.1...v1.8.0-dev.2) (2026-11-06)
+
+### ✨ New Features
+
+* **baconreader:** add Account colors, which shows each account's color in the menu and under the toolbars ([a899ab0](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/a899ab0b12f79e4c7aa6cb50de37d3ac537fcd0e))
+
 ## [1.8.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0...v1.8.0-dev.1) (2026-11-06)
 
 ### ✨ New Features

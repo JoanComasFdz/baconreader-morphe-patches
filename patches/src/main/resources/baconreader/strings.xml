@@ -151,4 +151,24 @@
     <string name="revanced_baconreader_chat_notification_many">%s new chat messages</string>
     <string name="revanced_baconreader_chat_notification_text">Tap to open Reddit chat</string>
     <string name="revanced_baconreader_chat_notification_channel">Reddit chat</string>
+    <!-- Account colors -->
+    <string name="revanced_settings_baconreader_screen_5_account_colors_title">Account colors</string>
+    <string name="revanced_baconreader_account_colors_title">Account colors</string>
+    <string name="revanced_baconreader_account_colors_summary_on">Shows a circle next to each account in the menu, which picks a color for it, and the color of the account in use as a line under the toolbars</string>
+    <string name="revanced_baconreader_account_colors_summary_off">No color circles in the menu and no line under the toolbars</string>
+    <string name="revanced_baconreader_account_color_title">Color for %s</string>
+    <string name="revanced_baconreader_account_color_none">No color</string>
+    <string name="revanced_baconreader_account_color_red">Red</string>
+    <string name="revanced_baconreader_account_color_pink">Pink</string>
+    <string name="revanced_baconreader_account_color_purple">Purple</string>
+    <string name="revanced_baconreader_account_color_indigo">Indigo</string>
+    <string name="revanced_baconreader_account_color_blue">Blue</string>
+    <string name="revanced_baconreader_account_color_cyan">Cyan</string>
+    <string name="revanced_baconreader_account_color_teal">Teal</string>
+    <string name="revanced_baconreader_account_color_green">Green</string>
+    <string name="revanced_baconreader_account_color_lime">Lime</string>
+    <string name="revanced_baconreader_account_color_yellow">Yellow</string>
+    <string name="revanced_baconreader_account_color_orange">Orange</string>
+    <string name="revanced_baconreader_account_color_brown">Brown</string>
+    <string name="revanced_baconreader_account_color_description">Color of %s</string>
 </resources>
