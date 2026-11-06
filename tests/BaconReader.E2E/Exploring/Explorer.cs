@@ -273,7 +273,7 @@ public sealed record ExplorerCommand(string Text, string Name, IReadOnlyList<str
         "comment with video", "comment with video link", "subscribe", "message", "late comments", "fail posts",
         "refuse posts", "drop posts", "image post", "gif post", "signed thumbnail post", "video post",
         "link post with preview", "nsfw image post", "spoiler image post", "gallery post", "crosspost",
-        "link post to video", "avatar", "late media", "fail media", "fail thumbnail", "imgur album", "imgur video album", "imgur gallery post",
+        "link post to video", "avatar", "second account", "late media", "fail media", "fail thumbnail", "imgur album", "imgur video album", "imgur gallery post",
         "imgur album post", "comment with imgur album", "redgifs post", "deleted redgifs post", "missing redgifs post", "phone joins another network", "x post", "long x post", "bluesky post", "youtube video", "removed youtube video", "youtube post", "comment with link", "comment with snoomoji", "comment with subreddit emote", "imgflip templates", "removed imgflip template", "chat link",
     ];
 
