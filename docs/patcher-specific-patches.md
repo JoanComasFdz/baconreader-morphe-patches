@@ -14,7 +14,7 @@ Ported from [ReVanced Patches](https://gitlab.com/ReVanced/revanced-patches)' Ba
 Patches with settings add them to one screen. Open it from BaconReader's settings → Patches, the last entry of the menu.
 
 - The screen is built in Java by the extension (`BaconReaderPreferenceFragment`) and shown in BaconReader's `GoogleApiActivity`, in BaconReader's theme (light, dark or black).
-- Its sections are Images and videos, Links, Comments and Chat. A section shows only when a selected patch has settings in it. An About section at the end shows "BaconReader Patches" and the patches' version.
+- Its sections are Images and videos, Links, Comments, Chat and Account colors. A section shows only when a selected patch has settings in it. An About section at the end shows "BaconReader Patches" and the patches' version.
 - A setting that needs another is greyed out while that one is off.
 - Settings are stored in Morphe's `morphe_prefs` preferences. The screen has no export or import.
 - The entry, the screen and the drawer's version footer come with `settingsPatch`, an internal patch without a name. Every patch with settings depends on it, so they show whenever one of those patches is selected, and never otherwise.
@@ -94,6 +94,16 @@ In the Chat section:
 | Setting | Key | Default |
 |---|---|---|
 | Chat messages apart from the inbox | `revanced_baconreader_check_chat_messages` | On |
+
+### Account colors settings
+
+In the Account colors section:
+
+| Setting | Key | Default |
+|---|---|---|
+| Account colors | `revanced_baconreader_account_colors` | On |
+
+The accounts' colors aren't settings: they're kept in the app's `baconreader_patches` preferences, as `account_colors.color.<user name in lower case>`.
 
 ## Differences from ReVanced
 

@@ -8,6 +8,8 @@ public class DrawerAdapter {
         // Final in the app.
         public int icon;
         public int tag;
+        public String tagString;
+        public int type;
 
         public DrawerItem(int type, String text, int icon, int tag) {
         }

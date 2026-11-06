@@ -55,4 +55,7 @@ public class Settings extends BaseSettings {
 
     // Reddit chat: chat messages Reddit also sends to the inbox are kept apart from it.
     public static final BooleanSetting CHECK_CHAT_MESSAGES = new BooleanSetting("revanced_baconreader_check_chat_messages", TRUE);
+
+    // Account colors.
+    public static final BooleanSetting ACCOUNT_COLORS = new BooleanSetting("revanced_baconreader_account_colors", TRUE);
 }
