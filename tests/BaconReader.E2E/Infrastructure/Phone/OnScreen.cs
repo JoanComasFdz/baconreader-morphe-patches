@@ -23,16 +23,26 @@ public static class OnScreen
     // How long a tap's ring is on the screen before the tap: ~6 of the GIF's 15 frames a second.
     private static readonly TimeSpan TapShown = TimeSpan.FromMilliseconds(400);
 
-    // When each driver's last step ended (one driver per scenario, its steps one after another).
+    // When each driver's last step ended (one scenario at a time on a driver, its steps one after another).
     private static readonly ConditionalWeakTable<AndroidDriver, Stopwatch> SinceLastStep = [];
 
-    // The recording that draws each driver's taps (one per recorded scenario).
+    // The recording that draws each driver's taps (the scenario's that is playing on it, when it records).
     private static readonly ConditionalWeakTable<AndroidDriver, ScreenRecording> TapsDrawnOn = [];
 
     private static bool Recording => E2EDevice.VideoDirectory is not null;
 
     /// <summary>Has <paramref name="recording"/> draw the taps <paramref name="driver"/> makes from now on.</summary>
     public static void DrawTapsOn(AndroidDriver driver, ScreenRecording recording) => TapsDrawnOn.AddOrUpdate(driver, recording);
+
+    /// <summary>
+    /// Forgets <paramref name="driver"/>'s scenario once it ends: its recording and its last step. The next scenario
+    /// plays on the same driver (<see cref="BaseE2E"/>).
+    /// </summary>
+    public static void ForgetScenarioOn(AndroidDriver driver)
+    {
+        TapsDrawnOn.Remove(driver);
+        SinceLastStep.Remove(driver);
+    }
 
     /// <summary>
     /// Taps the one element <paramref name="target"/> finds, at its center, after the recording has shown where for
