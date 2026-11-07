@@ -1,3 +1,13 @@
+## [1.8.0-dev.5](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.4...v1.8.0-dev.5) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** size a video's box from its playlist where images load on tap ([30218f8](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/30218f8c117c5e9037a27ebf3d99ac49155d4f48))
+
+### ✨ New Features
+
+* **baconreader:** add Load images only when tapped to Embed comment images ([c65dd9f](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/c65dd9fd15f14dcb387b8ec028b573cc33344afd))
+
 ## [1.8.0-dev.4](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.3...v1.8.0-dev.4) (2026-11-06)
 
 ### ✨ New Features
