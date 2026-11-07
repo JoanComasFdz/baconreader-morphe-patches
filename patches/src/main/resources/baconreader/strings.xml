@@ -53,6 +53,9 @@
     <string name="revanced_post_media_loading">Loading media</string>
     <string name="revanced_post_media_loading_failed">Media failed to load</string>
     <string name="revanced_thumbnail_blurred">Blurred thumbnail</string>
+    <string name="revanced_baconreader_loading_preview_title">Preview while loading</string>
+    <string name="revanced_baconreader_loading_preview_summary_on">A still preview of post media and gallery images shows behind the progress bar until they load</string>
+    <string name="revanced_baconreader_loading_preview_summary_off">Only the progress bar shows until post media and gallery images load</string>
     <string name="revanced_baconreader_link_preview_javascript_title">JavaScript in link posts</string>
     <string name="revanced_baconreader_link_preview_javascript_summary_on">All sites run JavaScript, except the blocked ones</string>
     <string name="revanced_baconreader_link_preview_javascript_summary_off">Only the allowed sites run JavaScript</string>

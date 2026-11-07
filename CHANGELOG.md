@@ -1,3 +1,9 @@
+## [1.8.0-dev.4](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.3...v1.8.0-dev.4) (2026-11-06)
+
+### ✨ New Features
+
+* **baconreader:** add preview while loading to improve post media loading, which can turn off the still preview ([0468d9d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/0468d9d5579c52fe2413a93c8fca4ac3518d8a17))
+
 ## [1.8.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.2...v1.8.0-dev.3) (2026-11-06)
 
 ### ✨ New Features

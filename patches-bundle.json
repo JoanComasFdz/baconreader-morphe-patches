@@ -1,7 +1,7 @@
 {
-  "created_at": "2026-11-06T18:22:27",
-  "description": "## [1.8.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.2...v1.8.0-dev.3) (2026-11-06)\n\n### ✨ New Features\n\n* **baconreader:** Show user avatars puts each account's avatar before its name in the drawer ([36a2234](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/36a2234fad991ae5f71c8f78f47ba61f500be622))",
-  "download_url": "https://github.com/JoanComasFdz/baconreader-morphe-patches/releases/download/v1.8.0-dev.3/patches-1.8.0-dev.3.mpp",
+  "created_at": "2026-11-06T19:43:43",
+  "description": "## [1.8.0-dev.4](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.3...v1.8.0-dev.4) (2026-11-06)\n\n### ✨ New Features\n\n* **baconreader:** add preview while loading to improve post media loading, which can turn off the still preview ([0468d9d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/0468d9d5579c52fe2413a93c8fca4ac3518d8a17))",
+  "download_url": "https://github.com/JoanComasFdz/baconreader-morphe-patches/releases/download/v1.8.0-dev.4/patches-1.8.0-dev.4.mpp",
   "signature_download_url": "",
-  "version": "1.8.0-dev.3"
+  "version": "1.8.0-dev.4"
 }

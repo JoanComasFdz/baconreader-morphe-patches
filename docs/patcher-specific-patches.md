@@ -39,6 +39,12 @@ Errors of the patches show in a dialog over the current screen, with the details
 
 ### Improve post media loading settings
 
+In the Images and videos section:
+
+| Setting | Key | Default |
+|---|---|---|
+| Preview while loading | `revanced_baconreader_loading_preview` | On: post media shows a dimmed still preview (Reddit's largest preview resolution), and a gallery image its preview, behind the progress bar until it loads. Off: only the progress bar and the size, over BaconReader's loading page |
+
 In the Links section:
 
 | Setting | Key | Default |
