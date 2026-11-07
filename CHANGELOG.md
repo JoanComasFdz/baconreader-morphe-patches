@@ -1,3 +1,13 @@
+## [1.8.0-dev.6](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.5...v1.8.0-dev.6) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** show spoilers in Select text's dialog as plain text, without their black box ([93ebe6d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/93ebe6da7dbfc0b7caee30803e47d4fb87e00bb2))
+
+### ✨ New Features
+
+* **baconreader:** add Select text, which shows a post's or comment's text in a dialog to select and copy any part of it ([af4f255](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/af4f255aa0d9563a7c2521734624141ed958fe48))
+
 ## [1.8.0-dev.5](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.4...v1.8.0-dev.5) (2026-11-07)
 
 ### 🐛 Bug Fixes
