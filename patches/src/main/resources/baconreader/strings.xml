@@ -143,6 +143,8 @@
     <string name="revanced_comment_search_close">Close search</string>
     <string name="revanced_comment_search_loading">LOADING…</string>
     <string name="revanced_comment_search_error">Could not load all comments: %s</string>
+    <string name="revanced_select_text">Select text</string>
+    <string name="revanced_select_text_close">Close</string>
     <string name="revanced_meme_template_loading">Loading template…</string>
     <string name="revanced_meme_template_error">Could not load the full template</string>
     <string name="revanced_settings_baconreader_screen_4_chat_title">Chat</string>
