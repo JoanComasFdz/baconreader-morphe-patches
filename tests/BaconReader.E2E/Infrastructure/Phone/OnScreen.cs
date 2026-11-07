@@ -29,6 +29,13 @@ public static class OnScreen
     // The recording that draws each driver's taps (the scenario's that is playing on it, when it records).
     private static readonly ConditionalWeakTable<AndroidDriver, ScreenRecording> TapsDrawnOn = [];
 
+    // The view the last wait found on each driver, with the locator it found it with (Waiting.UntilShownAsync): the step
+    // right after it, on the same locator, taps it without finding it again, one round trip (~0.25 s) less. A run of
+    // the LoggedIn scenarios found a view again right after its wait 334 times (2026-11-07). Any other step drops it.
+    private static readonly ConditionalWeakTable<AndroidDriver, Found> HandedOver = [];
+
+    private sealed record Found(By Target, IWebElement View);
+
     private static bool Recording => E2EDevice.VideoDirectory is not null;
 
     /// <summary>Has <paramref name="recording"/> draw the taps <paramref name="driver"/> makes from now on.</summary>
@@ -42,13 +49,27 @@ public static class OnScreen
     {
         TapsDrawnOn.Remove(driver);
         SinceLastStep.Remove(driver);
+        HandedOver.Remove(driver);
+    }
+
+    /// <summary>
+    /// Hands the next step <paramref name="view"/>, which a wait just found with <paramref name="target"/>: a tap on
+    /// <paramref name="target"/> right after takes it instead of finding it again. Not while recording: the ring asks the
+    /// view for its bounds first, and a recording isn't run for speed.
+    /// </summary>
+    internal static void HandOver(AndroidDriver driver, By target, IWebElement view)
+    {
+        if (!Recording)
+        {
+            HandedOver.AddOrUpdate(driver, new Found(target, view));
+        }
     }
 
     /// <summary>
     /// Taps the one element <paramref name="target"/> finds, at its center, after the recording has shown where for
     /// <see cref="TapShown"/>.
     /// </summary>
-    public static Task PressAsync(AndroidDriver driver, By target) => TouchAsync(driver, () => driver.FindElement(target), element => element.Click());
+    public static Task PressAsync(AndroidDriver driver, By target) => TouchAsync(driver, target, element => element.Click());
 
     /// <summary>
     /// Taps the element <paramref name="find"/> returns (one that no locator finds alone: an image in a given comment),
@@ -119,9 +140,54 @@ public static class OnScreen
     /// <summary>Does <paramref name="act"/> on the one element <paramref name="target"/> finds.</summary>
     public static async Task ActAsync(AndroidDriver driver, By target, Action<IWebElement> act)
     {
+        var handed = TakeHandedOver(driver, target);
         await WaitForActionGapAsync(driver);
-        await Task.Run(() => act(driver.FindElement(target)));
+        await Task.Run(() => OnFound(driver, target, handed, act));
         NoteStepEnded(driver);
+    }
+
+    // A touch on the view target finds: the one handed over, if any, else found now.
+    private static Task TouchAsync(AndroidDriver driver, By target, Action<IWebElement> touch)
+    {
+        var handed = TakeHandedOver(driver, target);
+        return TouchAsync(driver, () => handed ?? driver.FindElement(target), element =>
+        {
+            if (element == handed)
+            {
+                OnFound(driver, target, handed, touch);
+            }
+            else
+            {
+                touch(element);
+            }
+        });
+    }
+
+    // Does act on the view handed over, or on the one target finds when none was or it has gone since (the screen
+    // redrew it): then on the new one.
+    private static void OnFound(AndroidDriver driver, By target, IWebElement? handed, Action<IWebElement> act)
+    {
+        if (handed is not null)
+        {
+            try
+            {
+                act(handed);
+                return;
+            }
+            catch (StaleElementReferenceException)
+            {
+                RunLog.RetryFired("OnScreen: the view a wait found went stale, found again", 1, target.ToString());
+            }
+        }
+
+        act(driver.FindElement(target));
+    }
+
+    private static IWebElement? TakeHandedOver(AndroidDriver driver, By target)
+    {
+        var handed = HandedOver.TryGetValue(driver, out var found) && found.Target.Equals(target) ? found.View : null;
+        HandedOver.Remove(driver);
+        return handed;
     }
 
     /// <summary>Does <paramref name="act"/>, an action on the device rather than on a view (opening an app).</summary>
@@ -143,7 +209,8 @@ public static class OnScreen
         // once it can't scroll further up: on the Pixel 6 Pro the Front Page jumped back to its top right after the login,
         // in 1 run of 5 of Fix Reddit links' first step (2026-11-03), and a swipe during the jump couldn't scroll.
         var direction = "down";
-        for (var screens = 0; !await Task.Run(() => IsOnScreen(driver, target)); screens++)
+        IWebElement? shown;
+        for (var screens = 0; (shown = await Task.Run(() => ShownOnScreen(driver, target))) is null; screens++)
         {
             if (screens == 20)
             {
@@ -168,6 +235,7 @@ public static class OnScreen
         }
 
         NoteStepEnded(driver);
+        HandOver(driver, target, shown);
     }
 
     /// <summary>
@@ -185,6 +253,7 @@ public static class OnScreen
 
     private static async Task WaitForActionGapAsync(AndroidDriver driver)
     {
+        HandedOver.Remove(driver);
         if (Recording && SinceLastStep.TryGetValue(driver, out var since) && since.Elapsed < E2EDevice.ActionGap)
         {
             await Task.Delay(E2EDevice.ActionGap - since.Elapsed);
@@ -200,8 +269,8 @@ public static class OnScreen
         return ((edges[0] + edges[2]) / 2, (edges[1] + edges[3]) / 2);
     }
 
-    private static bool IsOnScreen(AndroidDriver driver, By target) =>
-        driver.FindElements(target).Any(element => element.Displayed && element.Size.Height > 0);
+    private static IWebElement? ShownOnScreen(AndroidDriver driver, By target) =>
+        driver.FindElements(target).FirstOrDefault(element => element.Displayed && element.Size.Height > 0);
 
     private static void NoteStepEnded(AndroidDriver driver) => SinceLastStep.AddOrUpdate(driver, Stopwatch.StartNew());
 }
