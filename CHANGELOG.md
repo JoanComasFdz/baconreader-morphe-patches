@@ -1,3 +1,47 @@
+## [1.8.0-dev.6](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.5...v1.8.0-dev.6) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** show spoilers in Select text's dialog as plain text, without their black box ([93ebe6d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/93ebe6da7dbfc0b7caee30803e47d4fb87e00bb2))
+
+### ✨ New Features
+
+* **baconreader:** add Select text, which shows a post's or comment's text in a dialog to select and copy any part of it ([af4f255](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/af4f255aa0d9563a7c2521734624141ed958fe48))
+
+## [1.8.0-dev.5](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.4...v1.8.0-dev.5) (2026-11-07)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** size a video's box from its playlist where images load on tap ([30218f8](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/30218f8c117c5e9037a27ebf3d99ac49155d4f48))
+
+### ✨ New Features
+
+* **baconreader:** add Load images only when tapped to Embed comment images ([c65dd9f](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/c65dd9fd15f14dcb387b8ec028b573cc33344afd))
+
+## [1.8.0-dev.4](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.3...v1.8.0-dev.4) (2026-11-06)
+
+### ✨ New Features
+
+* **baconreader:** add preview while loading to improve post media loading, which can turn off the still preview ([0468d9d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/0468d9d5579c52fe2413a93c8fca4ac3518d8a17))
+
+## [1.8.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.2...v1.8.0-dev.3) (2026-11-06)
+
+### ✨ New Features
+
+* **baconreader:** Show user avatars puts each account's avatar before its name in the drawer ([36a2234](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/36a2234fad991ae5f71c8f78f47ba61f500be622))
+
+## [1.8.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.1...v1.8.0-dev.2) (2026-11-06)
+
+### ✨ New Features
+
+* **baconreader:** add Account colors, which shows each account's color in the menu and under the toolbars ([a899ab0](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/a899ab0b12f79e4c7aa6cb50de37d3ac537fcd0e))
+
+## [1.8.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.7.0...v1.8.0-dev.1) (2026-11-06)
+
+### ✨ New Features
+
+* add "Remove Log out" patch ([aa79890](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/aa798908551d73041a9e0da185147d168ace8be9))
+
 ## [1.7.0](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.6.0...v1.7.0) (2026-11-06)
 
 ### 🐛 Bug Fixes
