@@ -23,6 +23,7 @@ public class Settings extends BaseSettings {
     public static final BooleanSetting IMAGES_FULL_WIDTH = new BooleanSetting("revanced_baconreader_images_full_width", FALSE, parent(SHOW_IMAGES));
     public static final BooleanSetting IMAGES_LONG_PRESS_DOWNLOAD = new BooleanSetting("revanced_baconreader_images_long_press_download", TRUE, parent(SHOW_IMAGES));
     public static final BooleanSetting IMAGES_WIFI_ONLY = new BooleanSetting("revanced_baconreader_images_wifi_only", FALSE, parent(SHOW_IMAGES));
+    public static final BooleanSetting IMAGES_TAP_TO_LOAD = new BooleanSetting("revanced_baconreader_images_tap_to_load", FALSE, parent(SHOW_IMAGES));
     public static final BooleanSetting SHOW_VIDEOS = new BooleanSetting("revanced_baconreader_show_videos", TRUE);
     public static final BooleanSetting YOUTUBE_TITLES = new BooleanSetting("revanced_baconreader_youtube_titles", TRUE);
     public static final BooleanSetting YOUTUBE_THUMBNAILS = new BooleanSetting("revanced_baconreader_youtube_thumbnails", FALSE);
