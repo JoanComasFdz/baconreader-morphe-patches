@@ -1,3 +1,9 @@
+## [1.8.0-dev.10](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.9...v1.8.0-dev.10) (2026-11-08)
+
+### 🐛 Bug Fixes
+
+* **e2e:** sign the NAS's runners out of GitHub when their container stops ([8830c0f](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/8830c0f7523f12f63e8c34870bd4a162ff9cae20))
+
 ## [1.8.0-dev.9](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.8...v1.8.0-dev.9) (2026-11-08)
 
 ### 🔧 Improvements
