@@ -58,7 +58,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release download --repo MorpheApp/morphe-desktop --pattern '*.jar' --dir morphe-desktop
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: bundles
           path: |
@@ -80,7 +80,7 @@ jobs:
           fetch-depth: 0
 
       # Back where record.sh and the scenarios look for them (the paths' common folder is the repository's root).
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: bundles
           path: .
@@ -114,7 +114,7 @@ jobs:
           [ ${#trx[@]} -gt 0 ] || { echo "No run finished: see the log of \"Play the scenarios\"." >> "$GITHUB_STEP_SUMMARY"; exit 0; }
           { echo '```text'; dotnet tools/e2e/BaconReader.E2ETools/bin/Release/net10.0/BaconReader.E2ETools.dll report-runs "${trx[@]}"; echo '```'; } >> "$GITHUB_STEP_SUMMARY" || true
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: e2e-results
@@ -161,7 +161,7 @@ jobs:
       - name: Install ffmpeg
         run: command -v ffmpeg > /dev/null || { sudo apt-get update -q && sudo apt-get install -yq ffmpeg; }
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: e2e-results
           path: .
