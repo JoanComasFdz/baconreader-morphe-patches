@@ -1,3 +1,9 @@
+## [1.8.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0...v1.8.1) (2026-11-08)
+
+### 🐛 Bug Fixes
+
+* **e2e:** scroll Patches until "JavaScript in link posts" shows with "Allowed sites", in Improve post media loading ([90bfdc7](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/90bfdc7597df3c7777247937c83136169e4018aa))
+
 ## [1.8.1-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0...v1.8.1-dev.1) (2026-11-08)
 
 ### 🐛 Bug Fixes
