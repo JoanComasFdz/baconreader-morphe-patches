@@ -233,7 +233,7 @@ public sealed class ImprovePostMediaLoadingTests : BaseE2E
         await Phone.BaconReader.Settings.WaitUntilShownAsync(new SettingsSection.Patches());
         await Phone.BaconReader.Settings.ClickAsync(new SettingsSection.Patches());
         await Phone.BaconReader.PatchesSettings.WaitUntilShownAsync();
-        await Phone.BaconReader.PatchesSettings.ScrollToAsync(new PatchSetting.AllowedSites());
+        await Phone.BaconReader.PatchesSettings.ScrollToAsync(new PatchSetting.JavaScriptInLinkPosts(), new PatchSetting.AllowedSites());
 
         // Then
         var settings = await Phone.BaconReader.PatchesSettings.ReadAsync();
@@ -269,7 +269,7 @@ public sealed class ImprovePostMediaLoadingTests : BaseE2E
         await Phone.BaconReader.Settings.WaitUntilShownAsync(new SettingsSection.Patches());
         await Phone.BaconReader.Settings.ClickAsync(new SettingsSection.Patches());
         await Phone.BaconReader.PatchesSettings.WaitUntilShownAsync();
-        await Phone.BaconReader.PatchesSettings.ScrollToAsync(new PatchSetting.AllowedSites());
+        await Phone.BaconReader.PatchesSettings.ScrollToAsync(new PatchSetting.JavaScriptInLinkPosts(), new PatchSetting.AllowedSites());
         await Phone.BaconReader.PatchesSettings.TickAsync(new PatchSetting.JavaScriptInLinkPosts());
         await Phone.BaconReader.GoBackToThePostsAsync();
         await Phone.BaconReader.Main.Posts.ClickPostAsync("Link with a preview");
