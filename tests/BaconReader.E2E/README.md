@@ -35,6 +35,11 @@ the scenarios joins the phone, starts Appium in the session and exports what the
 | `E2E_ACTION_GAP` | `0.4` | least seconds between two recorded steps |
 | `E2E_APPIUM_INSTALL_HELPERS` | unset | `1`: let Appium install its helper apps (a phone just reset) |
 
+The NAS the phone is plugged into has a GitHub Actions runner that plays the scenarios next to it, where each Appium
+command takes milliseconds: the "E2E on the phone" workflow, for long runs ([tools/e2e/nas](../../tools/e2e/nas/README.md)).
+It connects with the same script over the phone stack's network (`E2E_PHONE_LAN`), and shares the phone's lease with
+the cloud sessions.
+
 Appium's helper apps (`io.appium.uiautomator2.server`, `.server.test`, `io.appium.settings`) stay installed on the
 phone, so a session starts without reinstalling them; a reset phone needs one run with
 `E2E_APPIUM_INSTALL_HELPERS=1` (the connection script sets it when they're missing).
@@ -251,6 +256,7 @@ arguments: a Markdown table is `Scores\n\n¦ Player ¦ Score ¦\n¦---¦---¦\n�
 | `crosspost: <subreddit> \| <title> \| <shared post title>` | a crosspost of that post |
 | `link post to video: <subreddit> \| <title> \| <video post title>` | a link post to that post's video, on v.redd.it |
 | `avatar: <user>` | the user's avatar, for "Show user avatars" |
+| `second account: <name>` | an account besides the test account, which logs in with `SecondAccount.PasswordOf(<name>)` |
 | `late media: <post title> \| <seconds>` | the post's image or GIF answered that late |
 | `fail media: <post title> \| <status>` | the post's image or GIF answered with that status |
 | `fail thumbnail: <post title> \| <status> \| <times>` | the post's thumbnail answered with that status the first times |
