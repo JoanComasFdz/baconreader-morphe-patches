@@ -1,3 +1,12 @@
+## [1.8.0-dev.8](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.7...v1.8.0-dev.8) (2026-11-08)
+
+### 🐛 Bug Fixes
+
+* **e2e:** build and run the NAS's runner on QNAP's kernel (fchmodat2), and raise the runner to 2.338.2 ([93a2c14](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/93a2c14a0be57b4db3b8fb3d7f03b8e4fb460063))
+* **e2e:** give the comments' end a few seconds to start loading before the scroll to the end stops ([d22ed28](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/d22ed28730f91f969cfabd1f7e21919a90b744fa))
+* **e2e:** stop lease.sh keep's sleep with it, so the NAS job's step ends when its run does ([0e17512](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/0e17512c77bebcb3c330ffb6556f129d96cce0c6))
+* **e2e:** tap "Create new folder" again when the folder picker ignored the first tap ([9c7994e](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/9c7994e375e2fffa4cbc2a9d3b532019839e1d09))
+
 ## [1.8.0-dev.7](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.6...v1.8.0-dev.7) (2026-11-08)
 
 ### 🐛 Bug Fixes
