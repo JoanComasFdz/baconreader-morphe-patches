@@ -1,3 +1,19 @@
+## [1.8.0-dev.7](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.6...v1.8.0-dev.7) (2026-11-08)
+
+### 🐛 Bug Fixes
+
+* **e2e:** hand a wait's view over only to a step with the same locator ([75afb19](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/75afb19b7b42296c08f4223ba1ab7075815fc802))
+
+### 🔧 Improvements
+
+* **e2e:** check the Appium session by its screen orientation ([bbbef1a](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/bbbef1addcaba219a538e8df976da36c185585c5))
+* **e2e:** flick the comments to their end instead of flinging them ([bcced5c](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/bcced5cc78f36b43c7c59073ba9312f7ff7d7c0c))
+* **e2e:** play the scenarios on one Appium session ([a411e5e](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/a411e5eb4f7607c3eb44977ca4c7b464d086fba5))
+* **e2e:** read comments from one screen snapshot, and look once before going back to the posts ([cf1905d](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/cf1905d211c40d8bbf5e7943ff70455ee35b496c))
+* **e2e:** read the left menu, the post list and tables from screen snapshots ([d4da524](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/d4da5249d4db5c4f4fde5b2e7f83361da3b7777d))
+* **e2e:** start LoggedIn scenarios logged in, without the login screens ([899f6fb](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/899f6fb4d487b8916346271aa9eeb68aec50e1e2))
+* **e2e:** tap the view a wait just found without finding it again ([fbb5457](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/fbb54573804a318b3d563b383f5d79c5e1831a7d))
+
 ## [1.8.0-dev.6](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.5...v1.8.0-dev.6) (2026-11-07)
 
 ### 🐛 Bug Fixes
