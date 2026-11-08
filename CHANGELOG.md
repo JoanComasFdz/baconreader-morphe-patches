@@ -1,3 +1,9 @@
+## [1.8.0-dev.9](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.8...v1.8.0-dev.9) (2026-11-08)
+
+### 🔧 Improvements
+
+* **e2e:** draw the taps' rings with an overlay a lane instead of one a tap ([5211d0b](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/5211d0b831fa6cbfababbd947652dc50547d59d0))
+
 ## [1.8.0-dev.8](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.0-dev.7...v1.8.0-dev.8) (2026-11-08)
 
 ### 🐛 Bug Fixes
