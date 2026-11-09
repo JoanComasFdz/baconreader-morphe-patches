@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.ResourceType;
+import app.morphe.extension.shared.ResourceUtils;
 
 /**
  * The Slide Show View shows each post in a page of fixed height (PortraitPageLayout), which BaconReader works out
@@ -106,6 +108,7 @@ public final class FixSlideShowPatch {
         }
         column.addView(text, textParams);
         EdgeScrollView scroll = new EdgeScrollView(text.getContext());
+        scroll.setId(ResourceUtils.getIdentifier(ResourceType.ID, "baconreader_patches_post_text_scroll"));
         scroll.addView(column, new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         // In the page's column, under the media, which takes the height the text leaves it.

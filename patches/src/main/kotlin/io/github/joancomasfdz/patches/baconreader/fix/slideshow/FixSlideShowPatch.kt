@@ -7,6 +7,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.addInstructions
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.patch.bytecodePatch
+import app.morphe.patcher.patch.resourcePatch
 import app.morphe.util.indexOfFirstInstructionReversedOrThrow
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
@@ -17,6 +18,23 @@ import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER
 import io.github.joancomasfdz.patches.shared.Constants.COMPATIBILITY_BACONREADER_PREMIUM
 
 private const val EXTENSION_CLASS_DESCRIPTOR = "$EXTENSION_PACKAGE/slideshow/FixSlideShowPatch;"
+
+/**
+ * The scroll view the text goes in is made in code: this id, added to the app's ids, names it, so the e2e tests find
+ * it. The extension finds it by name.
+ */
+private val postTextScrollIdResourcePatch = resourcePatch {
+    execute {
+        document("res/values/ids.xml").use { ids ->
+            ids.getElementsByTagName("resources").item(0).appendChild(
+                ids.createElement("item").apply {
+                    setAttribute("type", "id")
+                    setAttribute("name", "baconreader_patches_post_text_scroll")
+                },
+            )
+        }
+    }
+}
 
 // The Slide Show View shows each post in a page of fixed height, which BaconReader works out from the display's
 // size. On newer Android versions that size is the whole screen, status and navigation bars included, so the page
@@ -30,7 +48,7 @@ val fixSlideShowPatch = bytecodePatch(
 ) {
     compatibleWith(COMPATIBILITY_BACONREADER, COMPATIBILITY_BACONREADER_PREMIUM)
 
-    dependsOn(sharedExtensionPatch)
+    dependsOn(sharedExtensionPatch, postTextScrollIdResourcePatch)
 
     execute {
         // The page's layout params, with the height BaconReader worked out, go through the extension on their way out.
