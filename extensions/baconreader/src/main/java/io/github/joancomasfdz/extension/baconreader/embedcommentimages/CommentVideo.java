@@ -250,6 +250,11 @@ final class CommentVideo {
             size.setContentDescription(str(expanded[0]
                     ? "revanced_embed_comment_images_video_shrink"
                     : "revanced_embed_comment_images_video_enlarge"));
+            // Grown, the video can reach below the screen, controls and all: the list scrolls to show it whole.
+            // Posted after the layout the new size asks for.
+            if (expanded[0]) {
+                box.post(() -> box.requestRectangleOnScreen(new Rect(0, 0, box.getWidth(), box.getHeight()), false));
+            }
         };
         applySize.run();
         size.setOnClickListener(v -> {
