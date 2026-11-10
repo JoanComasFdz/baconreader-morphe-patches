@@ -44,6 +44,10 @@
         .summary { font-size: 18px; margin: 0 0 8px; }
         .meta { color: var(--muted); font-size: 13px; margin: 2px 0 8px; }
         .scenario { margin: 20px 0 0; }
+        .patcher-note { max-width: 820px; margin: 16px 0 0; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line);
+            border-left: 3px solid var(--arc); border-radius: 0 8px 8px 0; }
+        .patcher-note h3 { color: var(--arc); }
+        .patcher-note ul { margin: 6px 0 0; padding-left: 20px; }
         .no-recording .player { display: none; }
         /* The phone's recordings are 576 × 1248: the space is kept before a video loads, so the page doesn't jump. */
         .recording video { height: var(--video-height); width: auto; aspect-ratio: 576 / 1248; }
@@ -398,6 +402,8 @@
 <p class="summary">BaconReader asks once to set up Reddit links to open in it, which Android doesn't let an app do by itself.</p>
 <ul><li>Since Android 12, Android opens Reddit links only in the apps you select for them: reddit.com verifies only Reddit's own app.</li><li>While no Reddit link opens in BaconReader, the main screen asks &quot;Open Reddit links with BaconReader?&quot;, with &quot;Not now&quot; and &quot;Set up&quot;.</li><li>&quot;Set up&quot; opens Android's &quot;Open by default&quot; screen for BaconReader: tap &quot;Add link&quot;, tick the Reddit links and tap &quot;Add&quot;.</li><li>Either answer, or closing the question, stops it: it isn't asked again. The links can be set up later in Android's settings: App info → Open by default.</li></ul>
 <p>No settings.</p>
+<aside class="patcher-note"><h3>Only in Morphe</h3>
+<ul><li><strong>Open Reddit links in BaconReader</strong> (BaconReader → Settings → Patches, under &quot;Links&quot;) tells how many Reddit links open in BaconReader, such as &quot;On: all &lt;n&gt; Reddit links open in BaconReader&quot; or &quot;Off: Reddit links open in the browser. Tap to set up&quot;, and opens Android's &quot;Open by default&quot; screen.</li><li>The prompt ends with &quot;This can be done later in Settings → Patches → Links.&quot;, where that row is.</li></ul></aside>
 <figure class="scenario">
 <figcaption><h3>Prompt to open Reddit links asks once and Set up opens Android's Open by default screen</h3><p class="meta">Recorded in <a href="https://github.com/JoanComasFdz/baconreader-morphe-patches/pull/115">PR #115</a> · V1</p></figcaption>
 <div class="recording" data-src="https://github.com/JoanComasFdz/baconreader-morphe-patches/releases/download/prs-resources/pr-115-v1-prompt-to-open-reddit-links-asks-once-and-set-up-opens-androids-open-by-default-screen-phone.mp4"><script type="application/json">{"g":"@phone\nScenario: Prompt to open Reddit links asks once and Set up opens Android's Open by default screen\n  Given BaconReader is patched with \"Prompt to open Reddit links\"\n  And BaconReader is installed\n  When I open BaconReader\n  And I tap \"GOT IT :(\" on \"FINAL RELEASE ANNOUNCEMENT!\"\n  # The prompt waits until the announcement is closed.\n  Then BaconReader asks \"Open Reddit links with BaconReader?\"\n  And it offers \"Not now\" and \"Set up\"\n  When I tap \"Set up\" on \"Open Reddit links with BaconReader?\"\n  Then Android shows \"Open by default\" for \"BaconReader Premium\"\n  # reddit.com verifies only Reddit's own app: \"0 verified links\".\n  And \"Links to open in this app\" lists no link\n  When I tap \"Add link\"\n  And I tick \"reddit.com\"\n  And I tap \"Add\"\n  Then \"Links to open in this app\" lists \"reddit.com\"\n  When I go back\n  And I force stop BaconReader\n  And I open BaconReader\n  # Opened again with its data kept: \"Set up\" answered the prompt.\n  Then the toolbar shows the \"Front Page\" feed\n  And \"Open Reddit links with BaconReader?\" doesn't show","m":[[2,0.31,0],[3,0.31,0],[4,0.51,0],[5,1.46,0],[7,3.59,0],[8,4.39,0],[9,5.19,0],[10,6.96,0],[12,7.76,0],[13,8.56,0],[14,9.56,0],[15,10.2,0],[16,12.57,0],[17,13.37,0],[18,13.98,0],[19,14.38,0],[21,21.91,0],[22,22.71,0]]}</script></div>
@@ -482,7 +488,7 @@
 <p class="summary">The popup asking for feedback about BaconReader no longer shows.</p>
 <ul><li>&quot;Please take a few moments to provide feedback about BaconReader&quot; no longer pops up after you've spent a while in the app. The app no longer tracks the time you spend in it for this popup.</li></ul>
 <p>No settings.</p>
-<p class="meta">No e2e scenario shows this patch yet.</p>
+<p class="meta">No recording: this patch has no e2e test yet.</p>
 </section>
 <section id="disable-final-release-announcement">
 <h2>Disable final release announcement</h2>
@@ -818,13 +824,18 @@
                 }
             }
             var sections = Array.prototype.slice.call(document.querySelectorAll("main section"));
+            // The section being read: the last one whose top is above a line near the top of the window; at the page's
+            // end, the last one, which may be too short to reach that line.
             function follow() {
                 var reading = sections[0];
                 sections.forEach(function (section) {
-                    if (section.getBoundingClientRect().top <= window.innerHeight / 3) {
+                    if (section.getBoundingClientRect().top <= 120) {
                         reading = section;
                     }
                 });
+                if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+                    reading = sections[sections.length - 1];
+                }
                 if (reading) {
                     highlight(reading.id);
                 }
