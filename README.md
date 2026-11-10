@@ -51,7 +51,11 @@ Don't patch the installed BaconReader: it's patched already, and the patches loo
 
 Fixes for what broke since 2023, features BaconReader never had, and cleanups of what no longer works.
 
-**[📖 The user guide](https://joancomasfdz.github.io/baconreader-morphe-patches/)** shows what each patch does, its settings and its limits, with a video of it on a real phone and the test's steps beside it.
+<div align="center">
+
+[**📖 Explore the user guide**](https://joancomasfdz.github.io/baconreader-morphe-patches/)
+
+</div>
 
 ## 🛠️ Development
 
