@@ -127,7 +127,9 @@
             <details class="toc" open>
                 <summary>Patches</summary>
                 <nav aria-label="Patches">
-                    <h2>🔧 Fixes</h2>
+                    <h2>Start here</h2>
+<ul><li><a href="#update">How to update</a></li></ul>
+<h2>🔧 Fixes</h2>
 <ul><li><a href="#spoof-client">Spoof client</a></li><li><a href="#fix-redgifs-api">Fix Redgifs API</a></li><li><a href="#fix-imgur-api">Fix Imgur API</a></li><li><a href="#fix-list-thumbnails">Fix list thumbnails</a></li><li><a href="#fix-unread-messages">Fix unread messages</a></li><li><a href="#fix-lost-post-votes">Fix lost post votes</a></li><li><a href="#fix-load-more-comments">Fix load more comments</a></li><li><a href="#fix-meme-templates">Fix meme templates</a></li><li><a href="#fix-empty-saved-files">Fix empty saved files</a></li><li><a href="#fix-slide-show">Fix slide show</a></li><li><a href="#fix-reddit-links">Fix Reddit links</a></li><li><a href="#save-videos-with-sound">Save videos with sound</a></li><li><a href="#show-request-errors">Show request errors</a></li></ul>
 <h2>✨ Features</h2>
 <ul><li><a href="#reddit-chat">Reddit chat</a></li><li><a href="#embed-comment-images">Embed comment images</a></li><li><a href="#improve-post-media-loading">Improve post media loading</a></li><li><a href="#show-tables">Show tables</a></li><li><a href="#markdown-editor">Markdown editor</a></li><li><a href="#search-comments">Search comments</a></li><li><a href="#load-more-comments">Load more comments</a></li><li><a href="#show-user-avatars">Show user avatars</a></li><li><a href="#flair-filter">Flair filter</a></li><li><a href="#inbox-comment-reply-screen">Inbox comment reply screen</a></li><li><a href="#hide-formatted-spoilers">Hide formatted spoilers</a></li><li><a href="#text-post-icon">Text post icon</a></li><li><a href="#prompt-to-open-reddit-links">Prompt to open Reddit links</a></li><li><a href="#video-autoplay-in-detail-view">Video autoplay in detail view</a></li><li><a href="#account-colors">Account colors</a></li><li><a href="#select-text">Select text</a></li><li><a href="#patches-entry-in-settings">Patches entry in settings</a></li></ul>
@@ -142,7 +144,16 @@
                 <p class="lead">This guide shows every patch, what it does, and a video of it working on a real phone. To install or
                     update them, see <a href="https://github.com/JoanComasFdz/baconreader-morphe-patches#-install">the README</a>.</p>
             </header>
-            <section id="spoof-client">
+            <section id="update">
+<h2>How to update</h2>
+<p class="summary">When new patches come out, patch BaconReader again with Morphe Manager: Android updates the app and keeps your login and settings.</p>
+<ul><li>Morphe Manager gets the new patches when it starts, or when you tap <strong>Update</strong> on the source in <strong>Sources</strong>.</li><li>Then, on <strong>Apps</strong>, tap <strong>BaconReader Premium</strong> (or <strong>BaconReader</strong>), then <strong>Patch</strong>, then <strong>Install → Update</strong>. Not the install button next to <strong>Open</strong>: it installs the copy patched before, with the patches of then.</li><li>The bottom of BaconReader's left menu shows which patches are installed, such as &quot;Patches 1.8.2 (Morphe)&quot;.</li></ul>
+<figure class="scenario">
+<figcaption><h3>Patching BaconReader Premium with 1.8.1, then updating it to 1.8.2</h3><p class="meta">Recorded on a Pixel 6 Pro with Morphe Manager 2.5.0.</p></figcaption>
+<div class="recording" data-src="update.mp4"><script type="application/json">{"g":"1. In Morphe Manager, tap BaconReader Premium.\n2. Tap \"No, I already have it\", and pick your BaconReader Premium 6.1.4 APK.\n3. Morphe Manager patches it with its source's patches, 1.8.1. Tap Install, then Install.\n4. Open BaconReader. The bottom of its left menu shows the patches installed: 1.8.1.\n5. New patches came out. In Morphe Manager, tap Sources, then the BaconReader source, then Update: it moves to 1.8.2.\n6. On Apps, tap BaconReader Premium, then Patch.\n7. Morphe Manager patches it with 1.8.2. Tap Install, then Update: Android keeps your login and settings.\n8. Open BaconReader. Its left menu shows the new patches: 1.8.2.","m":[[0,1.68,0],[1,6.72,0],[2,24.17,0],[3,50.52,0],[4,73,0],[5,98.42,0],[6,120.85,0],[7,135.63,0]]}</script></div>
+</figure>
+</section>
+<section id="spoof-client">
 <h2>Spoof client</h2>
 <p class="summary">You can log in to Reddit again, and BaconReader loads your feeds.</p>
 <ul><li>Reddit stopped accepting BaconReader's own login when BaconReader shut down in 2023. The patch logs in as another Reddit app, RedReader by default: Reddit's login asks to connect &quot;RedReader (Release)&quot; with your account.</li><li>Advanced: when patching, you can set the client ID of another Reddit app, such as an &quot;Installed app&quot; of your own from https://www.reddit.com/prefs/apps, with its redirect URI and user agent.</li></ul>
