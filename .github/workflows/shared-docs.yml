@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 
 # Fails when a shared file differs from the other BaconReader patches repo's (AGENTS.md, "Shared and
-# patcher-specific files"). A PR compares with the other repo's branch of the same name when there is one, so
+# patcher-specific files"): AGENTS.md, CLAUDE.md, STYLE.md, docs/patches.md and each patch's page in docs/patches/. A PR compares with the other repo's branch of the same name when there is one, so
 # the two PRs of one change pass together. A push to main or dev compares with the other repo's base branch, or with its
 # branch named as the PR just merged here: the other repo's PR of the same change may not be merged yet, and passes once
 # it is.
@@ -37,18 +37,27 @@ jobs:
             *) echo "::error::unknown repo $REPO"; exit 1 ;;
           esac
           files=(AGENTS.md CLAUDE.md STYLE.md docs/patches.md)
+          # Each patch's page (docs/patches/<patch>.md): the same set of files on both sides, each word for word.
+          patch_pages() {
+            { ls docs/patches/*.md 2> /dev/null
+              gh api "repos/$other/contents/docs/patches?ref=$1" --jq '.[] | select(.name | endswith(".md")) | "docs/patches/" + .name' 2> /dev/null
+            } | sort -u
+          }
           exists() { curl -fsIL -o /dev/null "https://raw.githubusercontent.com/$other/$1/AGENTS.md"; }
           # The other repo's shared files at a branch compared with this one's; with "loud", each difference is printed
           # and annotated.
           compare() {
-            local fail=0
-            for f in "${files[@]}"; do
+            local fail=0 f
+            for f in "${files[@]}" $(patch_pages "$1"); do
               if ! curl -fsSL "https://raw.githubusercontent.com/$other/$1/$f" -o "$RUNNER_TEMP/other"; then
                 [ "${2:-}" = loud ] && echo "::error file=$f::missing in $other@$1"
                 fail=1
                 continue
               fi
-              if [ "${2:-}" = loud ]; then
+              if [ ! -f "$f" ]; then
+                [ "${2:-}" = loud ] && echo "::error file=$f::missing here, but in $other@$1"
+                fail=1
+              elif [ "${2:-}" = loud ]; then
                 diff -u "$RUNNER_TEMP/other" "$f" || { echo "::error file=$f::differs from $other@$1"; fail=1; }
               else
                 cmp -s "$RUNNER_TEMP/other" "$f" || fail=1
