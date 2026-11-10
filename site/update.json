@@ -1,0 +1,42 @@
+{
+  "title": "How to update",
+  "summary": "When new patches come out, patch BaconReader again with Morphe Manager: Android updates the app and keeps your login and settings.",
+  "body": "- Morphe Manager gets the new patches when it starts, or when you tap **Update** on the source in **Sources**.\n- Then, on **Apps**, tap **BaconReader Premium** (or **BaconReader**), then **Patch**, then **Install → Update**. Not the install button next to **Open**: it installs the copy patched before, with the patches of then.\n- The bottom of BaconReader's left menu shows which patches are installed, such as \"Patches 1.8.2 (Morphe)\".",
+  "caption": "Patching BaconReader Premium with 1.8.1, then updating it to 1.8.2",
+  "recorded": "Recorded on a Pixel 6 Pro with Morphe Manager 2.5.0.",
+  "video": "update.mp4",
+  "steps": [
+    {
+      "text": "In Morphe Manager, tap BaconReader Premium.",
+      "seconds": 1.68
+    },
+    {
+      "text": "Tap \"No, I already have it\", and pick your BaconReader Premium 6.1.4 APK.",
+      "seconds": 6.72
+    },
+    {
+      "text": "Morphe Manager patches it with its source's patches, 1.8.1. Tap Install, then Install.",
+      "seconds": 24.17
+    },
+    {
+      "text": "Open BaconReader. The bottom of its left menu shows the patches installed: 1.8.1.",
+      "seconds": 50.52
+    },
+    {
+      "text": "New patches came out. In Morphe Manager, tap Sources, then the BaconReader source, then Update: it moves to 1.8.2.",
+      "seconds": 73.0
+    },
+    {
+      "text": "On Apps, tap BaconReader Premium, then Patch.",
+      "seconds": 98.42
+    },
+    {
+      "text": "Morphe Manager patches it with 1.8.2. Tap Install, then Update: Android keeps your login and settings.",
+      "seconds": 120.85
+    },
+    {
+      "text": "Open BaconReader. Its left menu shows the new patches: 1.8.2.",
+      "seconds": 135.63
+    }
+  ]
+}
