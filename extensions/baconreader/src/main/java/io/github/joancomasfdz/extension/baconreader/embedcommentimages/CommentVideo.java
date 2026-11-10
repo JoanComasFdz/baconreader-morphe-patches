@@ -322,8 +322,10 @@ final class CommentVideo {
                 }
             });
 
-            // A new view shows no frame of a video that has ended: it starts over, paused.
+            // A new view shows no frame of a video that has ended: it starts over, paused. The player still wants to
+            // play once it has ended, so it's paused first.
             if ((Integer) player.getClass().getMethod("getPlaybackState").invoke(player) == STATE_ENDED) {
+                player.getClass().getMethod("setPlayWhenReady", boolean.class).invoke(player, false);
                 player.getClass().getMethod("seekTo", int.class, long.class).invoke(player, 0, 0L);
             }
             switchTargetView(player, inline, playerView);
