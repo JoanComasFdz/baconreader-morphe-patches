@@ -171,12 +171,21 @@ public sealed class SpoofClientTests : BaseE2E
   the login screens (~11 s a scenario); Spoof client's Startup scenario still logs in through them;
 - **the screen:** one Appium session on the phone, its UiAutomator2 helpers already installed
   (`skipServerInstallation`, `skipDeviceInitialization`; `E2E_APPIUM_INSTALL_HELPERS=1` installs them after the
-  phone was reset), that never launches or resets the app itself: the scenario opens it;
+  phone was reset), that never launches or resets the app itself: the scenario opens it, from Android's home screen,
+  where each scenario starts (`Device/HomeScreen`), so its video starts there too;
 - **the recording:** when the run records (`E2E_VIDEO_DIR`), Android's `screenrecord` records the screen from before
   the app opens to the end, 576 px wide in the screen's shape at 1 Mbit/s, in parts of 3 minutes joined at the end,
-  with a ring drawn onto the video where each tap lands, before it (`Device/ScreenRecording`); it saves the video
+  with a ring drawn onto the video where each tap lands, before it, and an arrow pointing left, at the screen's right
+  side, at each Back (`Device/ScreenRecording`); it saves the video
   (record.sh holds its last frame 3 s), also when the scenario fails, with its record next to it (title, Gherkin,
-  screen, patches, GIF name, domain folder, when the main screen first showed, whether it passed);
+  screen, patches, GIF name, domain folder, when the main screen first showed, whether it passed, and when each Gherkin
+  line played in the video);
+- **the Gherkin marks** (`Steps/GherkinMarking`): while the run records, each statement of the scenario starts when it
+  asks for `Phone` or `Reddit`, and the recording marks the Gherkin line it plays (rule h, read from the scenario's own
+  source, embedded in the assembly: `Steps/ScenarioSteps`). An assertion asks for neither: its Then line is marked once
+  the scenario has gone past it, and the scenario stands still 0.8 s on each Then line, so the site's player
+  highlights one line at a time. When the scenario fails, the assertion its stack trace names, or else the line its
+  last statement played, is marked as failed;
 - the `Phone` property.
 
 A scenario never repeats any of that.
@@ -200,12 +209,15 @@ A scenario never repeats any of that.
   - **Read**: `ReadAsync()` returns an immutable record snapshot of what that part shows, never the raw UI tree:
     vocabulary values (rule e) where it shows one kind of thing, the shown text where it composes a line;
     `ReadLayoutAsync()` returns where its views are on the screen (their bounds, in pixels) for layout checks (rule d).
-- **Pace the steps.** Every Act and Read goes through `OnScreen` (`PressAsync`, `TouchAsync`, `ActAsync`, `DoAsync`,
-  `ReadAsync`), never straight to Appium: while recording, a step starts no sooner than `--action-gap` seconds after the
+- **Pace the steps.** Every Act and Read goes through `OnScreen` (`PressAsync`, `TouchAsync`, `PressBackAsync`, `ActAsync`,
+  `DoAsync`, `ReadAsync`), never straight to Appium: while recording, a step starts no sooner than `--action-gap` seconds after the
   previous one ended, so the GIF doesn't tap faster than the eye follows. A view that is off screen is scrolled to first
   (through `OnScreen`, when a scenario first needs it). `PressAsync` shows where it taps before it taps: the recording
   draws a ring there from 0.4 s before the tap until just after it (Android draws no touch for Appium's taps);
-  `TouchAsync` does the same for any other touch (a double tap, a long press). Waits don't go through it (`Waiting`).
+  `TouchAsync` does the same for any other touch (a double tap, a long press), and `PressBackAsync` for Android's Back,
+  with an arrow at the screen's right side. A swipe goes through `OnScreen.PerformSwipe`, and a scroll through
+  `OnScreen.ScrollGesture`, never straight to `PerformActions` or `mobile: scrollGesture`: the ring then follows the
+  finger, from where it lands to where it lifts. Waits don't go through it (`Waiting`).
 - Snapshots don't retry: a scenario waits for what it expects before it reads.
 - Locators are private to their class and use only `Locate`: a resource id (`Locate.AppId("toolbarTitle")`, Android's
   own `Locate.AndroidId("button1")`), a content description, or the exact text. Never XPath or a position. A view a patch
@@ -303,3 +315,14 @@ Line for line, in the Gherkin's order:
 | A `#` line (why it surprises) | Stays in the Gherkin; a `//` line above the read it explains, when it explains a check |
 
 A Gherkin line with no page-object member or assertion yet gets one (rule g, step 5), named in the same words.
+
+`ScenarioStepsTests` checks every scenario against this table, without the phone, since the recording marks each
+Gherkin line by it (rule b, "the Gherkin marks"):
+- A `// When` (and the `// Given`) plays a line a statement, but for the statements that only get the next one ready:
+  in the first of these that matches the lines, a wait (`WaitUntil…`), a read or a scroll (`ScrollTo…`, bringing a
+  setting into view) plays none; then a wait or a read ("And I wait until the comment shows" is a `WaitUntil…`); then
+  every statement plays one. `BaconReader is patched with …` and `BaconReader is installed` are BaseE2E's.
+- A `// Then` plays a line a source line of its `Asserting.That(…)` chains: each line that starts with a call, and the
+  first line when calls follow `That(…)` on it. `.AsksToConnect(…).WithTheTestAccount()` on one line checks one
+  Then line; two Then lines are two source lines, in the Gherkin's order. A check that only repeats the wait before it
+  (Reddit served what the wait waited for) is left out.
