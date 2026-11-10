@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -64,6 +65,11 @@ final class CommentVideo {
     private static final float DEFAULT_RATIO = 9f / 16f;
     private static final String PLAYER_USER_AGENT = "BaconReader";
     private static final int BUTTON_SIZE_DP = 36;
+    private static final long ORIENTATION_RELEASE_DELAY_MS = 1000L;
+    /**
+     * Player.STATE_ENDED: the video played to its end.
+     */
+    private static final int STATE_ENDED = 4;
 
     private static final ExecutorService LOADER = Executors.newFixedThreadPool(2);
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
@@ -275,6 +281,7 @@ final class CommentVideo {
             FrameLayout root = new FrameLayout(activity);
             root.setBackgroundColor(Color.BLACK);
             final View playerView = newPlayerView(activity);
+            playerView.setId(EmbedCommentImagesPatch.resourceId("baconreader_patches_video_full_screen"));
             root.addView(playerView, new FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             ImageView exit = button(activity);
@@ -288,12 +295,24 @@ final class CommentVideo {
             exit.setOnClickListener(v -> dialog.dismiss());
 
             final int orientation = activity.getRequestedOrientation();
-            if (box.getRatio() < 1f) {
+            final boolean turned = box.getRatio() < 1f;
+            final int before = activity.getResources().getConfiguration().orientation
+                    == Configuration.ORIENTATION_LANDSCAPE
+                    ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                    : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+            if (turned) {
                 activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
             }
             dialog.setOnDismissListener(d -> {
                 if (fullScreen == dialog) fullScreen = null;
-                activity.setRequestedOrientation(orientation);
+                if (turned) {
+                    // Given back right away, the app's own orientation follows the sensor, which keeps landscape
+                    // while the phone lies flat. The screen turns back first.
+                    activity.setRequestedOrientation(before);
+                    MAIN.postDelayed(() -> {
+                        if (fullScreen == null) activity.setRequestedOrientation(orientation);
+                    }, ORIENTATION_RELEASE_DELAY_MS);
+                }
                 if (box.getTag() == player) {
                     try {
                         switchTargetView(player, playerView, inline);
@@ -303,10 +322,18 @@ final class CommentVideo {
                 }
             });
 
+            // A new view shows no frame of a video that has ended: it starts over, paused.
+            if ((Integer) player.getClass().getMethod("getPlaybackState").invoke(player) == STATE_ENDED) {
+                player.getClass().getMethod("seekTo", int.class, long.class).invoke(player, 0, 0L);
+            }
             switchTargetView(player, inline, playerView);
             followControls(playerView, buttons);
             dialog.show();
-            hideSystemBars(dialog);
+            // The theme hides the status bar. Hiding the navigation bar too would show Android's "Viewing full
+            // screen" message over the video, the first time.
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            }
             fullScreen = dialog;
         } catch (Exception ex) {
             ErrorDialog.printException(() -> "Could not show the video in full screen", ex);
@@ -333,18 +360,6 @@ final class CommentVideo {
         Class<?> playerViewClass = loader.loadClass("com.google.android.exoplayer2.ui.PlayerView");
         playerViewClass.getMethod("switchTargetView", playerClass, playerViewClass, playerViewClass)
                 .invoke(null, player, from, to);
-    }
-
-    @SuppressWarnings("deprecation")
-    private static void hideSystemBars(Dialog dialog) {
-        if (dialog.getWindow() == null) return;
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        dialog.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
     }
 
     private static Activity activityOf(Context context) {
