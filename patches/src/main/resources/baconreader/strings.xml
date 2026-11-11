@@ -111,6 +111,7 @@
     <string name="revanced_baconreader_error_copied">Copied to the clipboard</string>
     <string name="revanced_baconreader_error_saved">Saved to %s</string>
     <string name="revanced_baconreader_error_save_failed">Could not save the file: %s</string>
+    <string name="revanced_baconreader_error_issue">Consider opening an issue here</string>
     <string name="revanced_baconreader_comment_limit_title">Comments to load</string>
     <string name="revanced_baconreader_comment_limit_summary">%d comments when a post opens (200 to 500). Fewer load faster on slow connections</string>
     <string name="revanced_baconreader_auto_load_more_comments_title">Auto-load \"load more comments\"</string>

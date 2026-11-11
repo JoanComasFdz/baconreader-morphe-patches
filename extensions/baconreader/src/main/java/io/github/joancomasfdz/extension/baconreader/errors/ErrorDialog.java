@@ -14,6 +14,8 @@ import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -64,6 +66,8 @@ public final class ErrorDialog {
     private static final String SEPARATOR = "\n\n────────────\n\n";
 
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
+
+    private static final String ISSUES = "https://github.com/JoanComasFdz/baconreader-morphe-patches/issues";
 
     /** The screen on top, to show the dialog on. */
     private static WeakReference<Activity> resumed = new WeakReference<>(null);
@@ -234,6 +238,16 @@ public final class ErrorDialog {
             header.addView(close, new LinearLayout.LayoutParams(dp(activity, 48), dp(activity, 48)));
             root.addView(header);
 
+            // Above the details, so that the link shows without scrolling to them.
+            TextView issue = new TextView(activity);
+            issue.setText(str("revanced_baconreader_error_issue"));
+            issue.setTextColor(textColor);
+            issue.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            issue.setPaintFlags(issue.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            issue.setPadding(0, dp(activity, 4), 0, dp(activity, 4));
+            issue.setOnClickListener(v -> openIssues(activity));
+            root.addView(issue);
+
             final TextView text = new TextView(activity);
             text.setText(details);
             text.setTextColor(textColor);
@@ -283,6 +297,15 @@ public final class ErrorDialog {
             // The dialog itself failed: the error is still in the log, show it short.
             Logger.printInfo(() -> "Could not show the error dialog", ex);
             Utils.showToastLong(details.substring(0, Math.min(details.length(), 300)));
+        }
+    }
+
+    /** The repo's issues, where the error can be reported. */
+    private static void openIssues(Activity activity) {
+        try {
+            activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ISSUES)));
+        } catch (Exception ex) {
+            Utils.showToastLong(ISSUES);
         }
     }
 
