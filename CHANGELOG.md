@@ -1,3 +1,9 @@
+## [1.9.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.9.0-dev.1...v1.9.0-dev.2) (2026-11-11)
+
+### ✨ New Features
+
+* **baconreader:** add Swipe through albums, which goes to the next or previous image of a gallery or album with a swipe ([38719e1](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/38719e1e72fb6914605ef1a999c1169ba7b99aaf))
+
 ## [1.9.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.2...v1.9.0-dev.1) (2026-11-11)
 
 ### 🐛 Bug Fixes
