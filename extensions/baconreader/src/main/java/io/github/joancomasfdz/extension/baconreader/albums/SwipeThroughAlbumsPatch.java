@@ -27,7 +27,7 @@ public final class SwipeThroughAlbumsPatch {
     private static final int MIN_DISTANCE_DP = 48;
 
     /** Longest swipe on a video, in milliseconds: a slower drag is no swipe. */
-    private static final long MAX_SWIPE_MS = 600;
+    private static final long MAX_SWIPE_MS = 1000;
 
     private SwipeThroughAlbumsPatch() {
     }
