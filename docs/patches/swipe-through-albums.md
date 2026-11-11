@@ -14,6 +14,3 @@ Swipe left or right on a Reddit gallery or an Imgur album to go to its next or p
   it.
 
 No settings.
-
-**Limits**:
-- In Slide Show View, a swipe on a gallery goes to the next or previous post, as before.

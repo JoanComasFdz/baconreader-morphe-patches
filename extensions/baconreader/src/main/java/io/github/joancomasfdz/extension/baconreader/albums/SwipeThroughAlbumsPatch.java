@@ -4,7 +4,6 @@
 package io.github.joancomasfdz.extension.baconreader.albums;
 
 import android.annotation.SuppressLint;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -26,6 +25,9 @@ import java.lang.reflect.Field;
 public final class SwipeThroughAlbumsPatch {
     /** Shortest swipe, in dp, that changes image: a tap that slides a little doesn't. */
     private static final int MIN_DISTANCE_DP = 48;
+
+    /** Longest swipe on a video, in milliseconds: a slower drag is no swipe. */
+    private static final long MAX_SWIPE_MS = 600;
 
     private SwipeThroughAlbumsPatch() {
     }
@@ -60,29 +62,28 @@ public final class SwipeThroughAlbumsPatch {
         View surface = (View) player.getClass().getMethod("getVideoSurfaceView").invoke(player);
         if (surface == null) return;
         float density = surface.getResources().getDisplayMetrics().density;
-        boolean[] swiped = new boolean[1];
-        GestureDetector detector = new GestureDetector(surface.getContext(), new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDown(MotionEvent event) {
-                swiped[0] = false;
-                return false;
-            }
-
-            @Override
-            public boolean onFling(MotionEvent down, MotionEvent up, float velocityX, float velocityY) {
-                swiped[0] = swipe(down, up, back, forward, density);
-                return swiped[0];
-            }
-        });
+        MotionEvent[] down = new MotionEvent[1];
         surface.setOnTouchListener((view, event) -> {
-            detector.onTouchEvent(event);
-            if (!swiped[0] || event.getActionMasked() != MotionEvent.ACTION_UP) return false;
-            // The swipe isn't a tap: the surface gets a cancel instead of the lift, so it doesn't pause the video.
-            MotionEvent cancel = MotionEvent.obtain(event);
-            cancel.setAction(MotionEvent.ACTION_CANCEL);
-            view.onTouchEvent(cancel);
-            cancel.recycle();
-            return true;
+            switch (event.getActionMasked()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (down[0] != null) down[0].recycle();
+                    down[0] = MotionEvent.obtain(event);
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    if (down[0] == null || event.getEventTime() - down[0].getEventTime() > MAX_SWIPE_MS
+                            || !swipe(down[0], event, back, forward, density)) {
+                        return false;
+                    }
+                    // The swipe isn't a tap: the surface gets a cancel instead of the lift, so it doesn't pause the
+                    // video.
+                    MotionEvent cancel = MotionEvent.obtain(event);
+                    cancel.setAction(MotionEvent.ACTION_CANCEL);
+                    view.onTouchEvent(cancel);
+                    cancel.recycle();
+                    return true;
+                default:
+                    return false;
+            }
         });
     }
 
