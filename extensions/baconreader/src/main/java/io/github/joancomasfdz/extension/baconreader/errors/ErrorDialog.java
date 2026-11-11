@@ -25,6 +25,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -64,6 +65,10 @@ public final class ErrorDialog {
     /** At most this many errors in the open dialog, so a repeating error cannot grow it forever. */
     private static final int MAX_ERRORS = 20;
     private static final String SEPARATOR = "\n\n────────────\n\n";
+
+    private static final String TAG = "ErrorDialog";
+    private static final String PATCHES_PACKAGE = "io.github.joancomasfdz.";
+    private static final String ERRORS_PACKAGE = "io.github.joancomasfdz.extension.baconreader.errors.";
 
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
 
@@ -126,6 +131,7 @@ public final class ErrorDialog {
             public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
             }
         });
+        catchErrors();
     }
 
     /**
@@ -135,7 +141,15 @@ public final class ErrorDialog {
     public static void printException(Logger.LogMessage message, @Nullable Throwable ex) {
         String text = message.buildMessageString();
         Logger.printInfo(message, ex instanceof Exception ? (Exception) ex : null);
-        String details = details(source(message), text, ex);
+        showDetails(details(source(message), text, ex));
+    }
+
+    public static void printException(Logger.LogMessage message) {
+        printException(message, null);
+    }
+
+    /** Shows the details on the screen on top, or keeps them until one is. Safe from any thread. */
+    private static void showDetails(String details) {
         MAIN.post(() -> {
             Activity activity = resumed.get();
             if (activity == null || activity.isFinishing()) {
@@ -150,8 +164,51 @@ public final class ErrorDialog {
         });
     }
 
-    public static void printException(Logger.LogMessage message) {
-        printException(message, null);
+    // Every error is caught, on any thread, and shown here instead of closing the app. The dialog
+    // says "Patches" when a patch's code is in the error, else "BaconReader".
+    private static void catchErrors() {
+        Thread.UncaughtExceptionHandler previous = Thread.getDefaultUncaughtExceptionHandler();
+        Thread.setDefaultUncaughtExceptionHandler((thread, error) -> {
+            try {
+                report(sourceOf(error), "An error stopped the thread " + thread.getName(), error);
+            } catch (Throwable failed) {
+                if (previous != null) previous.uncaughtException(thread, error);
+            }
+        });
+        // An error on the main thread ends its message loop. Running the loop again inside a
+        // message lets the error be shown there and the loop continue.
+        MAIN.post(ErrorDialog::loopMainThread);
+    }
+
+    private static void loopMainThread() {
+        while (true) {
+            try {
+                Looper.loop();
+                return;
+            } catch (Throwable error) {
+                try {
+                    report(sourceOf(error), "An error stopped a screen", error);
+                } catch (Throwable failed) {
+                    Log.e(TAG, "Could not show the error", failed);
+                }
+            }
+        }
+    }
+
+    private static void report(String source, String message, Throwable error) {
+        Log.e(source, message, error);
+        showDetails(details(source, message, error));
+    }
+
+    // The dialog's own classes are in every error shown here, so they are not a patch's.
+    private static String sourceOf(Throwable error) {
+        for (Throwable cause = error; cause != null; cause = cause.getCause() == cause ? null : cause.getCause()) {
+            for (StackTraceElement frame : cause.getStackTrace()) {
+                String name = frame.getClassName();
+                if (name.startsWith(PATCHES_PACKAGE) && !name.startsWith(ERRORS_PACKAGE)) return "Patches";
+            }
+        }
+        return "BaconReader";
     }
 
     // region Details
