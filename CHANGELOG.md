@@ -1,3 +1,15 @@
+## [1.9.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.2...v1.9.0-dev.1) (2026-11-11)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** pause an ended comment video before its full screen starts it over ([b94e066](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/b94e066ac0050b8c555196275141d9467f76f392))
+* **baconreader:** scroll a comment video whole into view when it grows ([96f237f](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/96f237f45e834fc30ecb35f20b0698457b681c51))
+* **baconreader:** show a comment video's full screen without Android's prompt, and turn the screen back after it ([ba85673](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/ba856730c9043e91b9320d4c329591090de33d42))
+
+### ✨ New Features
+
+* **baconreader:** play comment videos at full width, with shrink and full screen buttons ([665ebad](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/665ebade1173e394b7740b81ab77eda48907768a))
+
 ## [1.9.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.9.0-dev.1...v1.9.0-dev.2) (2026-11-10)
 
 ## [1.9.0-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.2...v1.9.0-dev.1) (2026-11-09)
