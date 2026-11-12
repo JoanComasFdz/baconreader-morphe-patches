@@ -25,6 +25,10 @@
     <string name="revanced_baconreader_show_videos_title">Play videos in comments</string>
     <string name="revanced_baconreader_show_videos_summary_on">Videos uploaded in comments and video links are played in the comment</string>
     <string name="revanced_baconreader_show_videos_summary_off">Videos uploaded in comments and video links are shown as links</string>
+    <string name="revanced_baconreader_open_web_pages_in_browser_title">Open web pages in the browser</string>
+    <string name="revanced_baconreader_open_web_pages_in_browser_summary_on">Links to web pages open in your browser, not in BaconReader. Images, GIFs, galleries and videos still open in BaconReader, whether or not \"Open links inside app\" is on</string>
+    <string name="revanced_baconreader_open_web_pages_in_browser_summary_off">Links to web pages open where \"Open links inside app\" says</string>
+    <string name="revanced_baconreader_open_link_button">Open link</string>
     <string name="revanced_baconreader_autoplay_videos_in_detail_view_title">Autoplay videos in Detail View</string>
     <string name="revanced_baconreader_autoplay_videos_in_detail_view_summary_on">Videos in a post\'s detail view, such as v.redd.it videos, start playing when the post opens</string>
     <string name="revanced_baconreader_autoplay_videos_in_detail_view_summary_off">The post shows its preview image with a play button, and the video loads when you tap it. GIFs are not affected</string>
