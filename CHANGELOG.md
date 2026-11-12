@@ -1,3 +1,13 @@
+## [1.9.0-dev.3](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.9.0-dev.2...v1.9.0-dev.3) (2026-11-12)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** show every error in the error dialog, labelled by its source, with a link to the issues ([91e2431](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/91e2431eda4cd658be8f02dfc24649d1e4967bd6)), closes [#142](https://github.com/JoanComasFdz/baconreader-morphe-patches/issues/142)
+
+### ✨ New Features
+
+* **baconreader:** add Open web pages in the browser, which opens links to web pages in the user's browser ([dc5a4a5](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/dc5a4a5ad5d7c809de8d5558168bf8130864960b))
+
 ## [1.9.0-dev.2](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.9.0-dev.1...v1.9.0-dev.2) (2026-11-11)
 
 ### ✨ New Features
