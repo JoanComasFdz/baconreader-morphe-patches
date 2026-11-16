@@ -128,7 +128,7 @@ In the Backup section, two rows that run code, not settings: Export settings and
 
 The file has `format: 1` and three maps:
 
-- `baconreader`: BaconReader's default preferences, by their own keys, without its accounts, logins and what it keeps about the device and install (`accounts`, `username`, `device_identifier`, `storage_uri`, first-start and review timestamps, ad consent strings, any key with "token").
+- `baconreader`: BaconReader's default preferences, by their own keys, without its accounts, logins and what it keeps about the device and install (`accounts`, `username`, `device_identifier`, `storage_uri`, first-start and review timestamps, its analytics key `FLURRY_KEY` and `clear_app_data_cache`, ad consent strings, any key with "token").
 - `patches`: the settings of the applied patches (`IncludedPatches`), by their key without `revanced_baconreader_` (`revanced_baconreader_show_images` is `show_images`). Reseam's keys without their group are the same names, so a file imports with either patcher. Integer settings are numbers here, strings in Reseam; each patcher reads either. Avatar size and Auto-load "load more comments" must be one of their list's values, or go back to their default. Prompt to open Reddit links' `OPEN_LINKS_PROMPT_SHOWN` isn't exported, as it isn't shown.
 - `account_colors`: Account colors' `account_colors.color.<name>` from the `baconreader_patches` preferences, by user name.
 
