@@ -1,3 +1,9 @@
+## [1.9.1-dev.1](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.9.0...v1.9.1-dev.1) (2026-11-16)
+
+### 🐛 Bug Fixes
+
+* **baconreader:** skip loading an image whose screen closed, instead of showing "load failed" ([8aad952](https://github.com/JoanComasFdz/baconreader-morphe-patches/commit/8aad952d28d7c76286890cc686cb00fa9a487ace)), closes [JoanComasFdz/baconreader-morphe-patches#145](https://github.com/JoanComasFdz/baconreader-morphe-patches/issues/145)
+
 ## [1.9.0](https://github.com/JoanComasFdz/baconreader-morphe-patches/compare/v1.8.2...v1.9.0) (2026-11-12)
 
 ### 🐛 Bug Fixes
