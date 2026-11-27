@@ -19,6 +19,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.reference.MethodReference
 import io.github.joancomasfdz.patches.baconreader.fix.imgur.fixImgurApiPatch
+import io.github.joancomasfdz.patches.baconreader.layout.postvideo.videoFullScreenIdResourcePatch
 import io.github.joancomasfdz.patches.baconreader.misc.extension.EXTENSION_PACKAGE
 import io.github.joancomasfdz.patches.baconreader.misc.extension.sharedExtensionPatch
 import io.github.joancomasfdz.patches.baconreader.misc.settings.markPatchIncluded
@@ -44,7 +45,6 @@ private val commentImageIdsResourcePatch = resourcePatch {
                 "baconreader_patches_comment_gif",
                 "baconreader_patches_comment_video",
                 "baconreader_patches_image_viewer",
-                "baconreader_patches_video_full_screen",
                 "baconreader_patches_comment_album",
                 "baconreader_patches_album_counter",
                 "baconreader_patches_text_after_media",
@@ -69,7 +69,13 @@ val embedCommentImagesPatch = bytecodePatch(
 ) {
     compatibleWith(COMPATIBILITY_BACONREADER, COMPATIBILITY_BACONREADER_PREMIUM)
 
-    dependsOn(sharedExtensionPatch, settingsPatch, fixImgurApiPatch, commentImageIdsResourcePatch)
+    dependsOn(
+        sharedExtensionPatch,
+        settingsPatch,
+        fixImgurApiPatch,
+        commentImageIdsResourcePatch,
+        videoFullScreenIdResourcePatch,
+    )
 
     execute {
         markPatchIncluded("embedCommentImages")

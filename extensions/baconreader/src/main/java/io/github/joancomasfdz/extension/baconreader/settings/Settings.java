@@ -56,6 +56,9 @@ public class Settings extends BaseSettings {
     // Video autoplay in detail view.
     public static final BooleanSetting AUTOPLAY_VIDEOS_IN_DETAIL_VIEW = new BooleanSetting("revanced_baconreader_autoplay_videos_in_detail_view", TRUE);
 
+    // Full screen post videos.
+    public static final BooleanSetting POST_VIDEO_FULL_SCREEN_BUTTON = new BooleanSetting("revanced_baconreader_post_video_full_screen_button", TRUE);
+
     // Prompt to open Reddit links. Not shown in the settings.
     public static final BooleanSetting OPEN_LINKS_PROMPT_SHOWN = new BooleanSetting("revanced_baconreader_open_links_prompt_shown", FALSE, false, false);
 

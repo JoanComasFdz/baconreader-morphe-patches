@@ -60,6 +60,9 @@ public class BaconReaderPreferenceFragment extends PreferenceFragment {
             if (IncludedPatches.videoAutoplayInDetailView()) {
                 images.addPreference(switchPreference(context, Settings.AUTOPLAY_VIDEOS_IN_DETAIL_VIEW));
             }
+            if (IncludedPatches.fullScreenPostVideos()) {
+                images.addPreference(switchPreference(context, Settings.POST_VIDEO_FULL_SCREEN_BUTTON));
+            }
             if (IncludedPatches.improvePostMediaLoading()) {
                 images.addPreference(switchPreference(context, Settings.LOADING_PREVIEW));
             }

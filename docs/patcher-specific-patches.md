@@ -104,6 +104,16 @@ In the Images and videos section:
 
 Off, the detail view of a post shows the post's preview image (the largest of Reddit's preview resolutions) with a play button in place of a video shown by ExoPlayer (v.redd.it, and the MP4 and GIFV videos of Imgur and RedGIFs), and doesn't load the video. A tap on it gives the video back to BaconReader, which shows and plays it as it does with the setting on. The detail view is the one whose `PostMediaHandler` listener is `DetailLinkFragment$6`: the full-screen photo viewer and the browser keep autoplaying, and so do the videos in comments. A post without a preview image shows a black page with the play button.
 
+### Full screen post videos settings
+
+In the Images and videos section:
+
+| Setting | Key | Default |
+|---|---|---|
+| Full screen button | `revanced_baconreader_post_video_full_screen_button` | On |
+
+The button shows over the video of a post's detail view, whose `PostMediaHandler` listener is `DetailLinkFragment$6`, while its controls show. The full screen is the one of videos in comments, shared by both patches.
+
 ### Reddit chat settings
 
 In the Chat section:
@@ -142,6 +152,7 @@ The ports follow ReVanced's BaconReader merge requests !6989 and !6998 closely: 
 - **Not from ReVanced:**
   - Reddit chat, ported from baconreader-reseam-patches;
   - Video autoplay in detail view, ported from baconreader-reseam-patches;
+  - Full screen post videos, ported from baconreader-reseam-patches;
   - Disable final release announcement;
   - Remove Log out;
   - the drawer's version footer.
