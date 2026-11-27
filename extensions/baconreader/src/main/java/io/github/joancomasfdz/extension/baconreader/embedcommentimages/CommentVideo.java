@@ -6,21 +6,10 @@ package io.github.joancomasfdz.extension.baconreader.embedcommentimages;
 
 import static app.morphe.extension.shared.StringRef.str;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -41,7 +30,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Proxy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -54,6 +42,7 @@ import org.xmlpull.v1.XmlPullParser;
 
 import io.github.joancomasfdz.extension.baconreader.errors.ErrorDialog;
 import io.github.joancomasfdz.extension.baconreader.GlideUtils;
+import io.github.joancomasfdz.extension.baconreader.VideoFullScreen;
 import app.morphe.extension.shared.Logger;
 
 /**
@@ -64,12 +53,6 @@ import app.morphe.extension.shared.Logger;
 final class CommentVideo {
     private static final float DEFAULT_RATIO = 9f / 16f;
     private static final String PLAYER_USER_AGENT = "BaconReader";
-    private static final int BUTTON_SIZE_DP = 36;
-    private static final long ORIENTATION_RELEASE_DELAY_MS = 1000L;
-    /**
-     * Player.STATE_ENDED: the video played to its end.
-     */
-    private static final int STATE_ENDED = 4;
 
     private static final ExecutorService LOADER = Executors.newFixedThreadPool(2);
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
@@ -82,10 +65,6 @@ final class CommentVideo {
      * The video playing in a comment. Only one plays at a time.
      */
     private static Object currentPlayer;
-    /**
-     * The full screen showing the playing video, if any.
-     */
-    private static Dialog fullScreen;
 
     private CommentVideo() {
     }
@@ -227,7 +206,7 @@ final class CommentVideo {
         Object player = box == null ? null : box.getTag();
         if (player == null) return;
         box.setTag(null);
-        if (currentPlayer == player) closeFullScreen();
+        VideoFullScreen.closeShowing(player, null);
         releasePlayer(player);
     }
 
@@ -239,14 +218,17 @@ final class CommentVideo {
                                    int maxHeight) {
         Context context = box.getContext();
         final boolean[] expanded = {true};
-        final ImageView size = button(context);
-        final ButtonDrawable sizeIcon = new ButtonDrawable(ButtonDrawable.SHRINK);
+        final ImageView size = VideoFullScreen.button(context);
+        final VideoFullScreen.ButtonDrawable sizeIcon =
+                new VideoFullScreen.ButtonDrawable(VideoFullScreen.ButtonDrawable.SHRINK);
         size.setImageDrawable(sizeIcon);
         final Runnable applySize = () -> {
             slot.getLayoutParams().width = expanded[0] ? ViewGroup.LayoutParams.MATCH_PARENT : boxSize;
             slot.requestLayout();
             box.setMaxHeight(expanded[0] ? maxHeight : boxSize);
-            sizeIcon.setKind(expanded[0] ? ButtonDrawable.SHRINK : ButtonDrawable.ENLARGE);
+            sizeIcon.setKind(expanded[0]
+                    ? VideoFullScreen.ButtonDrawable.SHRINK
+                    : VideoFullScreen.ButtonDrawable.ENLARGE);
             size.setContentDescription(str(expanded[0]
                     ? "revanced_embed_comment_images_video_shrink"
                     : "revanced_embed_comment_images_video_enlarge"));
@@ -262,173 +244,13 @@ final class CommentVideo {
             applySize.run();
         });
 
-        ImageView full = button(context);
-        full.setImageDrawable(new ButtonDrawable(ButtonDrawable.FULL_SCREEN));
-        full.setContentDescription(str("revanced_embed_comment_images_video_full_screen"));
-        full.setOnClickListener(v -> openFullScreen(box, playerView));
+        final Object player = box.getTag();
+        ImageView full = VideoFullScreen.fullScreenButton(playerView, player,
+                () -> box.getRatio() < 1f, p -> box.getTag() == p);
 
-        LinearLayout buttons = buttonRow(context, size, full);
-        box.addView(buttons, buttonRowParams(context));
-        followControls(playerView, buttons);
-    }
-
-    /**
-     * Shows the playing video of the box over the whole screen, turned to landscape when the video is wider than
-     * high. Back or the button closes it, and the video plays on in the comment.
-     */
-    private static void openFullScreen(AspectRatioFrameLayout box, View inline) {
-        try {
-            final Object player = box.getTag();
-            final Activity activity = activityOf(box.getContext());
-            if (player == null || activity == null) return;
-            closeFullScreen();
-
-            FrameLayout root = new FrameLayout(activity);
-            root.setBackgroundColor(Color.BLACK);
-            final View playerView = newPlayerView(activity);
-            playerView.setId(EmbedCommentImagesPatch.resourceId("baconreader_patches_video_full_screen"));
-            root.addView(playerView, new FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            ImageView exit = button(activity);
-            exit.setImageDrawable(new ButtonDrawable(ButtonDrawable.EXIT_FULL_SCREEN));
-            exit.setContentDescription(str("revanced_embed_comment_images_video_exit_full_screen"));
-            LinearLayout buttons = buttonRow(activity, exit);
-            root.addView(buttons, buttonRowParams(activity));
-
-            final Dialog dialog = new Dialog(activity, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-            dialog.setContentView(root);
-            exit.setOnClickListener(v -> dialog.dismiss());
-
-            final int orientation = activity.getRequestedOrientation();
-            final boolean turned = box.getRatio() < 1f;
-            final int before = activity.getResources().getConfiguration().orientation
-                    == Configuration.ORIENTATION_LANDSCAPE
-                    ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                    : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
-            if (turned) {
-                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            }
-            dialog.setOnDismissListener(d -> {
-                if (fullScreen == dialog) fullScreen = null;
-                if (turned) {
-                    // Given back right away, the app's own orientation follows the sensor, which keeps landscape
-                    // while the phone lies flat. The screen turns back first.
-                    activity.setRequestedOrientation(before);
-                    MAIN.postDelayed(() -> {
-                        if (fullScreen == null) activity.setRequestedOrientation(orientation);
-                    }, ORIENTATION_RELEASE_DELAY_MS);
-                }
-                if (box.getTag() == player) {
-                    try {
-                        switchTargetView(player, playerView, inline);
-                    } catch (Exception ex) {
-                        ErrorDialog.printException(() -> "Could not show the video in the comment again", ex);
-                    }
-                }
-            });
-
-            // A new view shows no frame of a video that has ended: it starts over, paused. The player still wants to
-            // play once it has ended, so it's paused first.
-            if ((Integer) player.getClass().getMethod("getPlaybackState").invoke(player) == STATE_ENDED) {
-                player.getClass().getMethod("setPlayWhenReady", boolean.class).invoke(player, false);
-                player.getClass().getMethod("seekTo", int.class, long.class).invoke(player, 0, 0L);
-            }
-            switchTargetView(player, inline, playerView);
-            followControls(playerView, buttons);
-            dialog.show();
-            // The theme hides the status bar. Hiding the navigation bar too would show Android's "Viewing full
-            // screen" message over the video, the first time.
-            if (dialog.getWindow() != null) {
-                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            }
-            fullScreen = dialog;
-        } catch (Exception ex) {
-            ErrorDialog.printException(() -> "Could not show the video in full screen", ex);
-        }
-    }
-
-    private static void closeFullScreen() {
-        Dialog dialog = fullScreen;
-        if (dialog == null) return;
-        fullScreen = null;
-        try {
-            dialog.dismiss();
-        } catch (Exception ex) {
-            Logger.printInfo(() -> "Could not close the full screen", ex);
-        }
-    }
-
-    /**
-     * PlayerView.switchTargetView: moves the player's video from one view to the other.
-     */
-    private static void switchTargetView(Object player, View from, View to) throws Exception {
-        ClassLoader loader = from.getContext().getClassLoader();
-        Class<?> playerClass = loader.loadClass("com.google.android.exoplayer2.Player");
-        Class<?> playerViewClass = loader.loadClass("com.google.android.exoplayer2.ui.PlayerView");
-        playerViewClass.getMethod("switchTargetView", playerClass, playerViewClass, playerViewClass)
-                .invoke(null, player, from, to);
-    }
-
-    private static Activity activityOf(Context context) {
-        while (context != null) {
-            if (context instanceof Activity) return (Activity) context;
-            context = context instanceof ContextWrapper ? ((ContextWrapper) context).getBaseContext() : null;
-        }
-        return null;
-    }
-
-    /**
-     * Shows the buttons while the player's controls show, and hides them with the controls.
-     */
-    private static void followControls(View playerView, final View buttons) {
-        try {
-            ClassLoader loader = playerView.getContext().getClassLoader();
-            boolean visible = (Boolean) playerView.getClass().getMethod("isControllerVisible").invoke(playerView);
-            buttons.setVisibility(visible ? View.VISIBLE : View.GONE);
-            Class<?> listenerClass =
-                    loader.loadClass("com.google.android.exoplayer2.ui.PlayerControlView$VisibilityListener");
-            Object listener = Proxy.newProxyInstance(loader, new Class<?>[]{listenerClass}, (proxy, method, args) -> {
-                if ("onVisibilityChange".equals(method.getName())) {
-                    buttons.setVisibility((Integer) args[0]);
-                    return null;
-                }
-                if ("equals".equals(method.getName())) return proxy == args[0];
-                if ("hashCode".equals(method.getName())) return System.identityHashCode(proxy);
-                if ("toString".equals(method.getName())) return "VisibilityListener";
-                return null;
-            });
-            playerView.getClass().getMethod("setControllerVisibilityListener", listenerClass)
-                    .invoke(playerView, listener);
-        } catch (Exception ex) {
-            buttons.setVisibility(View.VISIBLE);
-            Logger.printInfo(() -> "Could not follow the video's controls", ex);
-        }
-    }
-
-    private static ImageView button(Context context) {
-        ImageView button = new ImageView(context);
-        button.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        return button;
-    }
-
-    private static LinearLayout buttonRow(Context context, ImageView... buttons) {
-        LinearLayout row = new LinearLayout(context);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        int size = dp(context, BUTTON_SIZE_DP);
-        for (int i = 0; i < buttons.length; i++) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
-            if (i > 0) params.leftMargin = dp(context, 8);
-            row.addView(buttons[i], params);
-        }
-        return row;
-    }
-
-    private static FrameLayout.LayoutParams buttonRowParams(Context context) {
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, Gravity.TOP | Gravity.END);
-        int margin = dp(context, 6);
-        params.setMargins(margin, margin, margin, margin);
-        return params;
+        LinearLayout buttons = VideoFullScreen.buttonRow(context, size, full);
+        box.addView(buttons, VideoFullScreen.buttonRowParams(context));
+        VideoFullScreen.followControls(playerView, buttons);
     }
 
     /**
@@ -627,98 +449,6 @@ final class CommentVideo {
             Logger.printInfo(() -> "Could not release the video", ex);
         }
         if (currentPlayer == player) currentPlayer = null;
-    }
-
-    /**
-     * A button's icon over a video: a white sign on a dark circle, like the play button. Shrink is "<", enlarge ">",
-     * full screen four outward corners and exit full screen four inward ones.
-     */
-    static final class ButtonDrawable extends Drawable {
-        static final int SHRINK = 0;
-        static final int ENLARGE = 1;
-        static final int FULL_SCREEN = 2;
-        static final int EXIT_FULL_SCREEN = 3;
-
-        private final Paint circle = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final Paint sign = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final Path path = new Path();
-        private int kind;
-
-        ButtonDrawable(int kind) {
-            this.kind = kind;
-            circle.setColor(0x99000000);
-            sign.setColor(0xFFFFFFFF);
-            sign.setStyle(Paint.Style.STROKE);
-            sign.setStrokeCap(Paint.Cap.ROUND);
-            sign.setStrokeJoin(Paint.Join.ROUND);
-        }
-
-        void setKind(int kind) {
-            if (this.kind == kind) return;
-            this.kind = kind;
-            invalidateSelf();
-        }
-
-        @Override
-        public void draw(Canvas canvas) {
-            Rect b = getBounds();
-            float cx = b.exactCenterX();
-            float cy = b.exactCenterY();
-            float r = Math.min(b.width(), b.height()) / 2f;
-            canvas.drawCircle(cx, cy, r, circle);
-            sign.setStrokeWidth(r * 0.14f);
-            float t = r * 0.4f;
-            path.reset();
-            if (kind == SHRINK) {
-                chevron(cx + t * 0.4f, cy, -t);
-            } else if (kind == ENLARGE) {
-                chevron(cx - t * 0.4f, cy, t);
-            } else {
-                float c = t * 0.5f;
-                boolean outward = kind == FULL_SCREEN;
-                for (int dx = -1; dx <= 1; dx += 2) {
-                    for (int dy = -1; dy <= 1; dy += 2) {
-                        float x = cx + dx * t;
-                        float y = cy + dy * t;
-                        // Outward corners point away from the center; inward ones toward it.
-                        float ix = outward ? -dx * c : dx * c;
-                        float iy = outward ? -dy * c : dy * c;
-                        float px = outward ? x : x - dx * c;
-                        float py = outward ? y : y - dy * c;
-                        path.moveTo(px + ix, py);
-                        path.lineTo(px, py);
-                        path.lineTo(px, py + iy);
-                    }
-                }
-            }
-            canvas.drawPath(path, sign);
-        }
-
-        /**
-         * A chevron with its tip at (x + depth, y).
-         */
-        private void chevron(float x, float y, float depth) {
-            path.moveTo(x, y - Math.abs(depth));
-            path.lineTo(x + depth, y);
-            path.lineTo(x, y + Math.abs(depth));
-        }
-
-        @Override
-        public void setAlpha(int alpha) {
-            circle.setAlpha(alpha);
-            sign.setAlpha(alpha);
-        }
-
-        @Override
-        public void setColorFilter(ColorFilter colorFilter) {
-            sign.setColorFilter(colorFilter);
-        }
-
-        @Override
-        @SuppressWarnings("deprecation")
-        public int getOpacity() {
-            return PixelFormat.TRANSLUCENT;
-        }
     }
 
     /**

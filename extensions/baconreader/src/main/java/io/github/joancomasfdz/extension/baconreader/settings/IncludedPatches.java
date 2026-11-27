@@ -24,6 +24,10 @@ public final class IncludedPatches {
         return false;
     }
 
+    public static boolean fullScreenPostVideos() {
+        return false;
+    }
+
     public static boolean promptToOpenRedditLinks() {
         return false;
     }
